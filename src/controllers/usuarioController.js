@@ -58,7 +58,12 @@ function obterPermissoesUsuario(req, res) {
         });
 }
 
-
+function usuarioTemPermissao(idUsuario, codigoPermissao) {
+    return usuarioModel.obterPermissoesUsuario(idUsuario)
+        .then(function (permissoes) {
+            return permissoes.some(p => p.codigo_permissao === codigoPermissao);
+        });
+}
 
 
 // Função que cadastra um novo user
