@@ -73,15 +73,26 @@ function autenticarUsuario(req, res) {
                     console.log("\nHouve um erro ao realizar o login! Erro: ", erro.sqlMessage);
                     res.status(500).json(erro.sqlMessage);
                 }
-            );
+            }).catch( function (erro) {
+                console.log(erro);
+                console.log("\nHouve um erro ao realizar o login! Erro: ", erro.sqlMessage);
+                res.status(500).json(erro.sqlMessage);
+            });
     }
+}
 
-    // FLUXO:
-    // front envia email e senha
-    // controller recebe e valida os dados e chama o model
-    // model consulta o banco
-    // resultado volta pro controller
-    // controller envia resultado pro front
+function obterPermissoesUsuario(req, res) {
+    var idUsuario = req.params.idUsuario;
+
+    usuarioModel.obterPermissoesUsuario(idUsuario)
+        .then(function (resultado) {
+            res.json(resultado);
+        })
+        .catch(function (erro) {
+            console.log(erro);
+            console.log("\nHouve um erro ao obter as permissões do usuário! Erro: ", erro.sqlMessage);
+            res.status(500).json(erro.sqlMessage);
+        });
 }
 
 function listarCargos(req,res){
@@ -166,51 +177,6 @@ function cadastrarUsuario(req, res) {
     // resultado volta pro controller
     // controller envia resultado pro front
 }
-
-/*
-
-
-// Função que busca os dados de um user
-function visualizarUsuario(req, res)
-{
-    var fkUsuario = req.params.fkUsuario;
-
-    // Chama a função do model que executa o SELECT no banco
-    usuarioModel.visualizarUsuario(fkUsuario)
-    .then(function (resultado)
-    {
-        // Verifica se algum registro foi encontrado
-        if (resultado.length > 0)
-        {
-            // Retorna os dados encontrados em JSON
-            res.status(200).json(resultado);
-            console.log(resultado);
-        }
-        
-        else
-        {
-            res.status(204).send("Nenhum resultado encontrado!")
-        }
-    
-    // Executado caso erro na consulta
-    }).catch(function (erro)
-    {
-        console.log(erro);
-        console.log("Houve um erro ao buscar as preferências: ", erro.sqlMessage);
-        res.status(500).json(erro.sqlMessage);
-    });
-
-    // FLUXO:
-    // front solicita os dados
-    // controller recebe fkUsuario
-    // model faz SELECT e banco retorna dados
-    // controller verifica se encontrou registros
-    // controller envia resultado pro front
-}
-
-*/
-
-
 
 
 // Exportando as funções do controller

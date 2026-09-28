@@ -60,18 +60,39 @@ html {
 }
 
 .navbar {
-    background-color: white;
     position: absolute;
     top: 20px;
     left: 1.5%;
+
     display: flex;
     flex-direction: row;
-    width: 97%;
-    height: 70px;
     align-items: center;
     justify-content: space-between;
+    
+    width: 97%;
+    height: 70px;
     padding: 0% 1%;
+
     border-radius: 50px;
+
+    background: rgba(255, 255, 255, 0.45);
+
+    backdrop-filter:
+        blur(24px)
+        saturate(180%)
+        contrast(110%);
+
+    -webkit-backdrop-filter:
+        blur(24px)
+        saturate(180%)
+        contrast(110%);
+
+    border: 1px solid rgba(255, 255, 255, 0.65);
+
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .container-img {
@@ -160,10 +181,18 @@ html {
 }
 
 #btn-login {
-    background-color: white;
+    width: 40%;
+
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+
     border: 2px solid var(--cor-primaria);
     color: var(--cor-primaria);
-    width: 40%;
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.7),
+        0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 #btn-cad {
@@ -173,8 +202,11 @@ html {
 }
 
 #btn-login:hover {
-    background-color: var(--cor-primaria);
+    background: var(--cor-primaria);
     color: white;
+
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.12);
 }
 
 #btn-cad:hover {
@@ -183,27 +215,6 @@ html {
     box-shadow: 0px 0px 5px var(--cor-primaria);
 }
 
-.header-whatsapp {
-    position: absolute;
-    align-self: center;
-    width: 80px;
-    height: 80px;
-    border-radius: 100px;
-    background-color: #10B981;
-    left: 93%;
-    top: 86vh;
-    background-image: url(../assets/icons/whatsapp.svg);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 55%;
-    transition: all ease-in-out 0.3s;
-}
-
-.header-whatsapp:hover {
-    background-color: white;
-    background-image: url(../assets/icons/whatsapp-preto.svg);
-    box-shadow: 0px 0px 10px #10B981;
-}
 
 /* Responsividade header */
 @media (max-width: 1440px) {
@@ -245,11 +256,6 @@ html {
         width: 70px;
         height: 70px;
     }
-
-    .header-whatsapp {
-        left: 85%;
-        top: 80vh;
-    }
 }
 
 @media (max-width: 768px) {
@@ -275,11 +281,6 @@ html {
 }
 
 @media (max-width: 600px) {
-    .header-whatsapp {
-        left: 70%;
-        top: 80vh;
-    }
-
     .container-img {
         height: 100px;
     }
