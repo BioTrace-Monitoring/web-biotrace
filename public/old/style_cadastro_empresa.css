@@ -1,0 +1,187 @@
+/* Import da fonte Outfit para Títulos e Geist para parágrafos*/
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+*
+{
+    margin: 0; /* Remove as margens padrão que os navegadores colocam automaticamente*/
+    box-sizing: border-box; /* Evitar que elementos cresçam a mais*/
+    font-family: 'Outfit'; /* Fonte padrão do site*/
+}
+
+a
+{
+    text-decoration: none; /* Tira o sublinhado dos links*/
+}
+
+body
+{
+    min-height: 100px; /* Faz o body ocupar no mínimo toda a altura da tela*/
+
+    background: radial-gradient( /* Gradiente utilizado como fundo da página*/
+        circle at 0% 0%,
+        #AC70FF 0%,
+        #7A32D6 35%,
+        #21003F 100%
+    );
+}
+
+
+.cabecalho
+{
+    width: 100%; /* Header ocupa toda a largura da tela*/
+    height: 65px; /* Altura do header*/
+    display: flex; /* Alinhar elementos horizontalmente*/
+    align-items: center; /* Centraliza os elementos verticalmente*/
+    padding: 0 32px; /* Espaçamento interno -> 0 cima e baixo | 32px laterais*/
+
+}
+
+.btn-voltar
+{
+    padding: 9px 16px; /* Espaçamento interno -> 9px cima e baixo | 16px laterais*/
+    border: 1px solid #ECEAF3; /* Borda do botão*/
+    border-radius: 100px; /* Deixa o botão arredondado*/
+    background: #FFFFFF; /* Cor de fundo do botão*/
+    color: #6B6B76; /* Cor do texto*/
+    font-size: 12px; /* Tamanho da escrita*/
+    font-weight: 600; /* Semi negrito*/
+    cursor: pointer; /* Mão do mouse aparece*/
+}
+
+.container
+{
+    padding: 5px 20px 80px; /* Espaçamento interno -> 5px cima | 20px laterais | 80px baixo*/
+    display: flex; /* Alinhar elementos horizontalmente*/
+    justify-content: center; /* Centraliza os elementos horizontalmente*/
+    align-items: flex-start; /* Alinha os elementos no início verticalmente*/
+}
+
+.box-cad
+{
+    width: 100%; /* Card ocupa toda a largura disponível*/
+    max-width: 500px; /* Largura máxima do card*/
+    padding: 30px 32px; /* Espaçamento interno -> 30px cima e baixo | 32px laterais*/
+    background: #FFFFFF; /* Cor de fundo do card*/
+    border-radius: 16px; /* Arredonda os cantos do card*/
+}
+
+.box-cad h1
+{
+    margin-bottom: 6px; /* Espaço embaixo do título*/
+    text-align: center; /* Centraliza o texto*/
+    font-size: 24px; /* Tamanho da escrita*/
+    font-weight: bold; /* Negrito*/
+    color: #202938; /* Cor do texto*/
+}
+
+.subtitulo-cad
+{
+    margin-bottom: 25px; /* Espaço embaixo do subtítulo*/
+    text-align: center; /* Centraliza o texto*/
+    font-size: 11px; /* Tamanho da escrita*/
+    line-height: 16px; /* Altura de cada linha do texto*/
+    color: #777; /* Cor do texto*/
+}
+
+.campo-cad
+{
+    width: 100%; /* Campo ocupa toda a largura disponível*/ 
+    margin-bottom: 13px; /* Espaço embaixo de cada campo*/
+}
+
+.campo-cad label
+{
+    margin-bottom: 6px; /* Espaço entre o texto e o input*/
+    font-size: 11px; /* Tamanho da escrita*/
+    font-weight: 600; /* Semi negrito*/
+    color: #202938; /* Cor do texto*/
+}
+
+.campo-cad input
+{
+    width: 100%; /* Input ocupa toda a largura do campo*/
+    height: 38px; /* Altura do input*/
+    padding: 0 12px; /* Espaçamento interno -> 0 cima e baixo | 12px laterais*/
+    border: 1px solid #E1E3E7; /* Borda do input*/
+    border-radius: 7px; /* Arredonda os cantos do input*/
+    background: #F4F5F7; /* Cor de fundo do input*/
+    outline: none; /* Remove a borda padrão ao selecionar o input*/
+    font-size: 11px; /* Tamanho da escrita*/
+    color: #202938; /* Cor do texto*/
+}
+
+.campo-cad select
+{
+    width: 100%; /* Input ocupa toda a largura do campo*/
+    height: 38px; /* Altura do input*/
+    padding: 0 12px; /* Espaçamento interno -> 0 cima e baixo | 12px laterais*/
+    border: 1px solid #E1E3E7; /* Borda do input*/
+    border-radius: 7px; /* Arredonda os cantos do input*/
+    background: #F4F5F7; /* Cor de fundo do input*/
+    outline: none; /* Remove a borda padrão ao selecionar o input*/
+    font-size: 11px; /* Tamanho da escrita*/
+    color: #202938; /* Cor do texto*/
+}
+
+.campo-cad input:focus
+{
+    border-color: #8646BD; /* Altera a cor da borda quando o input é selecionado*/
+}
+
+.btn-cad
+{
+    display: block; /* Faz o botão se comportar como elemento em bloco*/
+    width: 50%; /* Botão ocupa metade da largura disponível*/
+    height: 40px; /* Botão ocupa metade da largura disponível*/
+    margin: 20px auto 0; /* Espaçamento externo -> 20px cima | auto laterais | 0 baixo*/
+    border: none; /* Tira a borda padrão do botão*/ 
+    border-radius: 7px; /* Arredonda os cantos do botão*/ 
+    background: #8646BD; /* Cor de fundo do botão*/
+    color: #FFFFFF; /* Cor do texto*/
+    font-size: 11px; /* Tamanho da escrita*/
+    font-weight: bold; /* Negrito*/
+    cursor: pointer; /* Mão do mouse aparece*/
+}
+
+/* Ajustes Globais de Responsividade */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+    align-items: center;
+}
+
+.box-cad {
+    max-width: 600px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+.btn-cad {
+    max-width: 240px;
+}
+
+@media (min-width: 580px) {
+    .box-cad {
+        padding: 36px 40px;
+    }
+
+    .empresa {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px 16px;
+    }
+
+    .empresa .campo-cad:nth-child(1) {
+        grid-column: span 2;
+    }
+
+
+    .empresa .campo-cad:nth-child(8):last-child ~ .campo-cad,
+    .empresa .campo-cad:nth-child(6):nth-last-child(3) {
+        grid-column: span 2;
+    }
+}

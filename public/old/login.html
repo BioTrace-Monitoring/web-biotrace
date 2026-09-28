@@ -5,71 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BioTrace - Login</title>
     <link rel="stylesheet" href="css/style_login.css">
-    <link rel="stylesheet" href="css/style.css">
 
     <script src="js/sessao.js"></script>
 </head>
 <body>
-    <header class="header"> <!-- SESSÃO DA ANA -->
-        <div class="navbar">
-            <div class="container-img"></div>
-
-            <ul class="container-lista">
-                <li><a href="index.html#1">Início</a></li>
-                <li class="linha"></li>
-                <li><a href="index.html#2">Sobre nós</a></li>
-                <li class="linha"></li>
-                <li><a href="index.html#3">Solução</a></li>
-                <li class="linha"></li>
-                <li><a href="index.html#4">Faq</a></li>
-                <li class="linha"></li>
-                <li><a href="index.html#5">Contato</a></li>
-            </ul>
-
-            <div class="container-btn">
-                <a href="login.html" id="btn-login">Login</a>
-            </div>
-        </div>
-    </header>
 
     <main class="area-login">
         <section class="cartao-login">
-            <div class="logo">
-                <img src="assets/icons/BioTrace (4).png" alt="BioTrace">
+            <div class="logo" aria-label="BioTrace">
+                <img src="assets/icons/BioTrace (4).png" alt="" class="logo">
             </div>
 
             <h1>Acessar Conta</h1>
             <p class="subtitulo">Insira suas credenciais para entrar no sistema</p>
 
-            <form onsubmit="return entrar()">
-                <label for="ipt_email_user">E-mail</label>
+            <form>
+                <label for="email">E-mail</label>
                 <div class="campo">
-                    <span class="icone" aria-hidden="true"></span>
+                    <span class="icone">✉</span>
                     <input
                         type="email"
                         id="ipt_email_user"
                         name="email"
                         placeholder="exemplo@email.com"
-                        autocomplete="email"
                     >
                 </div>
 
-                <label for="ipt_senha_user">Senha</label>
+                <label for="senha">Senha</label>
                 <div class="campo">
-                    <span class="icone" aria-hidden="true"></span>
+                    <span class="icone">🗝</span>
                     <input
                         type="password"
                         id="ipt_senha_user"
                         name="senha"
                         placeholder="••••••••••••"
-                        autocomplete="current-password"
                     >
-                    <span class="olho" id="btn_olho" role="button" tabindex="0"
-                          aria-label="Mostrar senha" onclick="alternarSenha()"
-                          onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); alternarSenha(); }"></span>
+                    <span class="olho">◉</span>
                 </div>
 
-                <button type="submit">Entrar</button>
+                <button type="button" onclick="entrar()">Entrar</button>
 
                 <a class="esqueci-senha" href="#">Esqueceu a senha?</a>
             </form>
@@ -119,19 +93,11 @@
         </div>
     </footer>
 
+</body>
+</html>
+
+
 <script>
-
-    function alternarSenha()
-    {
-        // mostra/esconde a senha e troca o ícone do olho
-        var input = document.getElementById("ipt_senha_user");
-        var olho = document.getElementById("btn_olho");
-        var mostrando = input.type === "text";
-
-        input.type = mostrando ? "password" : "text";
-        olho.classList.toggle("visivel", !mostrando);
-        olho.setAttribute("aria-label", mostrando ? "Mostrar senha" : "Ocultar senha");
-    }
 
     function entrar()
     {
@@ -147,6 +113,7 @@
         }
 
         console.log("FORM LOGIN: ", emailVar);
+        console.log("FORM SENHA: ", senhaVar);
 
         //document.getElementById("div_aguardar").style.display = "block";
 
@@ -226,6 +193,3 @@
     }
 
 </script>
-
-</body>
-</html>
