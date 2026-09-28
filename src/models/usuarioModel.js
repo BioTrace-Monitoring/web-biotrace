@@ -44,20 +44,35 @@ function obterPermissoesUsuario(idUsuario) {
     // Exibe a query montada no terminal
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
 
+function listarCargos(){
+   console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function listarCargos(): ")
+    
+    var instrucaoSql = `
+        SELECT
+         id_cargo AS id,
+         nome
+         FROM cargo;
+    `;
+
+    // Exibe a query montada no terminal
+    console.log("Executando a instrução SQL: \n" + instrucaoSql);
+
     // Executa a query no banco e retorna o resultado
-    return database.executar(instrucaoSql);
+    return database.executar(instrucaoSql); 
 }
 
 
+
+
 // Função que cadastra um novo usuário
-function cadastrarUsuario(nome, dt_nasc, telefone, cpf, email, senha, idEmpresa)
+function cadastrarUsuario(nome, dt_nasc, telefone, cpf, email, senha, idEmpresa, cargo)
 {
     console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function cadastrarUsuario():", nome, dt_nasc, telefone, cpf, email, senha);
     
     // Insert que insere um novo usuário na tabela usuario
     var instrucaoSql = `
-        INSERT INTO usuario(nome_usuario, dt_nasc_usuario, telefone_usuario, cpf_usuario, email_usuario, senha_usuario, fk_empresa, fk_nivel_acesso) VALUES
-        ('${nome}', '${dt_nasc}', '${telefone}', '${cpf}', '${email}', '${senha}', '${idEmpresa}', 1);
+        INSERT INTO usuario(nome_usuario, dt_nasc_usuario, telefone_usuario, cpf_usuario, email_usuario, senha_usuario, fk_empresa, fk_nivel_acesso, fk_cargo) VALUES
+        ('${nome}', '${dt_nasc}', '${telefone}', '${cpf}', '${email}', '${senha}', '${idEmpresa}', 1, '${cargo}');
     `;
 
     // Exibe a query montada no terminal
@@ -73,6 +88,6 @@ function cadastrarUsuario(nome, dt_nasc, telefone, cpf, email, senha, idEmpresa)
 // Outros arquivos podem usar essas funções
 module.exports = {
     autenticarUsuario,
-    obterPermissoesUsuario,
-    cadastrarUsuario
+    cadastrarUsuario,
+    listarCargos
 };
