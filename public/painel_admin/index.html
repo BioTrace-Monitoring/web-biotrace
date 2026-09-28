@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioTrace Admin | Início</title>
+
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+
+<body>
+    <header class="cabecalho">
+        <div class="cabecalho-marca">
+            <img src="../assets/icons/BioTrace (4).png" alt="Logo BioTrace" class="logo-biotrace">
+
+            <div class="cabecalho-logo-texto">
+                <h1>Painel interno</h1>
+            </div>
+        </div>
+
+        <div class="cabecalho-usuario">
+            <div class="cabecalho-usuario-info">
+                <p id="b_usuario">Olá, nomeUser</p>
+            </div>
+            <button class="btn-sair" onclick="limparSessao()">Sair</button>
+        </div>
+    </header>
+
+    <main class="conteudo">
+        <div class="conteudo-principal">
+            <div class="boas-vindas">
+                <h2>Bem-vindo ao Painel Administrativo</h2>
+                <p>Gerencie as informações e acesse os recursos internos do BioTrace.</p>
+            </div>
+
+            <div class="cards-container">
+                <div class="card-acao">
+                    <div class="card-icone">🏢</div>
+                    <h3>Cadastrar Empresa</h3>
+                    <p>Adicione uma nova empresa ao sistema preenchendo as informações e permissões necessárias.</p>
+                    <a href="cadastrar-empresa.html" class="btn-card">Nova Empresa</a>
+                </div>
+
+                <div class="card-acao">
+                    <div class="card-icone">📋</div>
+                    <h3>Empresas Cadastradas</h3>
+                    <p>Visualize, edite ou remova as empresas que já possuem acesso ao painel do BioTrace.</p>
+                    <a href="listar-empresas.html" class="btn-card btn-secundario">Ver Lista</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

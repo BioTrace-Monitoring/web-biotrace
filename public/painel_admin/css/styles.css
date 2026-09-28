@@ -1,0 +1,208 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&display=swap');
+
+:root {
+    /* Cores */
+    --cor-primaria: #8E39E2;
+    --cor-secundaria: #D4C9FF;
+    --cor-secundaria-light: #F5EBFF;
+    --cor-logo: #7F49B4;
+    --preto-padrao: #0B1020;
+
+    /* Fontes */
+    --titulo: "Outfit", sans-serif;
+    --paragrafo: "Geist", sans-serif;
+
+    /* Font-weigth */
+    --thin: 100;
+    --extra-light: 200;
+    --light: 300;
+    --regular: 400;
+    --medium: 500;
+    --semi-bold: 600;
+    --bold: 700;
+    --extra-bold: 800;
+    --black: 900;
+}
+
+
+* {
+    margin: 0; /* Remove as margens padrão que os navegadores colocam automaticamente*/
+    padding: 0; /* Remove o espaçamento interno padrão de todos os elementos */
+    box-sizing: border-box; /* Evitar que elementos cresçam a mais*/
+    font-family: 'Outfit'; /* Fonte padrão da página*/
+}
+
+body {
+    min-height: 100px; /* Define uma altura mínima para o body*/
+    background: #FBF9FF; /* Cor de fundo da página*/
+}
+
+a {
+    text-decoration: none; /* Tira o sublinhado dos links*/
+}
+
+button {
+    cursor: pointer; /* Mão do mouse aparece*/
+    border: none; /* Remove a borda padrão dos botões*/
+    font-family: 'Outfit'; /* Fonte utilizada nos botões*/
+}
+
+.cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #FFFFFF; 
+    padding: 14px 32px;
+    border-bottom: 1px solid var(--cor-primaria);
+}
+
+.cabecalho-marca {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-biotrace {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+}
+
+.cabecalho-logo-texto h1 {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.cabecalho-usuario {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-sair {
+    background: #F5F5F5;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #000000;
+    transition: all 0.3s ease;
+}
+
+.btn-sair:hover {
+    background: #fb6666;
+    color: #FFFFFF;
+}
+
+.conteudo {
+    display: flex;
+    justify-content: center;
+    padding: 40px 32px;
+}
+
+.conteudo-principal {
+    max-width: 1200px;
+    width: 100%;
+}
+
+.boas-vindas {
+    margin-bottom: 32px;
+}
+
+.boas-vindas h2 {
+    font-family: var(--titulo);
+    font-size: 26px;
+    font-weight: var(--bold);
+    color: var(--preto-padrao);
+    margin-bottom: 8px;
+}
+
+.boas-vindas p {
+    font-family: var(--paragrafo);
+    font-size: 15px;
+    font-weight: var(--regular);
+    color: #64748B; 
+}
+
+.cards-container {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap; 
+}
+
+.card-acao {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 24px;
+    flex: 1; 
+    min-width: 280px; 
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); 
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+
+.card-acao:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(142, 57, 226, 0.1); 
+    border-color: var(--cor-secundaria);
+}
+
+.card-icone {
+    font-size: 32px;
+    margin-bottom: 16px;
+    background: var(--cor-secundaria-light);
+    padding: 10px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-acao h3 {
+    font-family: var(--titulo);
+    font-size: 18px;
+    font-weight: var(--semi-bold);
+    color: var(--preto-padrao);
+    margin-bottom: 10px;
+}
+
+.card-acao p {
+    font-family: var(--paragrafo);
+    font-size: 14px;
+    font-weight: var(--regular);
+    color: #475569;
+    line-height: 1.5;
+    margin-bottom: 24px;
+    flex-grow: 1;
+}
+
+.btn-card {
+    display: inline-block;
+    background: var(--cor-primaria);
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: var(--semi-bold);
+    text-align: center;
+    transition: background 0.2s ease;
+    width: 100%;
+}
+
+.btn-card:hover {
+    background: #731bc4;
+}
+
+.btn-card.btn-secundario {
+    background: transparent;
+    color: var(--cor-primaria);
+    border: 1px solid var(--cor-primaria);
+}
+
+.btn-card.btn-secundario:hover {
+    background: var(--cor-secundaria-light);
+}
