@@ -67,13 +67,7 @@ function autenticarUsuario(req, res) {
                 }
 
                 // catch() é executado quando falha na execução da promise
-            ).catch(
-                function (erro) {
-                    console.log(erro);
-                    console.log("\nHouve um erro ao realizar o login! Erro: ", erro.sqlMessage);
-                    res.status(500).json(erro.sqlMessage);
-                }
-            }).catch( function (erro) {
+            ).catch(function (erro) {
                 console.log(erro);
                 console.log("\nHouve um erro ao realizar o login! Erro: ", erro.sqlMessage);
                 res.status(500).json(erro.sqlMessage);
@@ -116,6 +110,7 @@ function cadastrarUsuario(req, res) {
     var email = req.body.emailUserServer;
     var senha = req.body.senhaUserServer;
     var idEmpresa = req.body.idEmpresaServer;
+    var idCargo = req.body.cargoUserServer;
 
     // Validando pra que nenhum dado venha vazio
     if (nome == undefined) {
@@ -144,7 +139,7 @@ function cadastrarUsuario(req, res) {
 
     else if (idEmpresa == undefined) {
         res.status(400).send("O ID da empresa está undefined!");
-    } else if (cargo == undefined) {
+    } else if (idCargo == undefined) {
         res.status(400).send("O seu cargo está undefined");
     }
     else {
