@@ -10,6 +10,7 @@ var router = express.Router();
 var usuarioController = require("../controllers/usuarioController");
 
 
+router.get("/cargos", usuarioController.listarCargos);
 
 
 // Rota POST para cadastrar um usuário

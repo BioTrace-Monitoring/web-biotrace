@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
     <link rel="stylesheet" href="css/style_cadastro_empresa.css">
 
 </head>
+
 <body onload="validarSessao()">
 
     <header class="cabecalho">
@@ -34,20 +36,29 @@
                         <label for="">Nome completo</label>
                         <input type="text" id="ipt_nome_user" placeholder="Julia Araripe">
                     </div>
+                    <div class="campo-cad">
+                        <label for="ipt_cargo_user">Cargo</label>
+                        <select id="ipt_cargo_user">
+                            <option value="">Selecione o cargo</option>
+                        </select>
+                    </div>
 
                     <div class="campo-cad">
                         <label for="">Data de nascimento</label>
-                        <input type="text" id="ipt_dt_nasc_user" inputmode="numeric" placeholder="00/00/0000" maxlength="10">
+                        <input type="text" id="ipt_dt_nasc_user" inputmode="numeric" placeholder="00/00/0000"
+                            maxlength="10">
                     </div>
 
                     <div class="campo-cad">
                         <label for="">Telefone</label>
-                        <input type="text" id="ipt_telefone_user" inputmode="numeric" placeholder="(00) 00000-0000" maxlength="11">
+                        <input type="text" id="ipt_telefone_user" inputmode="numeric" placeholder="(00) 00000-0000"
+                            maxlength="11">
                     </div>
 
                     <div class="campo-cad">
                         <label for="">CPF</label>
-                        <input type="text" id="ipt_cpf_user" inputmode="numeric" placeholder="000.000.000-00" maxlength="11">
+                        <input type="text" id="ipt_cpf_user" inputmode="numeric" placeholder="000.000.000-00"
+                            maxlength="11">
                     </div>
 
                     <div class="campo-cad">
@@ -76,14 +87,33 @@
 
     </div>
 
-    
+
 
 </body>
 
 <script>
 
-    function cadastrarUsuario()
-    {
+    let cargos = [];
+
+    async function buscarCargos() {
+        const resposta = await fetch("/usuario/cargos");
+        cargos = await resposta.json();
+
+        const select = document.getElementById("ipt_cargo_user");
+
+        cargos.forEach(cargo => {
+            const option = document.createElement("option");
+
+            option.value = cargo.id;
+            option.textContent = cargo.nome;
+
+            select.appendChild(option);
+        });
+    }
+
+    buscarCargos();
+
+    function cadastrarUsuario() {
         // Recupera o id da empresa que foi salvo na sessão na tela anterior
         var idEmpresa = sessionStorage.ID_EMPRESA;
 
@@ -100,6 +130,7 @@
         var nascimentoUserVar = ano + `-` + mes + `-` + dia;
 
         var telefoneUserVar = ipt_telefone_user.value;
+        var cargoUserVar = ipt_cargo_user.value;
         var cpfUserVar = ipt_cpf_user.value;
         var emailUserVar = ipt_email_user.value;
         var senhaUserVar = ipt_senha_user.value;
@@ -107,42 +138,36 @@
 
         // Verifica se algum campo está vazio
         if (nomeUserVar == "" || dataBruta == "" || telefoneUserVar == "" || cpfUserVar == "" ||
-            emailUserVar == "" || senhaUserVar == "" || confirmacaoSenhaUserVar == "")
-        {
+            emailUserVar == "" || senhaUserVar == "" || confirmacaoSenhaUserVar == "" || cargoUserVar == "") {
             alert(`Verifique campos em branco`);
             return false; // Interrompe a função
         }
 
         // Verifica o tamanho mínimo do nome
-        else if (nomeUserVar.length < 3)
-        {
+        else if (nomeUserVar.length < 3) {
             alert(`Seu nome deve ter mais de 1 caractere`);
             return false; // Interrompe a função
         }
 
         // Verifica se a data está no formato esperado
-        else if (!dataBruta.includes('/'))
-        {
+        else if (!dataBruta.includes('/')) {
             alert(`Certifique-se que sua data de nascimento está seguindo esse formato: DD/MM/AAAA`);
             return false; // Interrompe a função
         }
 
         // Verifica se o e-mail possui elementos básicos de um endereço válido
-        else if (!emailUserVar.includes("@") || !emailUserVar.includes(".com"))
-        {
+        else if (!emailUserVar.includes("@") || !emailUserVar.includes(".com")) {
             alert(`Certifique-se que seu e-mail contenha "@" e ".com"`);
             return false; // Interrompe a função
         }
 
         // Verifica se a senha e a confirmação são iguais
-        else if (confirmacaoSenhaUserVar != senhaUserVar)
-        {
+        else if (confirmacaoSenhaUserVar != senhaUserVar) {
             alert(`Sua senha não está igual`)
             return false; // Interrompe a função
         }
 
-        else
-        {
+        else {
             // Faz a requisição
             // quando o servidor responder
             // verifica se deu ok
@@ -152,53 +177,50 @@
 
             // Envia os dados do gestor para a rota de cadastro de usuário
             fetch("/usuario/cadastrar-usuario",
-            {
-                method: "POST", // Método utilizado para envio de dados
-                headers: {
-                    "Content-Type": "application/json", // Informa que os dados estão sendo enviados em JSON
-                },
-                
-                // Converte os dados JavaScript para JSON e envia para o controller
-                body: JSON.stringify({
-                    nomeUserServer: nomeUserVar,
-                    nascimentoUserServer: nascimentoUserVar,
-                    telefoneUserServer: telefoneUserVar,
-                    cpfUserServer: cpfUserVar,
-                    emailUserServer: emailUserVar,
-                    senhaUserServer: senhaUserVar,
-                    idEmpresaServer: idEmpresa
-                }),
-            })
-                // Executado quando o servidor retorna uma resposta
-                .then(function (resposta)
                 {
+                    method: "POST", // Método utilizado para envio de dados
+                    headers: {
+                        "Content-Type": "application/json", // Informa que os dados estão sendo enviados em JSON
+                    },
+
+                    // Converte os dados JavaScript para JSON e envia para o controller
+                    body: JSON.stringify({
+                        nomeUserServer: nomeUserVar,
+                        nascimentoUserServer: nascimentoUserVar,
+                        telefoneUserServer: telefoneUserVar,
+                        cpfUserServer: cpfUserVar,
+                        emailUserServer: emailUserVar,
+                        senhaUserServer: senhaUserVar,
+                        idEmpresaServer: idEmpresa,
+                        cargoUserServer: cargoUserVar
+                    }),
+                })
+                // Executado quando o servidor retorna uma resposta
+                .then(function (resposta) {
                     // Cadastro bem-sucedido: avisa o user e redireciona depois de 1 segundo
-                    if (resposta.ok)
-                    {
+                    if (resposta.ok) {
                         // Remove o id temporário da empresa armazenado na sessão
                         sessionStorage.removeItem("ID_EMPRESA");
-                        
+
                         alert("Cadastro realizado com sucesso!");
 
-                        setTimeout(() =>
-                        {
+                        setTimeout(() => {
                             window.location = "inicio.html";
                         }, 1000);
                     }
-                    
-                    else
-                    {
+
+                    else {
                         // Exibe mensagem caso o cadastro não seja realizado
                         throw alert("Houve um erro ao tentar realizar o cadastro!");
                     }
                 })
                 // Executado caso ocorra algum erro durante a requisição
-                .catch(function (resposta)
-                {
+                .catch(function (resposta) {
                     alert(`#ERRO: ${resposta}`);
                 });
         }
     }
 
 </script>
+
 </html>

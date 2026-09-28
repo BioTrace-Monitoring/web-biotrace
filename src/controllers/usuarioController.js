@@ -3,8 +3,7 @@ var usuarioModel = require("../models/usuarioModel");
 
 
 // Função que autentica um usuário
-function autenticarUsuario(req, res)
-{
+function autenticarUsuario(req, res) {
     // req -> requisição: Possui todas as informações da requisição
     // res -> resposta: Retornar uma resposta pro usuario
 
@@ -13,18 +12,15 @@ function autenticarUsuario(req, res)
     var senha = req.body.senhaServer;
 
     // Validando se os dados foram recebidos corretamente
-    if (email == undefined)
-    {
+    if (email == undefined) {
         res.status(400).send("Seu email está undefined!");
     }
-    
-    else if (senha == undefined)
-    {
+
+    else if (senha == undefined) {
         res.status(400).send("Sua senha está undefined!");
     }
-    
-    else
-    {
+
+    else {
         // Chama a função do model que consulta o banco de dados
         usuarioModel.autenticarUsuario(email, senha)
             // then() é executado quando a consulta é feita com sucesso
@@ -36,10 +32,9 @@ function autenticarUsuario(req, res)
                 // Promises são utilizadas para lidar com operações que podem demorar
                 // pra serem concluídas, como as consultas do banco
                 // O código dentro do then() só será executado quando a consulta terminar com sucesso.
-                
+
                 // Contém os dados retornados pela consulta SQL
-                function (resultadoAutenticar)
-                {
+                function (resultadoAutenticar) {
                     console.log(`\nResultados encontrados: ${resultadoAutenticar.length}`); // qtd de registros encontrados
 
                     // JSON.stringify() -> transforma um objeto JSON em texto pra facilitar a visualização no terminal
@@ -47,8 +42,7 @@ function autenticarUsuario(req, res)
                     console.log(`Resultados: ${JSON.stringify(resultadoAutenticar)}`); // transforma JSON em String
 
                     // Se encontrou um usuário
-                    if (resultadoAutenticar.length == 1)
-                    {
+                    if (resultadoAutenticar.length == 1) {
                         console.log(resultadoAutenticar);
 
                         // Retorna os dados para o front-end no formato JSON
@@ -60,24 +54,21 @@ function autenticarUsuario(req, res)
                             fk_empresa: resultadoAutenticar[0].fk_empresa,
                         });
                     }
-                    
+
                     // Nenhum usuário encontrado
-                    else if (resultadoAutenticar.length == 0)
-                    {
+                    else if (resultadoAutenticar.length == 0) {
                         // 401 - senha ou o login estão ausentes, incorretos ou expirados
                         res.status(401).send("Email e/ou senha inválido(s)");
                     }
-                    
-                    else
-                    {
+
+                    else {
                         res.status(403).send("Mais de um usuário com o mesmo login e senha!");
                     }
                 }
 
-            // catch() é executado quando falha na execução da promise
+                // catch() é executado quando falha na execução da promise
             ).catch(
-                function (erro)
-                {
+                function (erro) {
                     console.log(erro);
                     console.log("\nHouve um erro ao realizar o login! Erro: ", erro.sqlMessage);
                     res.status(500).json(erro.sqlMessage);
@@ -93,12 +84,19 @@ function autenticarUsuario(req, res)
     // controller envia resultado pro front
 }
 
-
-
+function listarCargos(req,res){
+    usuarioModel.listarCargos()
+    .then(function(resultado){
+        res.json(resultado);
+    })
+    .catch(function(erro){
+        console.log(erro);
+        res.status(500).json(erro.sqlMessage);
+    });
+}
 
 // Função que cadastra um novo user
-function cadastrarUsuario(req, res)
-{
+function cadastrarUsuario(req, res) {
     // Recuperando os dados enviados pelo form
     var nome = req.body.nomeUserServer;
     var dt_nasc = req.body.nascimentoUserServer;
@@ -109,56 +107,47 @@ function cadastrarUsuario(req, res)
     var idEmpresa = req.body.idEmpresaServer;
 
     // Validando pra que nenhum dado venha vazio
-    if (nome == undefined)
-    {
+    if (nome == undefined) {
         res.status(400).send("Seu nome está undefined!");
     }
 
-    else if (dt_nasc == undefined)
-    {
+    else if (dt_nasc == undefined) {
         res.status(400).send("Sua data de nascimento está undefined!");
     }
-    
-    else if (telefone == undefined)
-    {
+
+    else if (telefone == undefined) {
         res.status(400).send("Seu telefone está undefined!");
     }
-    
-    else if (cpf == undefined)
-    {
+
+    else if (cpf == undefined) {
         res.status(400).send("Seu CPF está undefined!");
     }
 
-    else if (email == undefined)
-    {
+    else if (email == undefined) {
         res.status(400).send("Seu e-mail está undefined!");
     }
 
-    else if (senha == undefined)
-    {
+    else if (senha == undefined) {
         res.status(400).send("Sua senha está undefined!");
     }
 
-    else if (idEmpresa == undefined)
-    {
+    else if (idEmpresa == undefined) {
         res.status(400).send("O ID da empresa está undefined!");
+    } else if (cargo == undefined) {
+        res.status(400).send("O seu cargo está undefined");
     }
-    
-    else
-    {
+    else {
         // Chama a função do model que executa o INSERT no banco
-        usuarioModel.cadastrarUsuario(nome, dt_nasc, telefone, cpf, email, senha, idEmpresa)
+        usuarioModel.cadastrarUsuario(nome, dt_nasc, telefone, cpf, email, senha, idEmpresa, idCargo)
             // Executado quando o cadastro ocorre com sucesso
             .then(
-                function (resultado)
-                {
+                function (resultado) {
                     // Retorna o resultado para o front-end em formato JSON
                     res.json(resultado);
                 }
-            // Executado quando tem algum erro durante o cadastro
+                // Executado quando tem algum erro durante o cadastro
             ).catch(
-                function (erro)
-                {
+                function (erro) {
                     console.log(erro); // exibe erro no terminal
                     console.log(
                         "\nHouve um erro ao realizar o cadastro! Erro: ",
@@ -230,5 +219,6 @@ module.exports =
 {
     autenticarUsuario,
     cadastrarUsuario,
+    listarCargos
     //visualizarUsuario
 }
