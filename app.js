@@ -24,6 +24,9 @@ var app = express();
 var usuarioRouter = require("./src/routes/usuario");
 var empresaRouter = require("./src/routes/empresa");
 
+// Habilita CORS para permitir requisições de outros domínios/portas
+app.use(cors());
+
 // Interpreta requisições com corpo em JSON
 app.use(express.json());
 
@@ -32,9 +35,6 @@ app.use(express.urlencoded({ extended: false }));
 
 // Serve arquivos estáticos (HTML, CSS, JS, imagens) da pasta /public
 app.use(express.static(path.join(__dirname, "public")));
-
-// Habilita CORS para permitir requisições de outros domínios/portas
-app.use(cors());
 
 // Cada rota é montada em um prefixo de URL correspondente ao seu módulo
 app.use("/usuario", usuarioRouter);
