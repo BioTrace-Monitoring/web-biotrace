@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioTrace | Início</title>
+
+    <script src="js/sessao.js"></script>
+    <script src="js/permissao.js"></script>
+
+    <link rel="stylesheet" href="css/style_inicio.css">
+</head>
+<body onload="verificarNivel(), validarSessao()">
+    
+    <header class="cabecalho">
+        <div class="cabecalho-marca">
+            <img src="assets/icons/BioTrace (4).png" alt="Logo BioTrace" class="logo-biotrace">
+
+            <div class="cabecalho-logo-texto">
+                <h1>Painel interno</h1>
+            </div>
+        </div>
+
+        <div class="cabecalho-usuario">
+            <div class="cabecalho-usuario-info">
+                <p id="b_usuario">nomeUser</p>
+            </div>
+            <button class="btn-sair" onclick="limparSessao()">Sair</button>
+        </div>
+    </header>
+
+    <section id="container-inicio" class="container-inicio">
+
+        <div class="cabecalho-inicio">
+            <div>
+                <h2>Empresas cadastradas</h2>
+                <p>Gerencie as empresas clientes da BioTrace e seus gestores responsáveis.</p>
+            </div>
+
+            <a href="cadastrar-empresa.html"><button class="btn-cadastrar-empresa">+ Nova empresa</button></a>
+            
+        </div>
+
+        <br><br>
+
+        <div class="card-tabela">
+            <table>
+                <thead>
+                    <tr>
+                        <th>EMPRESA</th>
+                        <th>CIDADE</th>
+                        <th>TELEFONE</th>
+                        <th>GESTOR</th>
+                        <th style="text-align:right;">AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody id="corpo_tabela_empresas">
+                    <!-- linhas do banco -->
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+    <section id="container-cliente" class="container-cliente">
+
+        <div class="principal">
+            <h1 id="b_usuario_cliente">Ola, </h1>
+            <p>Nosso sistema está em construção!</p>
+        </div>
+    </section>
+    
+</body>
+
+<script>
+    
+    // Lista que vai armazenar as empresas recebidas do back-end
+    var listaEmpresas = [];
+
+    function visualizarEmpresa()
+    {
+        // Faz uma requisição para buscar todas as empresas cadastradas
+        fetch("/empresa/visualizar-empresa")
+
+            // Executado quando o servidor retorna uma resposta
+            .then(function(resposta)
+            {
+                // Verifica se ocorreu algum erro na requisição
+                if (!resposta.ok)
+                {
+                    throw new Error("Erro ao buscar empresas");
+                }
+
+                // Converte a resposta recebida para JSON
+                return resposta.json();
+            })
+            // Executado após os dados serem convertidos para JSON
+            .then(function(resultado)
+            {
+                console.log("Empresas encontradas:" + resultado);
+
+                // Armazena as empresas retornadas pelo back-end
+                listaEmpresas = resultado;
+
+                // Chama a função responsável por montar a tabela
+                renderizarEmpresas();
+            })
+            // Executado caso ocorra algum erro na requisição
+            .catch(function(erro)
+            {
+                console.log("Erro ao visualizar empresas:");
+                console.log(erro);
+            });
+    }
+
+
+    function renderizarEmpresas()
+    {
+        // Busca o corpo da tabela no HTML
+        var corpoTabela = document.getElementById("corpo_tabela_empresas");
+
+        // Limpa a tabela antes de adicionar as empresas
+        corpoTabela.innerHTML = "";
+
+        // Verifica se nenhuma empresa foi encontrada
+        if (listaEmpresas.length === 0)
+        {
+            alert("Nenhuma empresa cadastrada!");
+        }
+
+        // Percorre todas as empresas armazenadas na lista
+        for (let i = 0; i < listaEmpresas.length; i++)
+        {
+            // Pega a empresa da posição atual da lista
+            var empresa = listaEmpresas[i];
+
+            // Cria uma nova linha para a tabela
+            var linha = document.createElement("tr");
+
+            // Variável que vai armazenar o conteúdo da coluna de gestor
+            var gestor;
+
+            // Verifica se a empresa possui um gestor cadastrado
+            if (empresa.temGestor)
+            {
+                // Exibe o nome do gestor
+                gestor = `<span class="obs com-gestor">${empresa.nomeGestor}</span>`;
+            }
+
+            else
+            {
+                // Caso não tenha gestor, exibe o botão para cadastrar um
+                gestor = `
+                    <button class="btn-cadastrar-gestor" onclick="cadastrarGestor(${empresa.id_empresa})">
+                        Cadastrar gestor
+                    </button>
+                `;
+            }
+
+            // Monta as colunas da linha com os dados da empresa
+            linha.innerHTML = `
+                                <!-- Exibe razão social e CNPJ na primeira coluna -->
+                                <td>
+                                    <div class="empresa-nome">
+                                        ${empresa.razao_social}
+                                    </div>
+
+                                    <div class="empresa-cnpj">
+                                        ${empresa.cnpj}
+                                    </div>
+                                </td>
+
+
+                                <!-- Exibe a cidade da empresa -->
+                                <td>
+                                    ${empresa.cidade}
+                                </td>
+
+
+                                <!-- Exibe o telefone comercial -->
+                                <td>
+                                    ${empresa.telefone_comercial}
+                                </td>
+
+
+                                <!-- Exibe o gestor ou o botão de cadastrar gestor -->
+                                <td>
+                                    ${gestor}
+                                </td>
+
+
+                                <!-- Coluna de ações -->
+                                <td>
+                                    <div class="acoes-tabela">
+
+                                        <button
+                                            class="btn-editar"
+                                            onclick="editarEmpresa(${empresa.id_empresa})"
+                                            title="Editar empresa">✎
+                                        </button>
+
+                                    </div>
+                                </td>
+                            `;
+
+            // Adiciona a linha criada no corpo da tabela
+            corpoTabela.appendChild(linha);
+        }
+    }
+
+    function cadastrarGestor(idEmpresa)
+    {
+        // Salva o id da empresa selecionada na sessão
+        sessionStorage.ID_EMPRESA = idEmpresa;
+
+        console.log("ID DA EMPRESA SALVO:", sessionStorage.ID_EMPRESA);
+
+        // Redireciona para a tela de cadastro do gestor
+        window.location.href = "cadastrar-gestor.html";
+    }
+
+    function editarEmpresa(idEmpresa)
+    {
+        // Salva o id da empresa selecionada na sessão
+        sessionStorage.ID_EMPRESA = idEmpresa;
+
+        console.log("ID DA EMPRESA SALVO:", sessionStorage.ID_EMPRESA);
+
+        // Futuramente redirecionará para a tela de edição da empresa
+        //window.location.href = "editar-empresa.html";
+    }
+
+</script>
+</html>

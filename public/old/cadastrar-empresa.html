@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BioTrace | Cadastro</title>
+
+    <script src="js/sessao.js"></script>
+
+    <link rel="stylesheet" href="css/style_cadastro_empresa.css">
+
+</head>
+<body onload="validarSessao()">
+
+    <header class="cabecalho">
+        <a href="inicio.html"><button class="btn-voltar">Voltar</button></a>
+    </header>
+
+    <div class="container">
+
+        <div class="box-cad">
+
+            <h1>Cadastrar Empresa</h1>
+            <p class="subtitulo-cad">
+                Cadastre uma nova empresa cliente da BioTrace.
+            </p>
+
+            <div class="form-cad">
+
+                <div class="empresa">
+
+                    <div class="campo-cad">
+                        <label for="">Razão social</label>
+                        <input type="text" id="ipt_razao_social_empresa" placeholder="Ex: TechEquipamentos" maxlength="45">
+                    </div>
+
+                    <div class="campo-cad">
+                        <label for="">CNPJ</label>
+                        <input type="text" inputmode="numeric" id="ipt_cnpj_empresa" placeholder="00.000.000/0000-00" maxlength="14">
+                    </div>
+
+                    <div class="campo-cad">
+                        <label for="">Telefone comercial</label>
+                        <input type="text" inputmode="numeric" id="ipt_telefone_empresa" placeholder="(00) 00 00000-0000" maxlength="10">
+                    </div>
+
+                    <div class="campo-cad">
+                        <label for="">CEP</label>
+                        <input type="text" inputmode="numeric" id="ipt_cep_empresa" placeholder="00000-000" maxlength="8">
+                    </div>
+
+                    <div class="campo-cad">
+                        <label for="">Cidade</label>
+                        <input type="text" id="ipt_cidade_empresa" placeholder="São Paulo">
+                    </div>
+
+                    <div class="campo-cad">
+                        <label for="">Endereço</label>
+                        <input type="text" id="ipt_endereco_empresa" placeholder="Rua Brasil">
+                    </div>
+
+                    <div class="campo-cad">
+                        <label for="">Bairro</label>
+                        <input type="text" id="ipt_bairro_empresa" placeholder="Jardins"> 
+                    </div>
+
+                    <div class="campo-cad">
+                        <label for="">Número</label>
+                        <input type="text" id="ipt_numero_empresa" placeholder="00" maxlength="10">
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <button class="btn-cad" onclick="cadastrarEmpresa()">Cadastrar empresa</button>
+
+        </div>
+
+    </div>
+
+    
+
+</body>
+
+<script>
+
+    function cadastrarEmpresa()
+    {
+        // Captura os valores digitados nos campos do formulário
+        var razaoSocialEmpresaVar = ipt_razao_social_empresa.value;
+        var cnpjEmpresaVar = ipt_cnpj_empresa.value;
+        var telefoneComercialEmpresaVar = ipt_telefone_empresa.value;
+        var cepEmpresaVar = ipt_cep_empresa.value;
+        var cidadeEmpresaVar = ipt_cidade_empresa.value;
+        var logradouroEmpresaVar = ipt_endereco_empresa.value;
+        var bairroEmpresaVar = ipt_bairro_empresa.value;
+        var numeroEnderecoEmpresaVar = ipt_numero_empresa.value;
+
+        // Verifica se algum campo está vazio
+        if (razaoSocialEmpresaVar == "" || cnpjEmpresaVar == "" || telefoneComercialEmpresaVar == "" || cepEmpresaVar == "" ||
+            cidadeEmpresaVar == "" || logradouroEmpresaVar == "" || bairroEmpresaVar == "" || numeroEnderecoEmpresaVar == "")
+        {
+            alert(`Verifique campos em branco`);
+            return false; // Interrompe a função
+        }
+
+        // Verifica o tamanho mínimo da razão social
+        else if (razaoSocialEmpresaVar.length < 3)
+        {
+            alert(`A razão social da empresa deve ter mais de 3 caracteres`);
+            return false; // Interrompe a função
+        }
+
+        else
+        {
+            // Faz a requisição
+            // quando o servidor responder
+            // verifica se deu ok
+            // converte o conteúdo
+            // usa os dados
+            // se qualquer coisa der errado no caminho -> cai no catch
+
+            // Envia os dados da empresa para a rota de cadastro
+            fetch("/empresa/cadastrar-empresa",
+            {
+                method: "POST", // Método utilizado para envio de dados
+                headers: {
+                    "Content-Type": "application/json", // Informa que os dados estão sendo enviados em JSON
+                },
+
+                // Converte os dados JavaScript para JSON e envia para o controller
+                body: JSON.stringify({
+                    razaoSocialEmpresaServer: razaoSocialEmpresaVar,
+                    cnpjEmpresaServer: cnpjEmpresaVar,
+                    telefoneComercialEmpresaServer: telefoneComercialEmpresaVar,
+                    cepEmpresaServer: cepEmpresaVar,
+                    cidadeEmpresaServer: cidadeEmpresaVar,
+                    logradouroEmpresaServer: logradouroEmpresaVar,
+                    bairroEmpresaServer: bairroEmpresaVar,
+                    numeroEnderecoEmpresaServer: numeroEnderecoEmpresaVar
+                }),
+            })
+                // Executado quando o servidor retorna uma resposta
+                .then(function (resposta)
+                {
+                    // Cadastro bem-sucedido: avisa o user e redireciona depois de 1 segundo
+                    if (resposta.ok)
+                    {
+                        setTimeout(function ()
+                        {
+                            window.location = "inicio.html";
+                            alert("Empresa cadastrada com sucesso!")
+                        }, 1000);
+
+                    }
+                    
+                    else
+                    {
+                        // Exibe mensagem caso o cadastro não seja realizado
+                        throw alert("Houve um erro ao tentar realizar o cadastro!");
+                    }
+                })
+        }
+    }
+
+</script>
+</html>
