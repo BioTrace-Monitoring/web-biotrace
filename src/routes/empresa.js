@@ -18,6 +18,10 @@ router.get("/", function (req, res) {
     empresaController.listarEmpresas(req, res);
 })
 
+router.delete("/:idEmpresa", function (req, res) {
+    empresaController.excluirEmpresa(req, res);
+})
+
 
 // Exportando o router
 // Outros arquivos podem usar essas funções

@@ -68,10 +68,45 @@ function listarEmpresas(req, res) {
 }
 
 
+function excluirEmpresa(req, res) {
+    var idEmpresa = Number(req.params.idEmpresa);
+
+    if (!Number.isInteger(idEmpresa) || idEmpresa <= 0) {
+        return res.status(400).json("Id da empresa inválido!");
+    }
+
+    if (idEmpresa === 1) {
+        return res.status(403).json({
+            sucesso: false,
+            mensagem: "A empresa BioTrace não pode ser excluída."
+        });
+    }
+
+    empresaModel.excluirEmpresa(idEmpresa)
+        .then(function (resultado) {
+            if (resultado.affectedRows === 0) {
+                return res.status(404).json({
+                    sucesso: false,
+                    mensagem: "Empresa já excluida ou não encontrada."
+                });
+            }
+            res.status(200).json({ sucesso: true });
+        })
+        .catch(function (erro) {
+            console.log(erro);
+            console.log("\nHouve um erro ao excluir a empresa! Erro: ", erro.sqlMessage);
+            res.status(500).json({
+                sucesso: false,
+                mensagem: "Houve um erro ao excluir a empresa"
+            });
+        });
+}
+
 
 // Exportando as funções do controller
 // Outros arquivos podem usar essas funções
 module.exports = {
     cadastrarEmpresa,
     listarEmpresas,
+    excluirEmpresa
 }

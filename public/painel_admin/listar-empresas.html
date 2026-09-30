@@ -147,6 +147,7 @@
             for (var i = 0; i < empresas.length; i++) {
                 const empresa = empresas[i];
                 var linha = document.createElement("tr");
+                linha.dataset.id = empresa.id_empresa;
 
                 var tdNome = document.createElement("td");
                 tdNome.className = "empresa-nome";
@@ -217,8 +218,31 @@
         });
 
         document.getElementById("btn-confirmar-exclusao").addEventListener("click", function () {
-            console.log("Exclusão confirmada:", empresaParaExcluir.id_empresa);
-            fecharModalExcluir();
+            var botao = this;
+            var empresa = empresaParaExcluir;
+
+            botao.disabled = true;
+
+            fetch("/empresa/" + empresa.id_empresa, { method: "DELETE" })
+                .then(function (resposta) {
+                    if (!resposta.ok) {
+                        throw new Error("Erro ao excluir empresa: " + resposta.status);
+                    }
+                    fecharModalExcluir();
+
+                    var linha = document.querySelector('#tabela-empresas tr[data-id="' + empresa.id_empresa + '"]');
+                    if (linha) {
+                        linha.classList.add("removendo");
+                        setTimeout(listarEmpresas, 300);
+                    } else {
+                        listarEmpresas();
+                    }
+                })
+                .catch(function (erro) {
+                    console.log(erro);
+                    alert("Não foi possível excluir a empresa.");
+                    botao.disabled = false;
+                });
         });
 
         listarEmpresas();
