@@ -14,6 +14,10 @@ router.post("/", function (req, res) {
     empresaController.cadastrarEmpresa(req, res);
 })
 
+router.get("/", function (req, res) {
+    empresaController.listarEmpresas(req, res);
+})
+
 
 // Rota POST para autenticar um empresa
 // POST para enviar dados ao servidor

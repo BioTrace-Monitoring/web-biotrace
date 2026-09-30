@@ -46,15 +46,25 @@ function cadastrarEmpresa(req, res) {
                         idInserido: null,
                         mensagem: "Erro ao cadastrar empresa"
                     });
-                });
+            });
     }
+}
 
-    // FLUXO:
-    // front envia os dados
-    // controller recebe e valida os dados
-    // model faz INSERT e banco salva a empresa
-    // resultado volta pro controller
-    // controller envia resultado pro front
+function listarEmpresas(req, res) {
+    empresaModel.listarEmpresas()
+        .then(function (resultado) {
+            res.status(200).json({
+                sucesso: true,
+                empresas: resultado
+            });
+        })
+        .catch(function (erro) {
+            console.log(erro);
+            console.log("\nHouve um erro ao listar as empresas! Erro: ", erro.sqlMessage);
+            res.status(500).json({
+                sucesso: false
+            });
+        });
 }
 
 function visualizarEmpresa(req, res)
@@ -111,5 +121,6 @@ function visualizarEmpresa(req, res)
 module.exports =
 {
     cadastrarEmpresa,
+    listarEmpresas,
     visualizarEmpresa
 }
