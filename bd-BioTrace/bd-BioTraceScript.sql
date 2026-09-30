@@ -17,6 +17,7 @@ CREATE TABLE empresa (
     telefone_comercial VARCHAR(11),
     cep CHAR(8),
     numero VARCHAR(10),
+    ativo BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE hospital (
