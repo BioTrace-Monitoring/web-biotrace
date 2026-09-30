@@ -22,8 +22,12 @@ function cadastrarEmpresa(razao_social, cnpj, telefone, cep, cidade, logradouro,
 
 function listarEmpresas() {
     var instrucaoSql = `
-        SELECT id_empresa, razao_social, cnpj, telefone_comercial, cep, numero
-        FROM empresa;
+    SELECT e.id_empresa, e.razao_social, e.cnpj, e.telefone_comercial, e.cep, e.numero,
+           u.nome_usuario AS nome_administrador
+    FROM empresa e
+    LEFT JOIN usuario u
+        ON u.fk_empresa = e.id_empresa
+        AND u.fk_cargo = (SELECT id_cargo FROM cargo WHERE nome = 'Administrador')
     `;
 
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
