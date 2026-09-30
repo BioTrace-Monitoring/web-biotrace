@@ -16,11 +16,7 @@ CREATE TABLE empresa (
     cnpj CHAR(14) NOT NULL UNIQUE,
     telefone_comercial VARCHAR(11),
     cep CHAR(8),
-    logradouro VARCHAR(100),
     numero VARCHAR(10),
-    bairro VARCHAR(60),
-    cidade VARCHAR(60),
-    uf CHAR(2)
 );
 
 CREATE TABLE hospital (
@@ -28,11 +24,7 @@ CREATE TABLE hospital (
     nome_hospital VARCHAR(100) NOT NULL,
     cnpj CHAR(14) NOT NULL UNIQUE,
     cep CHAR(8),
-    logradouro VARCHAR(100),
     numero VARCHAR(10),
-    bairro VARCHAR(60),
-    cidade VARCHAR(60),
-    uf CHAR(2)
 );
 
 -- USUÁRIOS -------------------------------------------------------
