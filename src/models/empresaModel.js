@@ -4,14 +4,13 @@ var database = require("../database/config");
 
 
 // Função que cadastra um novo usuário
-function cadastrarEmpresa(razao_social, cnpj, telefone, cep, cidade, logradouro, bairro, numero)
-{
+function cadastrarEmpresa(razao_social, cnpj, telefone, cep, cidade, logradouro, bairro, numero) {
     console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function cadastrarUsuario():", razao_social, cnpj, telefone, cep, cidade, logradouro, bairro, numero);
     
     // Insert que insere uma nova empresa na tabela empresa
     var instrucaoSql = `
-        INSERT INTO empresa(razao_social, cnpj, telefone_comercial, cep, cidade, logradouro, bairro, numero) VALUES
-        ('${razao_social}', '${cnpj}', '${telefone}', '${cep}', '${cidade}', '${logradouro}', '${bairro}', '${numero}');
+    INSERT INTO empresa (razao_social, cnpj, telefone_comercial, cep, numero) VALUES
+    ('${razao_social}', '${cnpj}', '${telefone}', '${cep}', '${numero}');
     `;
 
     // Exibe a query montada no terminal
