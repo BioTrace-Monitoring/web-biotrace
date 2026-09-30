@@ -28,12 +28,8 @@ router.post("/cadastrar-usuario", function (req, res)
 })
 
 
-router.post("/autenticar", function (req, res) {
+router.post("/autenticar-usuario", function (req, res) {
     usuarioController.autenticarUsuario(req, res);
-});
-
-router.get("/permissoes/:idUsuario", function (req, res) {
-    usuarioController.obterPermissoesUsuario(req, res);
 });
 
 // Exportando o router
