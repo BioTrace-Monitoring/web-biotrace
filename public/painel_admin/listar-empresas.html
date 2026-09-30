@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioTrace Admin | Empresas Cadastradas</title>
+
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+
+<body>
+    <header class="cabecalho">
+        <div class="cabecalho-marca">
+            <img src="../assets/icons/BioTrace (4).png" alt="Logo BioTrace" class="logo-biotrace">
+
+            <div class="cabecalho-logo-texto">
+                <h1>Painel Interno</h1>
+            </div>
+        </div>
+
+        <div class="cabecalho-usuario">
+            <div class="cabecalho-usuario-info">
+                <p id="b_usuario">Olá, nomeUser</p>
+            </div>
+            <button class="btn-sair" onclick="limparSessao()">Sair</button>
+        </div>
+    </header>
+
+    <main class="conteudo">
+        <div class="conteudo-principal">
+            <div class="boas-vindas">
+                <h2>Empresas cadastradas no sistema BioTrace</h2>
+                <p>Gerencie as empresas cadastradas no sistema BioTrace.</p>
+            </div>
+
+            <div class="empresas-container">
+
+                <div class="empresas-cabecalho">
+                    <h3>Empresas cadastradas</h3>
+                    <span id="quantidade-empresas">0 empresas</span>
+                </div>
+
+                <div class="filtros">
+                    <input type="text" id="filtro-nome" placeholder="Buscar empresa por nome" autocomplete="off">
+                    <label class="filtro-checkbox">
+                        <input type="checkbox" id="filtro-sem-admin">
+                        Só sem administrador
+                    </label>
+                </div>
+
+                <div class="tabela-container">
+                    <table class="tabela-empresas">
+                        <thead>
+                            <tr>
+                                <th>Empresa</th>
+                                <th>CNPJ</th>
+                                <th>Administrador</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tabela-empresas">
+                            <!-- empresas serão inseridas aqui -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-fundo" id="modal-excluir">
+        <div class="modal">
+            <h3>Excluir empresa</h3>
+            <p>Você está prestes a excluir <strong id="modal-nome-empresa"></strong>. Essa ação não pode ser desfeita.
+            </p>
+            <p>Digite <strong>confirmar</strong> para continuar.</p>
+
+            <input type="text" id="input-confirmar" placeholder="confirmar" autocomplete="off">
+
+            <div class="modal-botoes">
+                <button class="btn-cancelar" onclick="fecharModalExcluir()">Cancelar</button>
+                <button class="btn-confirmar-exclusao" id="btn-confirmar-exclusao" disabled>Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var todasEmpresas = [];
+
+        function normalizar(texto) {
+            return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+
+        function aplicarFiltros() {
+            var busca = normalizar(document.getElementById("filtro-nome").value.trim());
+            var somenteSemAdmin = document.getElementById("filtro-sem-admin").checked;
+
+            var filtradas = todasEmpresas.filter(function (empresa) {
+                var bateNome = normalizar(empresa.razao_social).includes(busca);
+                var bateAdmin = !somenteSemAdmin || !empresa.nome_administrador;
+                return bateNome && bateAdmin;
+            });
+
+            montarTabela(filtradas);
+        }
+
+
+        function listarEmpresas() {
+            fetch("/empresa")
+                .then(function (resposta) {
+                    if (!resposta.ok) {
+                        throw new Error("Erro ao buscar empresas: " + resposta.status);
+                    }
+                    return resposta.json();
+                })
+                .then(function (empresas) {
+                    if (empresas.sucesso) {
+                        todasEmpresas = empresas.empresas;
+                        aplicarFiltros();
+                    }
+                })
+                .catch(function (erro) {
+                    console.log(erro);
+                })
+        }
+
+        function montarTabela(empresas) {
+            var tbody = document.getElementById("tabela-empresas");
+            tbody.innerHTML = "";
+
+
+            if (empresas.length === 0) {
+                var linhaVazia = document.createElement("tr");
+                var tdVazia = document.createElement("td");
+                tdVazia.colSpan = 4;
+                tdVazia.className = "tabela-vazia";
+                tdVazia.textContent = "Nenhuma empresa encontrada.";
+                linhaVazia.appendChild(tdVazia);
+                tbody.appendChild(linhaVazia);
+
+                document.getElementById("quantidade-empresas").textContent = "0 empresas";
+                return;
+            }
+
+            for (var i = 0; i < empresas.length; i++) {
+                const empresa = empresas[i];
+                var linha = document.createElement("tr");
+
+                var tdNome = document.createElement("td");
+                tdNome.className = "empresa-nome";
+                tdNome.textContent = empresa.razao_social;
+
+                var tdCnpj = document.createElement("td");
+                tdCnpj.textContent = empresa.cnpj;
+
+                var tdGestor = document.createElement("td");
+                if (empresa.nome_administrador) {
+                    tdGestor.textContent = empresa.nome_administrador;
+                } else {
+                    tdGestor.className = "gestor-sem-cadastro";
+                    tdGestor.textContent = "Sem gestor cadastrado";
+                }
+
+                var tdAcao = document.createElement("td");
+                var divAcoes = document.createElement("div");
+                divAcoes.className = "acoes";
+
+                if (!empresa.nome_administrador) {
+                    var btnGestor = document.createElement("a");
+                    btnGestor.className = "btn-cadastrar-gestor";
+                    btnGestor.textContent = "Cadastrar gestor";
+                    btnGestor.href = "cadastrar-gestor.html?id_empresa=" + empresa.id_empresa;
+                    divAcoes.appendChild(btnGestor);
+                }
+
+                var btnExcluir = document.createElement("button");
+                btnExcluir.className = "btn-excluir";
+                btnExcluir.textContent = "Excluir";
+                btnExcluir.addEventListener("click", function () {
+                    abrirModalExcluir(empresa);
+                });
+                divAcoes.appendChild(btnExcluir);
+
+                tdAcao.appendChild(divAcoes);
+
+                linha.appendChild(tdNome);
+                linha.appendChild(tdCnpj);
+                linha.appendChild(tdGestor);
+                linha.appendChild(tdAcao);
+                tbody.appendChild(linha);
+            }
+
+            document.getElementById("quantidade-empresas").textContent =
+                empresas.length + (empresas.length === 1 ? " empresa" : " empresas");
+        }
+
+        var empresaParaExcluir = null;
+        function abrirModalExcluir(empresa) {
+            empresaParaExcluir = empresa;
+            document.getElementById("modal-nome-empresa").textContent = empresa.razao_social;
+            document.getElementById("input-confirmar").value = "";
+            document.getElementById("btn-confirmar-exclusao").disabled = true;
+            document.getElementById("modal-excluir").classList.add("aberto");
+            document.getElementById("input-confirmar").focus();
+        }
+
+        function fecharModalExcluir() {
+            empresaParaExcluir = null;
+            document.getElementById("modal-excluir").classList.remove("aberto");
+        }
+
+        document.getElementById("input-confirmar").addEventListener("input", function () {
+            var digitado = this.value.trim().toLowerCase();
+            document.getElementById("btn-confirmar-exclusao").disabled = digitado !== "confirmar";
+        });
+
+        document.getElementById("btn-confirmar-exclusao").addEventListener("click", function () {
+            console.log("Exclusão confirmada:", empresaParaExcluir.id_empresa);
+            fecharModalExcluir();
+        });
+
+        listarEmpresas();
+        document.getElementById("filtro-nome").addEventListener("input", aplicarFiltros);
+        document.getElementById("filtro-sem-admin").addEventListener("change", aplicarFiltros);
+    </script>
+</body>
+
+</html>
