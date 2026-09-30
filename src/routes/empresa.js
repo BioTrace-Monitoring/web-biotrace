@@ -10,22 +10,9 @@ var router = express.Router();
 var empresaController = require("../controllers/empresaController");
 
 
-
-
-// Rota POST para cadastrar um empresa
-// POST para enviar dados ao servidor
-router.post("/cadastrar-empresa", function (req, res)
-{
-    // Chamando a função cadastrarempresa do empresaController.js
-
-    // req -> requisição: Possui todas as informações da requisição
-    // res -> resposta: Retornar uma resposta pro empresa
-
-    // Direcionando a requisição pro controller responsavel
+router.post("/", function (req, res) {
     empresaController.cadastrarEmpresa(req, res);
 })
-
-
 
 
 // Rota POST para autenticar um empresa
