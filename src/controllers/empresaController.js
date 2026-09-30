@@ -46,70 +46,32 @@ function cadastrarEmpresa(req, res) {
                         idInserido: null,
                         mensagem: "Erro ao cadastrar empresa"
                     });
-                });
+            });
     }
-
-    // FLUXO:
-    // front envia os dados
-    // controller recebe e valida os dados
-    // model faz INSERT e banco salva a empresa
-    // resultado volta pro controller
-    // controller envia resultado pro front
 }
 
-function visualizarEmpresa(req, res)
-{
-    // req -> requisição: Possui todas as informações da requisição
-    // res -> resposta: Retornar uma resposta pro usuario
-
-
-    // Chama a função do model que executa o SELECT no banco
-    empresaModel.visualizarEmpresa()
-        .then(
-            function(resultado)
-            {
-                // Verifica se algum registro foi encontrado
-                if (resultado.length > 0)
-                {
-                    // Retorna os dados encontrados em JSON
-                    res.json(resultado);
-                }
-                
-                else
-                {
-                    res.status(204).send("Nenhuma empresa encontrada!")
-                }
-            }
-        )
-        // Executado caso erro na consulta
-        .catch(
-            function(erro)
-            {
-                console.log(erro);
-
-                console.log(
-                    "\nHouve um erro ao listar as empresas! Erro: ",
-                    erro.sqlMessage
-                );
-
-                res.status(500).json(erro.sqlMessage);
-            }
-        );
-
-    // FLUXO:
-    // front solicita os dados
-    // controller recebe a requisição
-    // model faz SELECT e banco retorna dados
-    // controller verifica se encontrou registros
-    // controller envia resultado pro front
+function listarEmpresas(req, res) {
+    empresaModel.listarEmpresas()
+        .then(function (resultado) {
+            res.status(200).json({
+                sucesso: true,
+                empresas: resultado
+            });
+        })
+        .catch(function (erro) {
+            console.log(erro);
+            console.log("\nHouve um erro ao listar as empresas! Erro: ", erro.sqlMessage);
+            res.status(500).json({
+                sucesso: false
+            });
+        });
 }
 
 
 
 // Exportando as funções do controller
 // Outros arquivos podem usar essas funções
-module.exports =
-{
+module.exports = {
     cadastrarEmpresa,
-    visualizarEmpresa
+    listarEmpresas,
 }
