@@ -206,3 +206,244 @@ button {
 .btn-card.btn-secundario:hover {
     background: var(--cor-secundaria-light);
 }
+
+.empresas-container {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.empresas-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.empresas-cabecalho h3 {
+    font-family: var(--titulo);
+    font-size: 18px;
+    font-weight: var(--semi-bold);
+    color: var(--preto-padrao);
+}
+
+.empresas-cabecalho span {
+    font-family: var(--paragrafo);
+    font-size: 14px;
+    color: #64748B;
+}
+
+.tabela-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tabela-empresas {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabela-empresas th {
+    padding: 14px 24px;
+    background: #F8FAFC;
+    color: #64748B;
+    font-family: var(--paragrafo);
+    font-size: 13px;
+    font-weight: var(--semi-bold);
+    text-align: left;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.tabela-empresas td {
+    padding: 18px 24px;
+    font-family: var(--paragrafo);
+    font-size: 14px;
+    color: #334155;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.tabela-empresas tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tabela-empresas tbody tr:hover {
+    background: #FAF8FF;
+}
+
+.empresa-nome {
+    font-family: var(--titulo);
+    font-weight: var(--semi-bold);
+    color: var(--preto-padrao);
+}
+
+.gestor-sem-cadastro {
+    color: #94A3B8;
+    font-style: italic;
+}
+
+.btn-cadastrar-gestor {
+    display: inline-block;
+    padding: 8px 14px;
+    background: var(--cor-primaria);
+    color: #FFFFFF;
+    border-radius: 7px;
+    font-family: var(--paragrafo);
+    font-size: 13px;
+    font-weight: var(--semi-bold);
+    transition: background 0.2s ease;
+}
+
+.btn-cadastrar-gestor:hover {
+    background: #731bc4;
+}
+
+.sem-acao {
+    color: #94A3B8;
+}
+
+.acoes {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-excluir {
+    padding: 8px 14px;
+    background: transparent;
+    color: #DC2626;
+    border: 1px solid #DC2626;
+    border-radius: 7px;
+    font-family: var(--paragrafo);
+    font-size: 13px;
+    font-weight: var(--semi-bold);
+    transition: all 0.2s ease;
+}
+
+.btn-excluir:hover {
+    background: #DC2626;
+    color: #FFFFFF;
+}
+
+.modal-fundo {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(11, 16, 32, 0.6);
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.modal-fundo.aberto {
+    display: flex;
+}
+
+.modal {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 28px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+}
+
+.modal h3 {
+    font-family: var(--titulo);
+    font-size: 20px;
+    font-weight: var(--semi-bold);
+    color: var(--preto-padrao);
+    margin-bottom: 12px;
+}
+
+.modal p {
+    font-family: var(--paragrafo);
+    font-size: 14px;
+    color: #475569;
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.modal input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    font-family: var(--paragrafo);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.modal input:focus {
+    outline: none;
+    border-color: var(--cor-primaria);
+}
+
+.modal-botoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-cancelar {
+    padding: 10px 18px;
+    background: #F5F5F5;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: var(--semi-bold);
+}
+
+.btn-confirmar-exclusao {
+    padding: 10px 18px;
+    background: #DC2626;
+    color: #FFFFFF;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: var(--semi-bold);
+}
+
+.btn-confirmar-exclusao:disabled {
+    background: #FCA5A5;
+    cursor: not-allowed;
+}
+
+.filtros {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 24px;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.filtros input[type="text"] {
+    flex: 1;
+    max-width: 360px;
+    padding: 10px 12px;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    font-family: var(--paragrafo);
+    font-size: 14px;
+}
+
+.filtros input[type="text"]:focus {
+    outline: none;
+    border-color: var(--cor-primaria);
+}
+
+.filtro-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--paragrafo);
+    font-size: 14px;
+    color: #334155;
+    cursor: pointer;
+}
+
+.tabela-empresas td.tabela-vazia {
+    text-align: center;
+    color: #94A3B8;
+    padding: 32px 24px;
+}
