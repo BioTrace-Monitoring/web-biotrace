@@ -47,10 +47,11 @@ function autenticarUsuario(req, res) {
 
                         // Retorna os dados para o front-end no formato JSON
                         res.json({
-                            id: resultadoAutenticar[0].id,
+                            id: resultadoAutenticar[0].id_usuario,
                             email: resultadoAutenticar[0].email,
                             nome: resultadoAutenticar[0].nome,
-                            nivel_acesso: resultadoAutenticar[0].nivel_acesso,
+                            empresa: resultadoAutenticar[0].empresa,
+                            cargo: resultadoAutenticar[0].cargo,
                             fk_empresa: resultadoAutenticar[0].fk_empresa,
                         });
                     }
@@ -73,20 +74,6 @@ function autenticarUsuario(req, res) {
                 res.status(500).json(erro.sqlMessage);
             });
     }
-}
-
-function obterPermissoesUsuario(req, res) {
-    var idUsuario = req.params.idUsuario;
-
-    usuarioModel.obterPermissoesUsuario(idUsuario)
-        .then(function (resultado) {
-            res.json(resultado);
-        })
-        .catch(function (erro) {
-            console.log(erro);
-            console.log("\nHouve um erro ao obter as permissões do usuário! Erro: ", erro.sqlMessage);
-            res.status(500).json(erro.sqlMessage);
-        });
 }
 
 function listarCargos(req,res){

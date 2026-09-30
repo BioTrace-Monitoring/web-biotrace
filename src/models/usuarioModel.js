@@ -8,11 +8,13 @@ function autenticarUsuario(email, senha) {
     console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function autenticarUsuario(): ", email, senha)
     
     // Select que busca o usuário que possui o email e senha informados no login
+    // A senha é comparada usando SHA2, já que é assim que ela é salva no banco (ver seed)
     var instrucaoSql = `
-        SELECT u.id_usuario AS id_usuario, u.nome_usuario AS nome, u.email_usuario AS email, u.fk_empresa AS fk_empresa, c.nome as cargo
+        SELECT u.id_usuario AS id_usuario, u.nome_usuario AS nome, u.email_usuario AS email, u.fk_empresa AS fk_empresa, e.razao_social AS empresa, c.nome as cargo
         FROM usuario u
+        JOIN empresa e ON u.fk_empresa = e.id_empresa
         JOIN cargo c ON u.fk_cargo = c.id_cargo
-        WHERE u.email_usuario = '${email}' AND u.senha_usuario = '${senha}';
+        WHERE u.email_usuario = '${email}' AND u.senha_usuario = SHA2('${senha}', 256);
     `;
 
     // Exibe a query montada no terminal
@@ -20,29 +22,6 @@ function autenticarUsuario(email, senha) {
 
     // Executa a query no banco e retorna o resultado
     return database.executar(instrucaoSql);
-}
-
-function obterPermissoesUsuario(idUsuario) {
-    console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function obterPermissoesUsuario(): ", idUsuario);
-    
-    // Select que busca as permissões do usuário com base no ID fornecido
-    var instrucaoSql = `
-        SELECT
-            p.codigo_permissao,
-            p.nome_permissao,
-            p.descricao_permissao
-        FROM usuario u
-        JOIN nivel_acesso n
-            ON u.fk_nivel_acesso = n.id_nivel_acesso
-        JOIN permissoes_compartilhadas pc
-            ON n.id_nivel_acesso = pc.fk_nivel_acesso
-        JOIN permissao p
-            ON pc.fk_permissao = p.codigo_permissao
-        WHERE u.id_usuario = ${idUsuario};
-    `;
-    
-    // Exibe a query montada no terminal
-    console.log("Executando a instrução SQL: \n" + instrucaoSql);
 }
 
 function listarCargos(){
@@ -71,9 +50,10 @@ function cadastrarUsuario(nome, dt_nasc, telefone, cpf, email, senha, idEmpresa,
     console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function cadastrarUsuario():", nome, dt_nasc, telefone, cpf, email, senha);
     
     // Insert que insere um novo usuário na tabela usuario
+    // A senha é salva já em hash, usando SHA2 (mesmo padrão da seed)
     var instrucaoSql = `
-        INSERT INTO usuario(nome_usuario, dt_nasc_usuario, telefone_usuario, cpf_usuario, email_usuario, senha_usuario, fk_empresa, fk_nivel_acesso, fk_cargo) VALUES
-        ('${nome}', '${dt_nasc}', '${telefone}', '${cpf}', '${email}', '${senha}', '${idEmpresa}', 1, '${cargo}');
+        INSERT INTO usuario(nome_usuario, dt_nasc_usuario, telefone_usuario, cpf_usuario, email_usuario, senha_usuario, fk_empresa, fk_cargo) VALUES
+        ('${nome}', '${dt_nasc}', '${telefone}', '${cpf}', '${email}', SHA2('${senha}', 256), '${idEmpresa}', '${cargo}');
     `;
 
     // Exibe a query montada no terminal
