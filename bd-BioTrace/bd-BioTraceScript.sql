@@ -10,31 +10,29 @@ CREATE TABLE cargo (
 
 -- ORGANIZAÇÕES -------------------------------------------------
 
-CREATE TABLE cep (
-    cep CHAR(8) NOT NULL PRIMARY KEY,
-    logradouro VARCHAR(100),
-    bairro VARCHAR(60),
-    cidade VARCHAR(60) NOT NULL,
-    uf CHAR(2) NOT NULL
-);
-
 CREATE TABLE empresa (
     id_empresa INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     razao_social VARCHAR(100) NOT NULL,
     cnpj CHAR(14) NOT NULL UNIQUE,
     telefone_comercial VARCHAR(11),
-    fk_cep CHAR(8),
+    cep CHAR(8),
+    logradouro VARCHAR(100),
     numero VARCHAR(10),
-    CONSTRAINT fk_empresa_cep FOREIGN KEY (fk_cep) REFERENCES cep (cep)
+    bairro VARCHAR(60),
+    cidade VARCHAR(60),
+    uf CHAR(2)
 );
 
 CREATE TABLE hospital (
     id_hospital INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     nome_hospital VARCHAR(100) NOT NULL,
     cnpj CHAR(14) NOT NULL UNIQUE,
-    fk_cep CHAR(8),
+    cep CHAR(8),
+    logradouro VARCHAR(100),
     numero VARCHAR(10),
-    CONSTRAINT fk_hospital_cep FOREIGN KEY (fk_cep) REFERENCES cep (cep)
+    bairro VARCHAR(60),
+    cidade VARCHAR(60),
+    uf CHAR(2)
 );
 
 -- USUÁRIOS -------------------------------------------------------
