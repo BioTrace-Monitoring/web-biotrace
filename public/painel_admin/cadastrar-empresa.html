@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioTrace Admin | Cadastrar Empresa</title>
+
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+
+<body>
+    <header class="cabecalho">
+        <div class="cabecalho-marca">
+            <img src="../assets/icons/BioTrace (4).png" alt="Logo BioTrace" class="logo-biotrace">
+
+            <div class="cabecalho-logo-texto">
+                <h1>Painel Interno</h1>
+            </div>
+        </div>
+
+        <div class="cabecalho-usuario">
+            <div class="cabecalho-usuario-info">
+                <p id="b_usuario">Olá, nomeUser</p>
+            </div>
+            <button class="btn-sair" onclick="limparSessao()">Sair</button>
+        </div>
+    </header>
+
+    <main class="conteudo">
+        <div class="conteudo-principal">
+            <div class="boas-vindas">
+                <h2>Cadastrar empresa</h2>
+                <p>Preencha os dados da empresa que passará a usar o sistema BioTrace.</p>
+            </div>
+
+            <div class="form-container">
+                <div class="form-grid">
+                    <div class="campo campo-largo">
+                        <label for="input-razao-social">Razão social</label>
+                        <input type="text" id="input-razao-social" maxlength="100"
+                            placeholder="Ex.: BioMed Sistemas Hospitalares Ltda" autocomplete="off">
+                    </div>
+
+                    <div class="campo">
+                        <label for="input-cnpj">CNPJ</label>
+                        <input type="text" id="input-cnpj" maxlength="14" inputmode="numeric"
+                            placeholder="Somente números" autocomplete="off">
+                    </div>
+
+                    <div class="campo">
+                        <label for="input-telefone">Telefone comercial</label>
+                        <input type="text" id="input-telefone" maxlength="11" inputmode="numeric"
+                            placeholder="DDD + número" autocomplete="off">
+                    </div>
+
+                    <div class="campo">
+                        <label for="input-cep">CEP</label>
+                        <input type="text" id="input-cep" maxlength="8" inputmode="numeric"
+                            placeholder="Somente números" autocomplete="off">
+                    </div>
+
+                    <div class="campo">
+                        <label for="input-numero">Número</label>
+                        <input type="text" id="input-numero" maxlength="10" placeholder="Ex.: 155" autocomplete="off">
+                    </div>
+
+                    <div class="campo campo-largo">
+                        <label for="input-logradouro">Logradouro</label>
+                        <input type="text" id="input-logradouro" class="campo-auto" readonly
+                            placeholder="Preenchido automaticamente pelo CEP">
+                    </div>
+
+                    <div class="campo">
+                        <label for="input-bairro">Bairro</label>
+                        <input type="text" id="input-bairro" class="campo-auto" readonly
+                            placeholder="Preenchido pelo CEP">
+                    </div>
+
+                    <div class="campo">
+                        <label for="input-cidade">Cidade</label>
+                        <input type="text" id="input-cidade" class="campo-auto" readonly
+                            placeholder="Preenchido pelo CEP">
+                    </div>
+
+                    <div class="campo">
+                        <label for="input-estado">Estado</label>
+                        <input type="text" id="input-estado" class="campo-auto" readonly
+                            placeholder="Preenchido pelo CEP">
+                    </div>
+                </div>
+
+                <p class="form-erro" id="form-erro"></p>
+
+                <div class="form-botoes">
+                    <a href="listar-empresas.html" class="btn-voltar-link">Cancelar</a>
+                    <button type="button" class="btn-salvar" id="btn-cadastrar">Cadastrar empresa</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="sucesso-fundo" id="sucesso-cadastro">
+        <div class="sucesso-card">
+            <svg class="sucesso-icone" viewBox="0 0 52 52">
+                <circle class="sucesso-circulo" cx="26" cy="26" r="24" fill="none" />
+                <path class="sucesso-check" fill="none" d="M14 27l8 8 16-17" />
+            </svg>
+            <h3>Empresa cadastrada!</h3>
+            <p>Redirecionando para a listagem...</p>
+        </div>
+    </div>
+
+    <script src="./js/utils.js"></script>
+    <script>
+        function preencherEndereco(logradouro, bairro, cidade, estado) {
+            document.getElementById("input-logradouro").value = logradouro;
+            document.getElementById("input-bairro").value = bairro;
+            document.getElementById("input-cidade").value = cidade;
+            document.getElementById("input-estado").value = estado;
+        }
+
+        function buscarCep() {
+            var cep = document.getElementById("input-cep").value.replace(/\D/g, "");
+            var erro = document.getElementById("form-erro");
+            erro.textContent = "";
+
+            if (cep.length !== 8) {
+                preencherEndereco("", "", "", "");
+                return;
+            }
+
+            fetch("https://viacep.com.br/ws/" + cep + "/json/")
+                .then(function (resposta) {
+                    if (!resposta.ok) {
+                        throw new Error("Erro ao consultar CEP: " + resposta.status);
+                    }
+                    return resposta.json();
+                })
+                .then(function (dados) {
+                    var cepAtual = document.getElementById("input-cep").value.replace(/\D/g, "");
+                    if (cepAtual !== cep) {
+                        return;
+                    }
+
+                    if (dados.erro) {
+                        preencherEndereco("", "", "", "");
+                        erro.textContent = "CEP não encontrado.";
+                        return;
+                    }
+
+                    preencherEndereco(dados.logradouro, dados.bairro, dados.localidade, dados.uf);
+                })
+                .catch(function (e) {
+                    console.log(e);
+                    erro.textContent = "Não foi possível consultar o CEP. Tente novamente.";
+                });
+        }
+
+        function validarFormulario() {
+            var razao = document.getElementById("input-razao-social").value.trim();
+            var cnpj = document.getElementById("input-cnpj").value;
+            var telefone = document.getElementById("input-telefone").value;
+            var cep = document.getElementById("input-cep").value;
+            var cidade = document.getElementById("input-cidade").value;
+            var numero = document.getElementById("input-numero").value.trim();
+
+            if (razao === "") return "Informe a razão social.";
+            if (!/^\d{14}$/.test(cnpj)) return "O CNPJ deve ter 14 dígitos, somente números.";
+            if (!/^\d{10,11}$/.test(telefone)) return "O telefone deve ter 10 ou 11 dígitos (DDD + número).";
+            if (!/^\d{8}$/.test(cep)) return "O CEP deve ter 8 dígitos, somente números.";
+            if (cidade === "") return "CEP não encontrado. Confira o CEP informado.";
+            if (numero === "") return "Informe o número.";
+
+            return "";
+        }
+
+        function cadastrarEmpresa() {
+            var erro = document.getElementById("form-erro");
+            var botao = document.getElementById("btn-cadastrar");
+
+            var mensagem = validarFormulario();
+            if (mensagem !== "") {
+                erro.textContent = mensagem;
+                return;
+            }
+            erro.textContent = "";
+
+            botao.disabled = true;
+            botao.textContent = "Cadastrando...";
+
+            fetch("/empresa", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    razaoSocialServer: document.getElementById("input-razao-social").value.trim(),
+                    cnpjServer: document.getElementById("input-cnpj").value,
+                    telefoneComercialServer: document.getElementById("input-telefone").value,
+                    cepServer: document.getElementById("input-cep").value,
+                    numeroServer: document.getElementById("input-numero").value.trim()
+                })
+            })
+                .then(function (resposta) {
+                    return resposta.json().then(function (dados) {
+                        if (resposta.ok && dados.sucesso) {
+                            document.getElementById("sucesso-cadastro").classList.add("aberto");
+                            setTimeout(function () {
+                                window.location.href = "listar-empresas.html";
+                            }, 2000);
+                            return;
+                        }
+                        erro.textContent = dados.mensagem || "Não foi possível cadastrar a empresa.";
+                        botao.disabled = false;
+                        botao.textContent = "Cadastrar empresa";
+                    });
+                })
+                .catch(function (e) {
+                    console.log(e);
+                    erro.textContent = "Não foi possível cadastrar a empresa.";
+                    botao.disabled = false;
+                    botao.textContent = "Cadastrar empresa";
+                });
+        }
+
+        document.getElementById("btn-cadastrar").addEventListener("click", cadastrarEmpresa);
+
+        document.getElementById("input-cep").addEventListener("input", buscarCep);
+    </script>
+</body>
+
+</html>

@@ -9,7 +9,7 @@ function cadastrarEmpresa(req, res) {
     var telefone_comercial = req.body.telefoneComercialServer;
     var cep = req.body.cepServer;
     var numero = req.body.numeroServer;
-    
+
 
     // Validando pra que nenhum dado venha vazio
     if (razao_social == undefined) {
@@ -27,25 +27,30 @@ function cadastrarEmpresa(req, res) {
         empresaModel.cadastrarEmpresa(razao_social, cnpj, telefone_comercial, cep, numero)
             // Executado quando o cadastro ocorre com sucesso
             .then(function (resultado) {
-                    console.log("Empresa cadastrada!");
-                    // Retorna o resultado para o front-end em formato JSON
-                    res.json({
-                        sucesso: true,
-                        idInserido: resultado.insertId,
-                        mensagem: "Empresa cadastrada com sucesso"
-                    });
-            }).catch(function (erro){
-                    console.log(erro); // exibe erro no terminal
-                    console.log(
-                        "\nHouve um erro ao realizar o cadastro! Erro: ",
-                        erro.sqlMessage
-                    );
+                console.log("Empresa cadastrada!");
+                // Retorna o resultado para o front-end em formato JSON
+                res.json({
+                    sucesso: true,
+                    idInserido: resultado.insertId,
+                    mensagem: "Empresa cadastrada com sucesso"
+                });
+            }).catch(function (erro) {
+                console.log(erro);
+                console.log("\nHouve um erro ao realizar o cadastro! Erro: ", erro.sqlMessage);
 
-                    res.json({
+                if (erro.code === "ER_DUP_ENTRY" || erro.errno === 1062) {
+                    return res.status(409).json({
                         sucesso: false,
                         idInserido: null,
-                        mensagem: "Erro ao cadastrar empresa"
+                        mensagem: "Já existe uma empresa com esse CNPJ."
                     });
+                }
+
+                res.status(500).json({
+                    sucesso: false,
+                    idInserido: null,
+                    mensagem: "Erro ao cadastrar empresa"
+                });
             });
     }
 }
