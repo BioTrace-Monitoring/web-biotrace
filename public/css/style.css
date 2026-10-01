@@ -87,7 +87,7 @@ html {
         saturate(180%)
         contrast(110%);
 
-    border: 1px solid rgba(255, 255, 255, 0.65);
+    
 
     box-shadow:
         0 10px 40px rgba(0, 0, 0, 0.08),
@@ -703,9 +703,9 @@ html {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    background-color: #10B981;
-    width: 14vw;
-    height: 7vh;
+    background-color: transparent;
+    width: 25vw;
+    height: 15vh;
 }
 
 .sobre-content {
@@ -844,7 +844,7 @@ html {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    background-color: #10B981;
+    background-color: transparent;
     width: 14vw;
     height: 7vh;
 }
