@@ -1,6 +1,12 @@
 CREATE DATABASE IF NOT EXISTS biotrace;
 USE biotrace;
 
+CREATE USER 'webdataviz'@'localhost' IDENTIFIED BY 'web123';
+
+
+GRANT SELECT, INSERT, DELETE, UPDATE ON biotrace.* TO 'webdataviz'@'localhost';
+
+
 -- ACESSO -----------------------------------------------------
 
 CREATE TABLE cargo (
@@ -25,7 +31,7 @@ CREATE TABLE hospital (
     nome_hospital VARCHAR(100) NOT NULL,
     cnpj CHAR(14) NOT NULL UNIQUE,
     cep CHAR(8),
-    numero VARCHAR(10),
+    numero VARCHAR(10)
 );
 
 -- USUÁRIOS -------------------------------------------------------
@@ -106,3 +112,22 @@ CREATE TABLE parametro_metrica (
     fk_metrica INT NOT NULL,
     CONSTRAINT fk_parametro_metrica FOREIGN KEY (fk_metrica) REFERENCES metrica (id_metrica)
 );
+
+INSERT INTO empresa (razao_social, cnpj, telefone_comercial, cep, numero) VALUES
+('BioTrace Tecnologia Ltda','12345678000101', '1133334444', '01310100', '1000');
+
+
+INSERT INTO cargo (nome) VALUES
+('BioTrace'),
+('Administrador'),
+('Gestor'),
+('Analista');
+
+INSERT INTO usuario (nome_usuario, dt_nasc_usuario, telefone_usuario, cpf_usuario, email_usuario, senha_usuario, fk_empresa, fk_cargo) VALUES
+-- BioTrace (empresa 1, cargo 1)
+('Ana Clara',        '1995-03-12', '11987654321', '12345678901', 'ana.clara@biotrace.com',         SHA2('ana123', 256),      1, 1),
+('Bruno Rafael',     '1996-07-25', '11987654322', '23456789012', 'bruno.rafael@biotrace.com',      SHA2('bruno123', 256),    1, 1),
+('Eduardo Lupianez', '1994-11-08', '11987654323', '34567890123', 'eduardo.lupianez@biotrace.com',  SHA2('eduardo123', 256),  1, 1),
+('Pedro Ludovic',    '1997-02-19', '11987654324', '45678901234', 'pedro.ludovic@biotrace.com',     SHA2('pedro123', 256),    1, 1),
+('Jonatas Teles',    '1993-09-14', '11987654325', '56789012345', 'jonatas.teles@biotrace.com',     SHA2('jonatas123', 256),  1, 1),
+('Miguel Soares',    '1998-05-30', '11987654326', '67890123456', 'miguel.soares@biotrace.com',     SHA2('miguel123', 256),   1, 1);
