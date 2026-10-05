@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioTrace | Cadastrar Gestor</title>
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+
+<body>
+    <header class="cabecalho">
+        <div class="cabecalho-marca">
+            <img src="../assets/icons/BioTrace (4).png" alt="Logo BioTrace" class="logo-biotrace">
+
+            <div class="cabecalho-logo-texto">
+                <h1>Painel Interno</h1>
+            </div>
+        </div>
+
+        <div class="cabecalho-usuario">
+            <div class="cabecalho-usuario-info">
+                <p id="b_usuario">Olá, nomeUser</p>
+            </div>
+            <button class="btn-sair" onclick="limparSessao()">Sair</button>
+        </div>
+    </header>
+
+    <main class="conteudo">
+        <div class="conteudo-principal">
+            <div class="boas-vindas">
+                <h2>Cadastrar gestor</h2>
+                <p>Cadastre um gestor para a empresa correspondente.</p>
+            </div>
+
+            <div class="form-container">
+                <div class="form-grid">
+                    <div class="campo campo-largo">
+                        <label for="ipt_nome_user">Nome completo</label>
+                        <input type="text" id="ipt_nome_user" placeholder="Julia Araripe" autocomplete="off">
+                    </div>
+
+                    <div class="campo">
+                        <label for="ipt_cargo_user">Cargo</label>
+                        <select id="ipt_cargo_user">
+                            <option value="">Selecione o cargo</option>
+                        </select>
+                    </div>
+
+                    <div class="campo">
+                        <label for="ipt_dt_nasc_user">Data de nascimento</label>
+                        <input type="text" id="ipt_dt_nasc_user" inputmode="numeric" placeholder="DD/MM/AAAA"
+                            maxlength="10" autocomplete="off">
+                    </div>
+
+                    <div class="campo">
+                        <label for="ipt_telefone_user">Telefone</label>
+                        <input type="text" id="ipt_telefone_user" inputmode="numeric" placeholder="(00) 00000-0000"
+                            maxlength="11" autocomplete="off">
+                    </div>
+
+                    <div class="campo">
+                        <label for="ipt_cpf_user">CPF</label>
+                        <input type="text" id="ipt_cpf_user" inputmode="numeric" placeholder="000.000.000-00"
+                            maxlength="11" autocomplete="off">
+                    </div>
+
+                    <div class="campo">
+                        <label for="ipt_email_user">E-mail corporativo</label>
+                        <input type="email" id="ipt_email_user" placeholder="seuemail@email.com" autocomplete="off">
+                    </div>
+
+                    <div class="campo">
+                        <label for="ipt_senha_user">Senha</label>
+                        <div class="input-senha">
+                            <input type="password" id="ipt_senha_user" placeholder="Mínimo 8 caracteres" maxlength="8">
+                            <button type="button" class="toggle-password" data-target="ipt_senha_user"
+                                aria-label="Mostrar senha" data-closed="../assets/img/eyeClose.png"
+                                data-open="../assets/img/eye.png">
+                                <img src="../assets/img/eyeClose.png" alt="Mostrar senha" class="toggle-password-icon">
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="campo">
+                        <label for="ipt_conf_senha_user">Confirmar senha</label>
+                        <div class="input-senha">
+                            <input type="password" id="ipt_conf_senha_user" placeholder="Repita a senha" maxlength="8">
+                            <button type="button" class="toggle-password" data-target="ipt_conf_senha_user"
+                                aria-label="Mostrar senha" data-closed="../assets/img/eyeClose.png"
+                                data-open="../assets/img/eye.png">
+                                <img src="../assets/img/eyeClose.png" alt="Mostrar senha" class="toggle-password-icon">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="form-erro" id="form-erro"></p>
+
+                <div class="form-botoes">
+                    <a href="listar-empresas.html" class="btn-voltar-link">Cancelar</a>
+                    <button type="button" class="btn-salvar" id="btn-cadastrar">Cadastrar gestor</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="./js/utils.js"></script>
+    <script>
+        let cargos = [];
+
+        function mostrarErro(mensagem) {
+            const erro = document.getElementById("form-erro");
+            if (erro) {
+                erro.textContent = mensagem;
+            }
+        }
+
+        async function buscarCargos() {
+            const resposta = await fetch("/usuario/cargos");
+            cargos = await resposta.json();
+
+            const select = document.getElementById("ipt_cargo_user");
+
+            cargos.forEach(cargo => {
+                const option = document.createElement("option");
+
+                option.value = cargo.id;
+                option.textContent = cargo.nome;
+
+                select.appendChild(option);
+            });
+        }
+
+        function cadastrarUsuario() {
+            var idEmpresa = sessionStorage.ID_EMPRESA;
+            var nomeUserVar = document.getElementById("ipt_nome_user").value.trim();
+            var dataBruta = document.getElementById("ipt_dt_nasc_user").value;
+            var nascimentoUserVar = "";
+
+            if (dataBruta.length === 10) {
+                var dia = dataBruta[0] + dataBruta[1];
+                var mes = dataBruta[3] + dataBruta[4];
+                var ano = dataBruta[6] + dataBruta[7] + dataBruta[8] + dataBruta[9];
+                nascimentoUserVar = ano + "-" + mes + "-" + dia;
+            }
+
+            var telefoneUserVar = document.getElementById("ipt_telefone_user").value;
+            var cargoUserVar = document.getElementById("ipt_cargo_user").value;
+            var cpfUserVar = document.getElementById("ipt_cpf_user").value;
+            var emailUserVar = document.getElementById("ipt_email_user").value;
+            var senhaUserVar = document.getElementById("ipt_senha_user").value;
+            var confirmacaoSenhaUserVar = document.getElementById("ipt_conf_senha_user").value;
+
+            if (nomeUserVar == "" || dataBruta == "" || telefoneUserVar == "" || cpfUserVar == "" ||
+                emailUserVar == "" || senhaUserVar == "" || confirmacaoSenhaUserVar == "" || cargoUserVar == "") {
+                mostrarErro("Verifique campos em branco.");
+                return false;
+            }
+            else if (nomeUserVar.length < 3) {
+                mostrarErro("Seu nome deve ter mais de 1 caractere.");
+                return false;
+            }
+            else if (!dataBruta.includes('/')) {
+                mostrarErro("Certifique-se que sua data de nascimento está seguindo esse formato: DD/MM/AAAA.");
+                return false;
+            }
+            else if (!emailUserVar.includes("@") || !emailUserVar.includes(".com")) {
+                mostrarErro("Certifique-se que seu e-mail contenha '@' e '.com'.");
+                return false;
+            }
+            else if (confirmacaoSenhaUserVar != senhaUserVar) {
+                mostrarErro("Sua senha não está igual.");
+                return false;
+            }
+            else {
+                const botao = document.getElementById("btn-cadastrar");
+                botao.disabled = true;
+                botao.textContent = "Cadastrando...";
+
+                fetch("/usuario/cadastrar-usuario", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        nomeUserServer: nomeUserVar,
+                        nascimentoUserServer: nascimentoUserVar,
+                        telefoneUserServer: telefoneUserVar,
+                        cpfUserServer: cpfUserVar,
+                        emailUserServer: emailUserVar,
+                        senhaUserServer: senhaUserVar,
+                        idEmpresaServer: idEmpresa,
+                        cargoUserServer: cargoUserVar
+                    })
+                })
+                    .then(function (resposta) {
+                        if (resposta.ok) {
+                            sessionStorage.removeItem("ID_EMPRESA");
+                            mostrarErro("");
+                            alert("Cadastro realizado com sucesso!");
+
+                            setTimeout(() => {
+                                window.location.href = "listar-empresas.html";
+                            }, 1000);
+                            return;
+                        }
+
+                        throw new Error("Houve um erro ao tentar realizar o cadastro!");
+                    })
+                    .catch(function (erro) {
+                        mostrarErro(erro.message || "Não foi possível cadastrar o gestor.");
+                        botao.disabled = false;
+                        botao.textContent = "Cadastrar gestor";
+                    });
+            }
+        }
+
+        document.querySelectorAll(".toggle-password").forEach(function (botao) {
+            botao.addEventListener("click", function () {
+                const input = document.getElementById(this.dataset.target);
+                const mostrar = input.type === "password";
+                const imagem = this.querySelector(".toggle-password-icon");
+
+                input.type = mostrar ? "text" : "password";
+                this.setAttribute("aria-label", mostrar ? "Ocultar senha" : "Mostrar senha");
+                this.classList.toggle("ativo", mostrar);
+
+                if (imagem) {
+                    imagem.src = mostrar ? this.dataset.open : this.dataset.closed;
+                    imagem.alt = mostrar ? "Ocultar senha" : "Mostrar senha";
+                }
+            });
+        });
+
+        document.getElementById("btn-cadastrar").addEventListener("click", cadastrarUsuario);
+        buscarCargos();
+    </script>
+</body>
+
+</html>
