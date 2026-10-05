@@ -9,7 +9,6 @@ INSERT INTO cargo (nome) VALUES
 
 -- EMPRESAS
 INSERT INTO empresa (razao_social, cnpj, telefone_comercial, cep, numero) VALUES
-('BioTrace Tecnologia Ltda',          '12345678000101', '1133334444', '01310100', '1000'),
 ('BioMed Sistemas Hospitalares Ltda', '23456789000102', '1144445555', '04538132', '1500'),
 ('HealthTech Equipamentos Ltda',      '34567890000103', '1155556666', '04037000', '2000');
 
@@ -19,15 +18,7 @@ INSERT INTO hospital (nome_hospital, cnpj, cep, numero) VALUES
 ('Hospital Vida Paulista',   '56789012000105', '01310100', '750'),
 ('Hospital Regional do ABC', '67890123000106', '09715000', '1200');
 
--- USUÁRIOS
-INSERT INTO usuario (nome_usuario, dt_nasc_usuario, telefone_usuario, cpf_usuario, email_usuario, senha_usuario, fk_empresa, fk_cargo) VALUES
--- BioTrace (empresa 1, cargo 1)
-('Ana Clara',        '1995-03-12', '11987654321', '12345678901', 'ana.clara@biotrace.com',         SHA2('ana123', 256),      1, 1),
-('Bruno Rafael',     '1996-07-25', '11987654322', '23456789012', 'bruno.rafael@biotrace.com',      SHA2('bruno123', 256),    1, 1),
-('Eduardo Lupianez', '1994-11-08', '11987654323', '34567890123', 'eduardo.lupianez@biotrace.com',  SHA2('eduardo123', 256),  1, 1),
-('Pedro Ludovic',    '1997-02-19', '11987654324', '45678901234', 'pedro.ludovic@biotrace.com',     SHA2('pedro123', 256),    1, 1),
-('Jonatas Teles',    '1993-09-14', '11987654325', '56789012345', 'jonatas.teles@biotrace.com',     SHA2('jonatas123', 256),  1, 1),
-('Miguel Soares',    '1998-05-30', '11987654326', '67890123456', 'miguel.soares@biotrace.com',     SHA2('miguel123', 256),   1, 1),
+
 -- BioMed (empresa 2)
 ('Marcos Oliveira',  '1988-07-22', '11976543210', '89012345678', 'marcos@biomed.com',              SHA2('marcos123', 256),   2, 2),
 ('Carlos Santos',    '1992-11-03', '11965432109', '90123456789', 'carlos@biomed.com',              SHA2('carlos123', 256),   2, 3),
