@@ -489,19 +489,64 @@ button {
     color: #334155;
 }
 
-.campo input {
+.campo input,
+.campo select {
     padding: 10px 12px;
     border: 1px solid #CBD5E1;
     border-radius: 8px;
     font-family: var(--paragrafo);
     font-size: 14px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background: #FFFFFF;
 }
 
-.campo input:focus {
+.campo input:focus,
+.campo select:focus {
     outline: none;
     border-color: var(--cor-primaria);
     box-shadow: 0 0 0 3px var(--cor-secundaria-light);
+}
+
+.input-senha {
+    position: relative;
+}
+
+.input-senha input {
+    width: 100%;
+    padding-right: 42px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.toggle-password:hover {
+    background: #F5F3FF;
+}
+
+.toggle-password-icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    display: block;
+}
+
+.toggle-password.ativo {
+    opacity: 0.9;
 }
 
 .form-erro {
