@@ -12,7 +12,7 @@
 <body>
     <header class="header"> <!-- SESSÃO DA ANA -->
         <div class="navbar">
-            <div class="container-img"></div>
+            <div onclick="voltar()" class="container-img" href="index.html"></div>
 
             <ul class="container-lista">
                 <li><a href="index.html#1">Início</a></li>
@@ -222,6 +222,10 @@
         })
 
         return false;
+    }
+
+    function voltar() {
+        window.location = "./index.html"
     }
 
 </script>
