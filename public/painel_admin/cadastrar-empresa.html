@@ -7,6 +7,7 @@
     <title>BioTrace Admin | Cadastrar Empresa</title>
 
     <link rel="stylesheet" href="./css/styles.css">
+
 </head>
 
 <body>
@@ -49,19 +50,19 @@
 
                     <div class="campo">
                         <label for="input-cnpj">CNPJ</label>
-                        <input type="text" id="input-cnpj" maxlength="14" inputmode="numeric"
+                        <input type="text" id="input-cnpj" maxlength="18" inputmode="numeric"
                             placeholder="Somente números" autocomplete="off">
                     </div>
 
                     <div class="campo">
                         <label for="input-telefone">Telefone comercial</label>
-                        <input type="text" id="input-telefone" maxlength="11" inputmode="numeric"
+                        <input type="text" id="input-telefone" maxlength="14" inputmode="numeric"
                             placeholder="DDD + número" autocomplete="off">
                     </div>
 
                     <div class="campo">
                         <label for="input-cep">CEP</label>
-                        <input type="text" id="input-cep" maxlength="8" inputmode="numeric"
+                        <input type="text" id="input-cep" maxlength="9" inputmode="numeric"
                             placeholder="Somente números" autocomplete="off">
                     </div>
 
@@ -117,7 +118,23 @@
     </div>
 
     <script src="./js/utils.js"></script>
+    <script src="https://unpkg.com/imask"></script>
+
     <script>
+        IMask(document.getElementById("input-cnpj"), {
+            mask: "00.000.000/0000-00"
+        });
+
+        IMask(document.getElementById("input-cep"), {
+            mask: "00000-000"
+        })
+
+        IMask(document.getElementById("input-telefone"),{
+            mask: "(00)00000-0000"
+        });
+    </script>
+    <script>
+
         function preencherEndereco(logradouro, bairro, cidade, estado) {
             document.getElementById("input-logradouro").value = logradouro;
             document.getElementById("input-bairro").value = bairro;
@@ -164,9 +181,9 @@
 
         function validarFormulario() {
             var razao = document.getElementById("input-razao-social").value.trim();
-            var cnpj = document.getElementById("input-cnpj").value;
-            var telefone = document.getElementById("input-telefone").value;
-            var cep = document.getElementById("input-cep").value;
+            var cnpj = document.getElementById("input-cnpj").value.replace(/\D/g, "");
+            var telefone = document.getElementById("input-telefone").value.replace(/\D/g, "");
+            var cep = document.getElementById("input-cep").value.replace(/\D/g, "");
             var cidade = document.getElementById("input-cidade").value;
             var numero = document.getElementById("input-numero").value.trim();
 
@@ -199,9 +216,9 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     razaoSocialServer: document.getElementById("input-razao-social").value.trim(),
-                    cnpjServer: document.getElementById("input-cnpj").value,
-                    telefoneComercialServer: document.getElementById("input-telefone").value,
-                    cepServer: document.getElementById("input-cep").value,
+                    cnpjServer: document.getElementById("input-cnpj").value.replace(/\D/g, ""),
+                    telefoneComercialServer: document.getElementById("input-telefone").value.replace(/\D/g, ""),
+                    cepServer: document.getElementById("input-cep").value.replace(/\D/g, ""),
                     numeroServer: document.getElementById("input-numero").value.trim()
                 })
             })

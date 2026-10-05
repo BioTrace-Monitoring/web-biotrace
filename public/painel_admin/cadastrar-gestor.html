@@ -105,6 +105,20 @@
     </main>
 
     <script src="./js/utils.js"></script>
+    <script src="https://unpkg.com/imask"></script>
+    <script>
+        IMask(document.getElementById("ipt_dt_nasc_user"),{
+            mask: "00/00/0000"
+        })
+
+        IMask(document.getElementById("ipt_telefone_user"),{
+            mask: "(00)00000-0000"
+        })
+
+        IMask(document.getElementById("ipt_cpf_user"),{
+            mask: "000.000.000-00"
+        })
+    </script>
     <script>
         function aplicarMascaraCPF(valor) {
             valor = valor.replace(/\D/g, "");
