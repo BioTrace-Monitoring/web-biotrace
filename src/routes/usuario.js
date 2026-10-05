@@ -14,13 +14,13 @@ router.get("/cargos", function (req, res) {
     usuarioController.listarCargos(req, res);
 });
 
+router.post("/autenticar", function (req, res) {
+    usuarioController.autenticarUsuario(req, res);
+});
+
 router.post("/:idEmpresa", function (req, res) {
     usuarioController.cadastrarUsuario(req, res);
 })
-
-router.post("/autenticar-usuario", function (req, res) {
-    usuarioController.autenticarUsuario(req, res);
-});
 
 // Exportando o router
 // Outros arquivos podem usar essas funções

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
 
     <script src="js/sessao.js"></script>
 </head>
+
 <body>
     <header class="header"> <!-- SESSÃO DA ANA -->
         <div class="navbar">
@@ -45,28 +47,18 @@
                 <label for="ipt_email_user">E-mail</label>
                 <div class="campo">
                     <span class="icone" aria-hidden="true"></span>
-                    <input
-                        type="email"
-                        id="ipt_email_user"
-                        name="email"
-                        placeholder="exemplo@email.com"
-                        autocomplete="email"
-                    >
+                    <input type="email" id="ipt_email_user" name="email" placeholder="exemplo@email.com"
+                        autocomplete="email">
                 </div>
 
                 <label for="ipt_senha_user">Senha</label>
                 <div class="campo">
                     <span class="icone" aria-hidden="true"></span>
-                    <input
-                        type="password"
-                        id="ipt_senha_user"
-                        name="senha"
-                        placeholder="••••••••••••"
-                        autocomplete="current-password"
-                    >
-                    <span class="olho" id="btn_olho" role="button" tabindex="0"
-                          aria-label="Mostrar senha" onclick="alternarSenha()"
-                          onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); alternarSenha(); }"></span>
+                    <input type="password" id="ipt_senha_user" name="senha" placeholder="••••••••••••"
+                        autocomplete="current-password">
+                    <span class="olho" id="btn_olho" role="button" tabindex="0" aria-label="Mostrar senha"
+                        onclick="alternarSenha()"
+                        onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); alternarSenha(); }"></span>
                 </div>
 
                 <button type="submit">Entrar</button>
@@ -119,112 +111,110 @@
         </div>
     </footer>
 
-<script>
+    <div id="login-sucesso" class="login-sucesso">
+        <div class="sucesso-card">
+            <div class="sucesso-check">
+                <span>✓</span>
+            </div>
 
-    function alternarSenha()
-    {
-        // mostra/esconde a senha e troca o ícone do olho
-        var input = document.getElementById("ipt_senha_user");
-        var olho = document.getElementById("btn_olho");
-        var mostrando = input.type === "text";
+            <h2>Login realizado!</h2>
+            <p id="mensagem-sucesso">Seja bem-vindo(a)!</p>
 
-        input.type = mostrando ? "password" : "text";
-        olho.classList.toggle("visivel", !mostrando);
-        olho.setAttribute("aria-label", mostrando ? "Mostrar senha" : "Ocultar senha");
-    }
+            <div class="sucesso-carregando">
+                <span></span>
+            </div>
+        </div>
+    </div>
 
-    function entrar()
-    {
-        // função que realiza o login do usuário
-        var emailVar = ipt_email_user.value; // captura email digitado no input
-        var senhaVar = ipt_senha_user.value; // captura senha digitada no input
+    <script>
 
-        // valida se algum campo está vazio
-        if (emailVar == "" || senhaVar == "")
-        {
-            alert(`Verifique campos em branco`)
-            return false;
+        function alternarSenha() {
+            // mostra/esconde a senha e troca o ícone do olho
+            var input = document.getElementById("ipt_senha_user");
+            var olho = document.getElementById("btn_olho");
+            var mostrando = input.type === "text";
+
+            input.type = mostrando ? "password" : "text";
+            olho.classList.toggle("visivel", !mostrando);
+            olho.setAttribute("aria-label", mostrando ? "Mostrar senha" : "Ocultar senha");
         }
 
-        console.log("FORM LOGIN: ", emailVar);
 
-        //document.getElementById("div_aguardar").style.display = "block";
+        function entrar() {
+            var emailVar = ipt_email_user.value;
+            var senhaVar = ipt_senha_user.value;
 
-        // Faz a requisição
-        // quando o servidor responder
-        // verifica se deu ok
-        // converte o conteúdo
-        // usa os dados
-        // se qualquer coisa der errado no caminho -> cai no catch
-        fetch("/usuario/autenticar-usuario",
-        {
-            method: "POST", // define método HTTP como POST para envio de dados
-            headers: {
-                "Content-Type": "application/json" // informa que o corpo da requisição está em JSON
-            },
-            body: JSON.stringify({
-                // converte os dados JS para JSON para envio ao backend
+            if (emailVar == "" || senhaVar == "") {
+                alert("Verifique os campos em branco");
+                return false;
+            }
 
-                emailServer: emailVar, // envia email
-                senhaServer: senhaVar // envia senha
+            console.log("FORM LOGIN:", emailVar);
+
+            fetch("/usuario/autenticar", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    emailServer: emailVar,
+                    senhaServer: senhaVar
+                })
             })
-        }).then(function (resposta)
-        {
-            // trata resposta do backend após login
+                .then(function (resposta) {
 
-            console.log("ESTOU NO THEN DO entrar()!")
+                    if (resposta.ok) {
+                        return resposta.json();
+                    }
 
-            // login autorizado
-            if (resposta.ok)
-            {
-                console.log(resposta);
+                    return resposta.text().then(function (mensagem) {
+                        throw new Error(mensagem);
+                    });
+                })
+                .then(function (json) {
 
-                resposta.json().then(json => {
-                    // converte resposta em JSON
-                    console.log(json);
-                    console.log(JSON.stringify(json));
+                    console.log("LOGIN REALIZADO:", json);
 
-                    sessionStorage.EMAIL_USUARIO = json.email; // armazena email na sessão
-                    sessionStorage.NOME_USUARIO = json.nome; // armazena nome na sessão
-                    sessionStorage.ID_USUARIO = json.id; // armazena id na sessão
+                    // Salva os dados do usuário na sessão
+                    sessionStorage.EMAIL_USUARIO = json.email;
+                    sessionStorage.NOME_USUARIO = json.nome;
+                    sessionStorage.ID_USUARIO = json.id;
                     sessionStorage.FK_EMPRESA = json.fk_empresa;
+                    sessionStorage.CARGO_USUARIO = json.cargo;
 
-                    // redireciona para página inicial após login
-                    setTimeout(function ()
-                    {
-                        window.location = "painel_admin/index.html";
-                        alert(`Seja bem vindo(a), ${sessionStorage.NOME_USUARIO}`)
-                    }, 1000); // apenas para exibir o loading
+                    console.log("Sessão salva:", sessionStorage);
 
-                    console.log("SALVEI:", sessionStorage);
+                    // Define o painel de acordo com a empresa
+                    var destino;
+
+                    if (Number(json.fk_empresa) === 1) {
+                        destino = "painel_admin/index.html";
+                    } else {
+                        destino = "painel_cliente/index.html";
+                    }
+
+                    var telaSucesso = document.getElementById("login-sucesso");
+                    var mensagemSucesso = document.getElementById("mensagem-sucesso");
+
+                    mensagemSucesso.textContent = `Seja bem-vindo(a), ${json.nome}!`;
+
+                    telaSucesso.classList.add("ativo");
+
+                    setTimeout(function () {
+                        window.location.href = destino;
+                    }, 1500);
+                })
+                .catch(function (erro) {
+
+                    console.error("Erro ao realizar login:", erro);
+
+                    alert(erro.message || "Erro ao realizar login.");
                 });
 
-            }
-            
-            else
-            {
-                // caso login falhe
-                resposta.text().then(texto => {
-                    // Esconde o loading se der erro
-                    //document.getElementById("div_aguardar").style.display = "none";
-
-                    console.error(texto);
-                });
-            }
-
-        }).catch(function (erro)
-        {
-            // Esconde o loading se cair no catch
-            //document.getElementById("div_aguardar").style.display = "none";
-
-            // erro na requisição
-            console.log(erro);
-        })
-
-        return false;
-    }
-
-</script>
+            return false;
+        }
+    </script>
 
 </body>
+
 </html>
