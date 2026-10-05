@@ -40,12 +40,6 @@
                         <input type="text" id="ipt_nome_user" placeholder="Julia Araripe" autocomplete="off">
                     </div>
 
-                    <div class="campo">
-                        <label for="ipt_cargo_user">Cargo</label>
-                        <select id="ipt_cargo_user">
-                            <option value="">Selecione o cargo</option>
-                        </select>
-                    </div>
 
                     <div class="campo">
                         <label for="ipt_dt_nasc_user">Data de nascimento</label>
@@ -116,105 +110,115 @@
             }
         }
 
-        async function buscarCargos() {
-            const resposta = await fetch("/usuario/cargos");
-            cargos = await resposta.json();
-
-            const select = document.getElementById("ipt_cargo_user");
-
-            cargos.forEach(cargo => {
-                const option = document.createElement("option");
-
-                option.value = cargo.id;
-                option.textContent = cargo.nome;
-
-                select.appendChild(option);
-            });
+        function limparErro() {
+            mostrarErro("");
         }
 
-        function cadastrarUsuario() {
-            var idEmpresa = sessionStorage.ID_EMPRESA;
-            var nomeUserVar = document.getElementById("ipt_nome_user").value.trim();
-            var dataBruta = document.getElementById("ipt_dt_nasc_user").value;
-            var nascimentoUserVar = "";
 
-            if (dataBruta.length === 10) {
-                var dia = dataBruta[0] + dataBruta[1];
-                var mes = dataBruta[3] + dataBruta[4];
-                var ano = dataBruta[6] + dataBruta[7] + dataBruta[8] + dataBruta[9];
-                nascimentoUserVar = ano + "-" + mes + "-" + dia;
+        function obterIdEmpresa() {
+            const parametros = new URLSearchParams(window.location.search);
+            return parametros.get("idEmpresa");
+        }
+
+        document.getElementById("btn-cadastrar").addEventListener("click", function () {
+            limparErro();
+
+            const idEmpresa = obterIdEmpresa();
+            const nome = document.getElementById("ipt_nome_user").value.trim();
+            const cargo = document.getElementById("ipt_cargo_user").value;
+            const dtNasc = document.getElementById("ipt_dt_nasc_user").value.trim();
+            const telefone = document.getElementById("ipt_telefone_user").value.trim();
+            const cpf = document.getElementById("ipt_cpf_user").value.trim();
+            const email = document.getElementById("ipt_email_user").value.trim();
+            const senha = document.getElementById("ipt_senha_user").value;
+            const confSenha = document.getElementById("ipt_conf_senha_user").value;
+
+            if (!Number.isInteger(idEmpresa) || idEmpresa <= 0) {
+                mostrarErro("ID da empresa inválido.");
+                return;
             }
 
-            var telefoneUserVar = document.getElementById("ipt_telefone_user").value;
-            var cargoUserVar = document.getElementById("ipt_cargo_user").value;
-            var cpfUserVar = document.getElementById("ipt_cpf_user").value;
-            var emailUserVar = document.getElementById("ipt_email_user").value;
-            var senhaUserVar = document.getElementById("ipt_senha_user").value;
-            var confirmacaoSenhaUserVar = document.getElementById("ipt_conf_senha_user").value;
+            if (nome === "") {
+                mostrarErro("Informe o nome completo.");
+                return;
+            }
 
-            if (nomeUserVar == "" || dataBruta == "" || telefoneUserVar == "" || cpfUserVar == "" ||
-                emailUserVar == "" || senhaUserVar == "" || confirmacaoSenhaUserVar == "" || cargoUserVar == "") {
-                mostrarErro("Verifique campos em branco.");
-                return false;
+            if (dtNascimento === "") {
+                mostrarErro("Informe a data de nascimento.");
+                return;
             }
-            else if (nomeUserVar.length < 3) {
-                mostrarErro("Seu nome deve ter mais de 1 caractere.");
-                return false;
-            }
-            else if (!dataBruta.includes('/')) {
-                mostrarErro("Certifique-se que sua data de nascimento está seguindo esse formato: DD/MM/AAAA.");
-                return false;
-            }
-            else if (!emailUserVar.includes("@") || !emailUserVar.includes(".com")) {
-                mostrarErro("Certifique-se que seu e-mail contenha '@' e '.com'.");
-                return false;
-            }
-            else if (confirmacaoSenhaUserVar != senhaUserVar) {
-                mostrarErro("Sua senha não está igual.");
-                return false;
-            }
-            else {
-                const botao = document.getElementById("btn-cadastrar");
-                botao.disabled = true;
-                botao.textContent = "Cadastrando...";
 
-                fetch("/usuario/cadastrar-usuario", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        nomeUserServer: nomeUserVar,
-                        nascimentoUserServer: nascimentoUserVar,
-                        telefoneUserServer: telefoneUserVar,
-                        cpfUserServer: cpfUserVar,
-                        emailUserServer: emailUserVar,
-                        senhaUserServer: senhaUserVar,
-                        idEmpresaServer: idEmpresa,
-                        cargoUserServer: cargoUserVar
-                    })
-                })
-                    .then(function (resposta) {
-                        if (resposta.ok) {
-                            sessionStorage.removeItem("ID_EMPRESA");
-                            mostrarErro("");
-                            alert("Cadastro realizado com sucesso!");
+            if (telefone === "") {
+                mostrarErro("Informe o telefone.");
+                return;
+            }
 
-                            setTimeout(() => {
-                                window.location.href = "listar-empresas.html";
-                            }, 1000);
-                            return;
-                        }
+            if (cpf === "") {
+                mostrarErro("Informe o CPF.");
+                return;
+            }
 
-                        throw new Error("Houve um erro ao tentar realizar o cadastro!");
-                    })
-                    .catch(function (erro) {
-                        mostrarErro(erro.message || "Não foi possível cadastrar o gestor.");
-                        botao.disabled = false;
-                        botao.textContent = "Cadastrar gestor";
+            if (email === "") {
+                mostrarErro("Informe o e-mail.");
+                return;
+            }
+
+            if (senha === "") {
+                mostrarErro("Informe a senha.");
+                return;
+            }
+
+            if (senha.length < 8) {
+                mostrarErro("A senha deve possuir 8 caracteres.");
+                return;
+            }
+
+            if (senha !== confirmarSenha) {
+                mostrarErro("As senhas não coincidem.");
+                return;
+            }
+
+            const dados = {
+                nomeServer: nome,
+                emailServer: email,
+                senhaServer: senha,
+                cargoServer: 2,
+                cpfServer: cpf,
+                dtNascimentoServer: dtNasc,
+                telefoneServer: telefone
+            };
+
+            fetch(`/usuarios/${idEmpresa}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(dados)
+            }).then(function (resposta) {
+                if (!resposta.ok) {
+                    return resposta.text().then(function (mensagem) {
+                        throw new Error(mensagem);
                     });
-            }
-        }
+                }
+
+                return resposta.json();
+            }).then(function (resultado) {
+                console.log("Usuário cadastrado:", resultado);
+
+                // TODO: Exibir mensagem de sucesso e redirecionar para a página de listagem de empresas
+                alert("Gestor cadastrado com sucesso!");
+
+                window.location.href = `listar-empresas.html`;
+            }).catch(function (erro) {
+                console.error("Erro ao cadastrar gestor:", erro);
+
+                mostrarErro(
+                    erro.message || "Erro ao cadastrar gestor."
+                );
+            });
+                
+
+        });
 
         document.querySelectorAll(".toggle-password").forEach(function (botao) {
             botao.addEventListener("click", function () {
@@ -232,9 +236,6 @@
                 }
             });
         });
-
-        document.getElementById("btn-cadastrar").addEventListener("click", cadastrarUsuario);
-        buscarCargos();
     </script>
 </body>
 

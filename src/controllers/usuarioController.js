@@ -89,75 +89,52 @@ function listarCargos(req,res){
 
 // Função que cadastra um novo user
 function cadastrarUsuario(req, res) {
-    // Recuperando os dados enviados pelo form
-    var nome = req.body.nomeUserServer;
-    var dt_nasc = req.body.nascimentoUserServer;
-    var telefone = req.body.telefoneUserServer;
-    var cpf = req.body.cpfUserServer;
-    var email = req.body.emailUserServer;
-    var senha = req.body.senhaUserServer;
-    var idEmpresa = req.body.idEmpresaServer;
-    var idCargo = req.body.cargoUserServer;
+    var idEmpresa = Number(req.params.idEmpresa);
+    var nome = req.body.nomeServer;
+    var email = req.body.emailServer;
+    var senha = req.body.senhaServer;
+    var cargo = req.body.cargoServer;
+    var cpf = req.body.cpfServer;
+    var dt_nascimento = req.body.dtNascimentoServer;
+    var telefone = req.body.telefoneServer;
 
-    // Validando pra que nenhum dado venha vazio
+    if (!Number.isInteger(idEmpresa) || idEmpresa <= 0) {
+        return res.status(400).json("Id da empresa inválido!");
+    }
+
     if (nome == undefined) {
-        res.status(400).send("Seu nome está undefined!");
+        res.status(400).send("Nome está undefined!");
+    } else if (email == undefined) {
+        res.status(400).send("Email está undefined!");
+    } else if (senha == undefined) {
+        res.status(400).send("Senha está undefined!");
+    } else if (cargo == undefined) {
+        res.status(400).send("Cargo está undefined!");
+    } else if (cpf == undefined) {
+        res.status(400).send("CPF está undefined!");
+    } else if (dt_nascimento == undefined) {
+        res.status(400).send("Data de nascimento está undefined!");
+    } else if (telefone == undefined) {
+        res.status(400).send("Telefone está undefined!");
+    } else {
+        empresaModel.cadastrarUsuario(idEmpresa, nome, dt_nascimento, telefone, cpf, email, senha, fkCargo)
+            .then(function (resultado) {
+                res.status(200).json({
+                    sucesso: true,
+                    idInserido: resultado.insertId,
+                    mensagem: "Usuário cadastrado com sucesso"
+                });
+            })
+            .catch(function (erro) {
+                console.log(erro);
+                console.log("\nHouve um erro ao cadastrar o usuário! Erro: ", erro.sqlMessage);
+                res.status(500).json({
+                    sucesso: false,
+                    idInserido: null,
+                    mensagem: "Erro ao cadastrar usuário"
+                });
+            });
     }
-
-    else if (dt_nasc == undefined) {
-        res.status(400).send("Sua data de nascimento está undefined!");
-    }
-
-    else if (telefone == undefined) {
-        res.status(400).send("Seu telefone está undefined!");
-    }
-
-    else if (cpf == undefined) {
-        res.status(400).send("Seu CPF está undefined!");
-    }
-
-    else if (email == undefined) {
-        res.status(400).send("Seu e-mail está undefined!");
-    }
-
-    else if (senha == undefined) {
-        res.status(400).send("Sua senha está undefined!");
-    }
-
-    else if (idEmpresa == undefined) {
-        res.status(400).send("O ID da empresa está undefined!");
-    } else if (idCargo == undefined) {
-        res.status(400).send("O seu cargo está undefined");
-    }
-    else {
-        // Chama a função do model que executa o INSERT no banco
-        usuarioModel.cadastrarUsuario(nome, dt_nasc, telefone, cpf, email, senha, idEmpresa, idCargo)
-            // Executado quando o cadastro ocorre com sucesso
-            .then(
-                function (resultado) {
-                    // Retorna o resultado para o front-end em formato JSON
-                    res.json(resultado);
-                }
-                // Executado quando tem algum erro durante o cadastro
-            ).catch(
-                function (erro) {
-                    console.log(erro); // exibe erro no terminal
-                    console.log(
-                        "\nHouve um erro ao realizar o cadastro! Erro: ",
-                        erro.sqlMessage
-                    );
-
-                    res.status(500).json(erro.sqlMessage);
-                }
-            );
-    }
-
-    // FLUXO:
-    // front envia os dados
-    // controller recebe e valida os dados
-    // model faz INSERT e banco salva o user
-    // resultado volta pro controller
-    // controller envia resultado pro front
 }
 
 
@@ -168,5 +145,4 @@ module.exports =
     autenticarUsuario,
     cadastrarUsuario,
     listarCargos
-    //visualizarUsuario
 }
