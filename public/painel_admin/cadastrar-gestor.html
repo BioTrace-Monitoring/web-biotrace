@@ -56,13 +56,13 @@
                     <div class="campo">
                         <label for="ipt_telefone_user">Telefone</label>
                         <input type="text" id="ipt_telefone_user" inputmode="numeric" placeholder="(00) 00000-0000"
-                            maxlength="11" autocomplete="off">
+                            maxlength="15" autocomplete="off">
                     </div>
 
                     <div class="campo">
                         <label for="ipt_cpf_user">CPF</label>
                         <input type="text" id="ipt_cpf_user" inputmode="numeric" placeholder="000.000.000-00"
-                            maxlength="11" autocomplete="off">
+                            maxlength="14" autocomplete="off">
                     </div>
 
                     <div class="campo">
@@ -106,6 +106,20 @@
     </main>
 
     <script src="./js/utils.js"></script>
+    <script src="https://unpkg.com/imask"></script>
+    <script>
+        IMask(document.getElementById("ipt_dt_nasc_user"),{
+            mask: "00/00/0000"
+        })
+
+        IMask(document.getElementById("ipt_telefone_user"),{
+            mask: "(00)00000-0000"
+        })
+
+        IMask(document.getElementById("ipt_cpf_user"),{
+            mask: "000.000.000-00"
+        })
+    </script>
     <script>
         let cargos = [];
 
@@ -135,19 +149,19 @@
         function cadastrarUsuario() {
             var idEmpresa = sessionStorage.ID_EMPRESA;
             var nomeUserVar = document.getElementById("ipt_nome_user").value.trim();
-            var dataBruta = document.getElementById("ipt_dt_nasc_user").value;
+            var dataBruta = document.getElementById("ipt_dt_nasc_user").value.replace(/\D/g, "");
             var nascimentoUserVar = "";
 
-            if (dataBruta.length === 10) {
+            if (dataBruta.length === 8) {
                 var dia = dataBruta[0] + dataBruta[1];
-                var mes = dataBruta[3] + dataBruta[4];
-                var ano = dataBruta[6] + dataBruta[7] + dataBruta[8] + dataBruta[9];
+                var mes = dataBruta[2] + dataBruta[3];
+                var ano = dataBruta[4] + dataBruta[5] + dataBruta[6] + dataBruta[7];
                 nascimentoUserVar = ano + "-" + mes + "-" + dia;
             }
 
-            var telefoneUserVar = document.getElementById("ipt_telefone_user").value;
+            var telefoneUserVar = document.getElementById("ipt_telefone_user").value.replace(/\D/g, "");
             var cargoUserVar = document.getElementById("ipt_cargo_user").value;
-            var cpfUserVar = document.getElementById("ipt_cpf_user").value;
+            var cpfUserVar = document.getElementById("ipt_cpf_user").value.replace(/\D/g, "");
             var emailUserVar = document.getElementById("ipt_email_user").value;
             var senhaUserVar = document.getElementById("ipt_senha_user").value;
             var confirmacaoSenhaUserVar = document.getElementById("ipt_conf_senha_user").value;
@@ -161,10 +175,10 @@
                 mostrarErro("Seu nome deve ter mais de 1 caractere.");
                 return false;
             }
-            else if (!dataBruta.includes('/')) {
-                mostrarErro("Certifique-se que sua data de nascimento está seguindo esse formato: DD/MM/AAAA.");
-                return false;
-            }
+            // else if (!dataBruta.includes('/')) {
+            //     mostrarErro("Certifique-se que sua data de nascimento está seguindo esse formato: DD/MM/AAAA.");
+            //     return false;
+            // }
             else if (!emailUserVar.includes("@") || !emailUserVar.includes(".com")) {
                 mostrarErro("Certifique-se que seu e-mail contenha '@' e '.com'.");
                 return false;
