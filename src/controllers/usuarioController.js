@@ -4,41 +4,19 @@ var usuarioModel = require("../models/usuarioModel");
 
 // Função que autentica um usuário
 function autenticarUsuario(req, res) {
-    // req -> requisição: Possui todas as informações da requisição
-    // res -> resposta: Retornar uma resposta pro usuario
-
-    // Recuperando os dados enviados pelo front-end
     var email = req.body.emailServer;
     var senha = req.body.senhaServer;
 
     // Validando se os dados foram recebidos corretamente
     if (email == undefined) {
         res.status(400).send("Seu email está undefined!");
-    }
-
-    else if (senha == undefined) {
+    } else if (senha == undefined) {
         res.status(400).send("Sua senha está undefined!");
-    }
-
-    else {
+    } else {
         // Chama a função do model que consulta o banco de dados
         usuarioModel.autenticarUsuario(email, senha)
-            // then() é executado quando a consulta é feita com sucesso
-            .then(
-                // then()
-
-                // O método database.executar() do model retorna uma Promise
-
-                // Promises são utilizadas para lidar com operações que podem demorar
-                // pra serem concluídas, como as consultas do banco
-                // O código dentro do then() só será executado quando a consulta terminar com sucesso.
-
-                // Contém os dados retornados pela consulta SQL
-                function (resultadoAutenticar) {
+            .then(function (resultadoAutenticar) {
                     console.log(`\nResultados encontrados: ${resultadoAutenticar.length}`); // qtd de registros encontrados
-
-                    // JSON.stringify() -> transforma um objeto JSON em texto pra facilitar a visualização no terminal
-
                     console.log(`Resultados: ${JSON.stringify(resultadoAutenticar)}`); // transforma JSON em String
 
                     // Se encontrou um usuário
@@ -58,16 +36,11 @@ function autenticarUsuario(req, res) {
 
                     // Nenhum usuário encontrado
                     else if (resultadoAutenticar.length == 0) {
-                        // 401 - senha ou o login estão ausentes, incorretos ou expirados
                         res.status(401).send("Email e/ou senha inválido(s)");
-                    }
-
-                    else {
+                    } else {
                         res.status(403).send("Mais de um usuário com o mesmo login e senha!");
                     }
                 }
-
-                // catch() é executado quando falha na execução da promise
             ).catch(function (erro) {
                 console.log(erro);
                 console.log("\nHouve um erro ao realizar o login! Erro: ", erro.sqlMessage);
@@ -137,11 +110,7 @@ function cadastrarUsuario(req, res) {
     }
 }
 
-
-// Exportando as funções do controller
-// Outros arquivos podem usar essas funções
-module.exports =
-{
+module.exports = {
     autenticarUsuario,
     cadastrarUsuario,
     listarCargos
