@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body>
+<body class="pagina-recuperacao">
     <header class="header">
         <div class="navbar">
             <div class="container-img"></div>
@@ -38,19 +38,20 @@
                 <img src="assets/icons/BioTrace (5).png" alt="BioTrace">
             </div>
 
-            <h1 id="titulo-recuperacao">Recuperar senha</h1>
-            <p class="subtitulo">Informe o e-mail cadastrado para recuperar sua senha.</p>
+            <h1 id="titulo-recuperacao">Esqueci minha senha</h1>
+            <p class="subtitulo">Informe seu e-mail cadastrado para receber um link de recuperação de senha.</p>
 
-            <label for="ipt_email_recuperacao">E-mail</label>
+            <label class="label" for="ipt_email_recuperacao">E-mail</label>
             <div class="campo">
                 <span class="icone" aria-hidden="true"></span>
                 <input type="email" id="ipt_email_recuperacao" name="email" placeholder="exemplo@email.com"
                     autocomplete="email" required>
             </div>
+            <p class="ajuda-email">Use o e-mail cadastrado na sua conta.</p>
 
-            <button type="button" onclick="recuperarSenha()">Recuperar Senha</button>
+            <button class="btnRec" type="button" onclick="recuperarSenha()">Enviar link de recuperação</button>
             <p id="mensagem-recuperacao" role="status" aria-live="polite" hidden></p>
-            <a class="esqueci-senha" href="login.html">Voltar para o login</a>
+            <a class="esqueci-senha" href="login.html"><span aria-hidden="true">←</span> Voltar ao login</a>
         </section>
     </main>
 
