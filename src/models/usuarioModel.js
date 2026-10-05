@@ -45,24 +45,20 @@ function listarCargos(){
 
 
 // Função que cadastra um novo usuário
-function cadastrarUsuario(nome, dt_nasc, telefone, cpf, email, senha, idEmpresa, cargo)
-{
-    console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function cadastrarUsuario():", nome, dt_nasc, telefone, cpf, email, senha);
-    
+function cadastrarUsuario(idEmpresa, nomeUsuario, dt_nascimento, telefone, cpf, email, senha, fkCargo) {
+    console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function cadastrarUsuario():", idEmpresa, nomeUsuario, email, senha, fkCargo);
+
     // Insert que insere um novo usuário na tabela usuario
-    // A senha é salva já em hash, usando SHA2 (mesmo padrão da seed)
     var instrucaoSql = `
-        INSERT INTO usuario(nome_usuario, dt_nasc_usuario, telefone_usuario, cpf_usuario, email_usuario, senha_usuario, fk_empresa, fk_cargo) VALUES
-        ('${nome}', '${dt_nasc}', '${telefone}', '${cpf}', '${email}', SHA2('${senha}', 256), '${idEmpresa}', '${cargo}');
+    INSERT INTO usuario (nome_usuario, dt_nasc_usuario, telefone_usuario, cpf_usuario, email_usuario, senha_usuario, fk_cargo, fk_empresa) VALUES
+    ('${nomeUsuario}', '${dt_nascimento}', '${telefone}', '${cpf}', '${email}', '${senha}', ${fkCargo}, ${idEmpresa});
     `;
 
-    // Exibe a query montada no terminal
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
 
     // Executa a query no banco e retorna o resultado
     return database.executar(instrucaoSql);
 }
-
 
 
 // Exportando as funções do model

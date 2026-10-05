@@ -49,20 +49,6 @@ function excluirEmpresa(idEmpresa) {
     return database.executar(instrucaoSql);
 }
 
-function cadastrarUsuario(idEmpresa, nomeUsuario, dt_nascimento, telefone, cpf, email, senha, fkCargo) {
-    console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function cadastrarUsuario():", idEmpresa, nomeUsuario, email, senha, fkCargo);
-
-    // Insert que insere um novo usuário na tabela usuario
-    var instrucaoSql = `
-    INSERT INTO usuario (nome_usuario, dt_nasc_usuario, telefone_usuario, cpf_usuario, email_usuario, senha_usuario, fk_cargo, fk_empresa) VALUES
-    ('${nomeUsuario}', '${dt_nascimento}', '${telefone}', '${cpf}', '${email}', '${senha}', ${fkCargo}, ${idEmpresa});
-    `;
-
-    console.log("Executando a instrução SQL: \n" + instrucaoSql);
-
-    // Executa a query no banco e retorna o resultado
-    return database.executar(instrucaoSql);
-}
 
 // Exportando as funções do model
 // Outros arquivos podem usar essas funções
@@ -70,6 +56,5 @@ module.exports =
 {
     cadastrarEmpresa,
     listarEmpresas,
-    excluirEmpresa,
-    cadastrarUsuario
+    excluirEmpresa
 };

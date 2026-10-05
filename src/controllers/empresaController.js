@@ -107,60 +107,11 @@ function excluirEmpresa(req, res) {
         });
 }
 
-function cadastrarUsuario(req, res) {
-    var idEmpresa = Number(req.params.idEmpresa);
-    var nome = req.body.nomeServer;
-    var email = req.body.emailServer;
-    var senha = req.body.senhaServer;
-    var cargo = req.body.cargoServer;
-    var cpf = req.body.cpfServer;
-    var dt_nascimento = req.body.dtNascimentoServer;
-    var telefone = req.body.telefoneServer;
-
-    if (!Number.isInteger(idEmpresa) || idEmpresa <= 0) {
-        return res.status(400).json("Id da empresa inválido!");
-    }
-
-    if (nome == undefined) {
-        res.status(400).send("Nome está undefined!");
-    } else if (email == undefined) {
-        res.status(400).send("Email está undefined!");
-    } else if (senha == undefined) {
-        res.status(400).send("Senha está undefined!");
-    } else if (cargo == undefined) {
-        res.status(400).send("Cargo está undefined!");
-    } else if (cpf == undefined) {
-        res.status(400).send("CPF está undefined!");
-    } else if (dt_nascimento == undefined) {
-        res.status(400).send("Data de nascimento está undefined!");
-    } else if (telefone == undefined) {
-        res.status(400).send("Telefone está undefined!");
-    } else {
-        empresaModel.cadastrarUsuario(idEmpresa, nome, dt_nascimento, telefone, cpf, email, senha, fkCargo)
-            .then(function (resultado) {
-                res.status(200).json({
-                    sucesso: true,
-                    idInserido: resultado.insertId,
-                    mensagem: "Usuário cadastrado com sucesso"
-                });
-            })
-            .catch(function (erro) {
-                console.log(erro);
-                console.log("\nHouve um erro ao cadastrar o usuário! Erro: ", erro.sqlMessage);
-                res.status(500).json({
-                    sucesso: false,
-                    idInserido: null,
-                    mensagem: "Erro ao cadastrar usuário"
-                });
-            });
-    }
-}
 
 // Exportando as funções do controller
 // Outros arquivos podem usar essas funções
 module.exports = {
     cadastrarEmpresa,
     listarEmpresas,
-    excluirEmpresa,
-    cadastrarUsuario
+    excluirEmpresa
 }

@@ -22,10 +22,6 @@ router.delete("/:idEmpresa", function (req, res) {
     empresaController.excluirEmpresa(req, res);
 })
 
-router.post("/:idEmpresa", function (req, res) {
-    empresaController.cadastrarUsuario(req, res);
-})
-
 // Exportando o router
 // Outros arquivos podem usar essas funções
 module.exports = router;
