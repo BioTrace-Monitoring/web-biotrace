@@ -14,23 +14,13 @@ router.get("/cargos", function (req, res) {
     usuarioController.listarCargos(req, res);
 });
 
-// Rota POST para cadastrar um usuário
-// POST para enviar dados ao servidor
-router.post("/cadastrar-usuario", function (req, res)
-{
-    // Chamando a função cadastrarUsuario do usuarioController.js
-
-    // req -> requisição: Possui todas as informações da requisição
-    // res -> resposta: Retornar uma resposta pro usuario
-
-    // Direcionando a requisição pro controller responsavel
-    usuarioController.cadastrarUsuario(req, res);
-})
-
-
-router.post("/autenticar-usuario", function (req, res) {
+router.post("/autenticar", function (req, res) {
     usuarioController.autenticarUsuario(req, res);
 });
+
+router.post("/:idEmpresa", function (req, res) {
+    usuarioController.cadastrarUsuario(req, res);
+})
 
 // Exportando o router
 // Outros arquivos podem usar essas funções
