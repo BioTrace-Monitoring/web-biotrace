@@ -22,6 +22,11 @@
             <div class="cabecalho-usuario-info">
                 <p id="b_usuario">Olá, nomeUser</p>
             </div>
+
+            <a href="index.html" class="btn-voltar-painel">
+                Voltar ao painel
+            </a>
+
             <button class="btn-sair" onclick="limparSessao()">Sair</button>
         </div>
     </header>
@@ -50,13 +55,13 @@
                     <div class="campo">
                         <label for="ipt_telefone_user">Telefone</label>
                         <input type="text" id="ipt_telefone_user" inputmode="numeric" placeholder="(00) 00000-0000"
-                            maxlength="11" autocomplete="off">
+                            maxlength="15" autocomplete="off">
                     </div>
 
                     <div class="campo">
                         <label for="ipt_cpf_user">CPF</label>
                         <input type="text" id="ipt_cpf_user" inputmode="numeric" placeholder="000.000.000-00"
-                            maxlength="11" autocomplete="off">
+                            maxlength="14" autocomplete="off">
                     </div>
 
                     <div class="campo">
@@ -101,6 +106,82 @@
 
     <script src="./js/utils.js"></script>
     <script>
+        function aplicarMascaraCPF(valor) {
+            valor = valor.replace(/\D/g, "");
+
+            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+            valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+
+            return valor;
+        }
+
+        function aplicarMascaraTelefone(valor) {
+            valor = valor.replace(/\D/g, "");
+
+            if (valor.length <= 10) {
+                valor = valor.replace(/^(\d{2})(\d)/, "($1) $2");
+                valor = valor.replace(/(\d{4})(\d)/, "$1-$2");
+            } else {
+                valor = valor.replace(/^(\d{2})(\d)/, "($1) $2");
+                valor = valor.replace(/(\d{5})(\d)/, "$1-$2");
+            }
+
+            return valor;
+        }
+
+        function aplicarMascaraCEP(valor) {
+            valor = valor.replace(/\D/g, "");
+
+            valor = valor.replace(/^(\d{5})(\d)/, "$1-$2");
+
+            return valor;
+        }
+
+        function aplicarMascaraData(valor) {
+            valor = valor.replace(/\D/g, "");
+
+            valor = valor.replace(/^(\d{2})(\d)/, "$1/$2");
+            valor = valor.replace(/^(\d{2})\/(\d{2})(\d)/, "$1/$2/$3");
+
+            return valor;
+        }
+
+        function converterDataParaAPI(data) {
+            const partes = data.split("/");
+
+            if (partes.length !== 3) {
+                return null;
+            }
+
+            const dia = partes[0];
+            const mes = partes[1];
+            const ano = partes[2];
+
+            if (
+                dia.length !== 2 ||
+                mes.length !== 2 ||
+                ano.length !== 4
+            ) {
+                return null;
+            }
+
+            return `${ano}-${mes}-${dia}`;
+        }
+
+        document.getElementById("ipt_cpf_user").addEventListener("input", function () {
+            this.value = aplicarMascaraCPF(this.value);
+        });
+
+        document.getElementById("ipt_telefone_user").addEventListener("input", function () {
+            this.value = aplicarMascaraTelefone(this.value);
+        });
+
+        document.getElementById("ipt_dt_nasc_user").addEventListener("input", function () {
+            this.value = aplicarMascaraData(this.value);
+        });
+
+
         let cargos = [];
 
         function mostrarErro(mensagem) {
@@ -117,7 +198,7 @@
 
         function obterIdEmpresa() {
             const parametros = new URLSearchParams(window.location.search);
-            return parametros.get("idEmpresa");
+            return parametros.get("id_empresa");
         }
 
         document.getElementById("btn-cadastrar").addEventListener("click", function () {
@@ -125,7 +206,6 @@
 
             const idEmpresa = obterIdEmpresa();
             const nome = document.getElementById("ipt_nome_user").value.trim();
-            const cargo = document.getElementById("ipt_cargo_user").value;
             const dtNasc = document.getElementById("ipt_dt_nasc_user").value.trim();
             const telefone = document.getElementById("ipt_telefone_user").value.trim();
             const cpf = document.getElementById("ipt_cpf_user").value.trim();
@@ -133,7 +213,7 @@
             const senha = document.getElementById("ipt_senha_user").value;
             const confSenha = document.getElementById("ipt_conf_senha_user").value;
 
-            if (!Number.isInteger(idEmpresa) || idEmpresa <= 0) {
+            if (idEmpresa <= 0) {
                 mostrarErro("ID da empresa inválido.");
                 return;
             }
@@ -143,7 +223,7 @@
                 return;
             }
 
-            if (dtNascimento === "") {
+            if (dtNasc === "") {
                 mostrarErro("Informe a data de nascimento.");
                 return;
             }
@@ -173,8 +253,15 @@
                 return;
             }
 
-            if (senha !== confirmarSenha) {
+            if (senha !== confSenha) {
                 mostrarErro("As senhas não coincidem.");
+                return;
+            }
+
+            const dtNascAPI = converterDataParaAPI(dtNasc);
+
+            if (dtNascAPI === null) {
+                mostrarErro("Informe uma data de nascimento válida.");
                 return;
             }
 
@@ -183,12 +270,12 @@
                 emailServer: email,
                 senhaServer: senha,
                 cargoServer: 2,
-                cpfServer: cpf,
-                dtNascimentoServer: dtNasc,
-                telefoneServer: telefone
+                cpfServer: cpf.replace(/\D/g, ""),
+                dtNascimentoServer: dtNascAPI,
+                telefoneServer: telefone.replace(/\D/g, "")
             };
 
-            fetch(`/usuarios/${idEmpresa}`, {
+            fetch(`/usuario/${idEmpresa}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -216,7 +303,7 @@
                     erro.message || "Erro ao cadastrar gestor."
                 );
             });
-                
+
 
         });
 

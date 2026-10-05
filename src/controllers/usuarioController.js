@@ -90,7 +90,7 @@ function cadastrarUsuario(req, res) {
     } else if (telefone == undefined) {
         res.status(400).send("Telefone está undefined!");
     } else {
-        empresaModel.cadastrarUsuario(idEmpresa, nome, dt_nascimento, telefone, cpf, email, senha, fkCargo)
+        usuarioModel.cadastrarUsuario(idEmpresa, nome, dt_nascimento, telefone, cpf, email, senha, cargo)
             .then(function (resultado) {
                 res.status(200).json({
                     sucesso: true,
