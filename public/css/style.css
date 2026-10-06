@@ -139,11 +139,6 @@ html {
     transition: all ease-in-out 0.3s;
 }
 
-.container-lista li a:hover {
-    color: var(--cor-primaria);
-    transform: scale(1.1);
-}
-
 .container-lista .linha {
     display: flex;
     align-items: center;
@@ -200,21 +195,6 @@ html {
     color: white;
     width: 45%;
 }
-
-#btn-login:hover {
-    background: var(--cor-primaria);
-    color: white;
-
-    box-shadow:
-        0 4px 15px rgba(0, 0, 0, 0.12);
-}
-
-#btn-cad:hover {
-    background-color: white;
-    color: var(--cor-primaria);
-    box-shadow: 0px 0px 5px var(--cor-primaria);
-}
-
 
 /* Responsividade header */
 @media (max-width: 1440px) {
@@ -412,13 +392,6 @@ html {
 }
 
 
-.inicio-btn-conheca:hover {
-    background-image: url(./../assets/icons/seta-btn-roxa.svg);
-    color: var(--cor-primaria);
-    background-color: white;
-    box-shadow: 0px 0px 10px var(--cor-primaria);
-}
-
 .inicio-dados {
     align-self: center;
     background-color: white;
@@ -452,15 +425,6 @@ html {
     width: 100%;
     text-align: center;
     transition: all ease-in-out 0.3s;
-}
-
-.inicio-dados-infos:hover h1 {
-    color: white;
-}
-
-.inicio-dados-infos:hover {
-    background-color: var(--cor-primaria);
-    color: white;
 }
 
 /* Responsividade início */
@@ -524,9 +488,6 @@ html {
         font-size: 20px;
     }
 
-    .inicio-btn-conheca:hover {
-        background-image: none;
-    }
 }
 
 @media (max-width: 600px) {
@@ -587,11 +548,6 @@ html {
     transition: all ease-in-out 0.5s;
 }
 
-.titulo-componentes:hover {
-    padding: 1% 5%;
-    background-color: white;
-}
-
 .grid-componentes {
     width: 100%;
     max-width: 1400px;
@@ -612,10 +568,6 @@ html {
     box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
     gap: 18px;
     transition: all ease-in-out 0.3s;
-}
-
-.card-componente:hover {
-    transform: scale(1.05);
 }
 
 .icone-componente {
@@ -808,9 +760,6 @@ html {
         font-size: 16px;
         max-width: 70vw;
     }
-    .equipe-box:hover {
-        transform: scale(1.00);
-    }
 }
 
 @media (max-width: 600px) {
@@ -822,10 +771,6 @@ html {
         width: 50vw;
         height: 10vh;
     }
-    .equipe-box:hover {
-        transform: scale(1.00);
-    }
-    
 }
 
 
@@ -893,12 +838,6 @@ html {
     justify-content: center;
     flex-direction: column;
     transition: 0.2s;
-}
-
-.equipe-box:hover {
-    transform: scale(110%);
-    font-weight: bold;
-    color: #7c9bff;
 }
 
 .member-icon img {
@@ -1126,11 +1065,6 @@ html {
     justify-content: center;
     transition: transform 0.3s ease-in-out;
 }
-.solucao-box:hover {
-    transform: scale(1.1);
-
-}
-
 .solucao-box:nth-child(odd) {
     margin-left: -10%;
 }
@@ -1479,16 +1413,6 @@ html {
     color: white;
 }
 
-.faq-botao:hover {
-    transform: scale(1.05);
-    border-color: var(--cor-primaria);
-    color: var(--cor-primaria);
-}
-
-.faq-planos.aberto .faq-botao:hover {
-    color: white;
-}
-
 .faq-resposta {
     display: none;
     padding: 0 25px 25px 25px;
@@ -1595,10 +1519,6 @@ html {
     text-decoration: none;
 }
 
-.footer-coluna a:hover {
-    color: #a653cf;
-}
-
 /* Redes sociais */
 
 .redes-sociais {
@@ -1642,11 +1562,6 @@ html {
     text-decoration: none;
     margin-left: 25px;
 }
-
-.footer-final a:hover {
-    color: #a653cf;
-}
-
 
 /* RESPONSIVO */
 @media (max-width: 900px) {
@@ -1770,5 +1685,80 @@ html {
 @media (max-width: 900px) {
     .grid-impacto {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .container-lista li a:hover {
+        color: var(--cor-primaria);
+        transform: scale(1.1);
+    }
+
+    #btn-login:hover {
+        background: var(--cor-primaria);
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+    }
+
+    #btn-cad:hover {
+        background-color: white;
+        color: var(--cor-primaria);
+        box-shadow: 0px 0px 5px var(--cor-primaria);
+    }
+
+    .inicio-btn-conheca:hover {
+        background-image: url(./../assets/icons/seta-btn-roxa.svg);
+        color: var(--cor-primaria);
+        background-color: white;
+        box-shadow: 0px 0px 10px var(--cor-primaria);
+    }
+
+    .inicio-dados-infos:hover h1 {
+        color: white;
+    }
+
+    .inicio-dados-infos:hover {
+        background-color: var(--cor-primaria);
+        color: white;
+    }
+
+    .titulo-componentes:hover {
+        padding: 1% 5%;
+        background-color: white;
+    }
+
+    .card-componente:hover {
+        transform: scale(1.05);
+    }
+
+    .equipe-box:hover {
+        transform: scale(110%);
+        font-weight: bold;
+        color: #7c9bff;
+    }
+
+    .solucao-box:hover {
+        transform: scale(1.1);
+    }
+
+    .faq-botao:hover {
+        transform: scale(1.05);
+        border-color: var(--cor-primaria);
+        color: var(--cor-primaria);
+    }
+
+    .faq-planos.aberto .faq-botao:hover {
+        color: white;
+    }
+
+    .footer-coluna a:hover,
+    .footer-final a:hover {
+        color: #a653cf;
+    }
+
+    @media (max-width: 768px) {
+        .inicio-btn-conheca:hover {
+            background-image: none;
+        }
     }
 }
