@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Cliente | BioTrace</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="logo">
+                    <img src="../assets/icons/BioTrace (4).png" alt="Logo BioTrace">
+                </a>
+
+                <button class="sidebar-close" id="sidebarClose">
+                    &times;
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <span class="nav-title">
+                    Principal
+                </span>
+
+                <a href="#" class="nav-item active">
+                    <span class="nav-icon">⌂</span>
+                    <span>Dashboard</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-avatar">
+                    BS
+                </div>
+
+                <div class="user-info">
+                    <strong>Cliente BioTrace</strong>
+                    <span>cliente@biotrace.com</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="mobile-header">
+                <button class="menu-button" id="menuButton">
+                    ☰
+                </button>
+
+                <img src="./assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo">
+            </header>
+
+            <div class="page-content">
+                <h1>Dashboard</h1>
+                <p>Bem-vindo ao painel BioTrace.</p>
+            </div>
+        </main>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const menuButton = document.getElementById('menuButton');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function abrirSidebar() {
+            sidebar.classList.add('open');
+            sidebarOverlay.classList.add('active');
+        }
+
+
+        function fecharSidebar() {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+        }
+
+        menuButton.addEventListener('click', abrirSidebar);
+
+        sidebarClose.addEventListener('click', fecharSidebar);
+
+        sidebarOverlay.addEventListener('click', fecharSidebar);
+    </script>
+</body>
+</html>
