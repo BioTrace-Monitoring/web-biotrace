@@ -51,7 +51,7 @@ function cadastrarUsuario(idEmpresa, nomeUsuario, dt_nascimento, telefone, cpf, 
     // Insert que insere um novo usuário na tabela usuario
     var instrucaoSql = `
     INSERT INTO usuario (nome_usuario, dt_nasc_usuario, telefone_usuario, cpf_usuario, email_usuario, senha_usuario, fk_cargo, fk_empresa) VALUES
-    ('${nomeUsuario}', '${dt_nascimento}', '${telefone}', '${cpf}', '${email}', '${senha}', ${fkCargo}, ${idEmpresa});
+    ('${nomeUsuario}', '${dt_nascimento}', '${telefone}', '${cpf}', '${email}', SHA2('${senha}', 256), ${fkCargo}, ${idEmpresa});
     `;
 
     console.log("Executando a instrução SQL: \n" + instrucaoSql);

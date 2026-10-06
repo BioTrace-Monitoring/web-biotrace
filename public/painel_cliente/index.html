@@ -31,13 +31,13 @@
             </nav>
 
             <div class="sidebar-footer">
-                <div class="user-avatar">
+                <div id="usuario_avatar" class="user-avatar">
                     BS
                 </div>
 
                 <div class="user-info">
-                    <strong>Cliente BioTrace</strong>
-                    <span>cliente@biotrace.com</span>
+                    <strong id="nome_cliente">Cliente BioTrace</strong>
+                    <span id="email_cliente">cliente@biotrace.com</span>
                 </div>
             </div>
         </aside>
@@ -48,7 +48,7 @@
                     ☰
                 </button>
 
-                <img src="./assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo">
+                <img src="../assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo">
             </header>
 
             <div class="page-content">
@@ -61,6 +61,16 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <script>
+        let idUsuario = sessionStorage.getItem('ID_USUARIO');
+        let nomeUsuario = sessionStorage.getItem('NOME_USUARIO');
+        let emailUsuario = sessionStorage.getItem('EMAIL_USUARIO');
+        let cargoUsuario = sessionStorage.getItem('CARGO_USUARIO');
+
+        document.getElementById('nome_cliente').textContent = nomeUsuario;
+        document.getElementById('email_cliente').textContent = emailUsuario;
+        let avatar_default = nomeUsuario[0] + nomeUsuario[nomeUsuario.indexOf(' ') + 1];
+        document.getElementById('usuario_avatar').textContent = avatar_default.toUpperCase();
+
         const sidebar = document.getElementById('sidebar');
         const menuButton = document.getElementById('menuButton');
         const sidebarClose = document.getElementById('sidebarClose');
