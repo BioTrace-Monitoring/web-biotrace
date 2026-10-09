@@ -181,6 +181,7 @@
                     sessionStorage.ID_USUARIO = json.id;
                     sessionStorage.FK_EMPRESA = json.fk_empresa;
                     sessionStorage.CARGO_USUARIO = json.cargo;
+                    localStorage.setItem('token', json.token);
 
                     console.log("Sessão salva:", sessionStorage);
 

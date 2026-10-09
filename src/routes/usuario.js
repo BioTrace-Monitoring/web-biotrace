@@ -9,6 +9,8 @@ var router = express.Router();
 // Importando o arquivo usuarioController
 var usuarioController = require("../controllers/usuarioController");
 
+const middleware = require("../middlewares/authMiddleware");
+
 
 router.get("/cargos", function (req, res) {
     usuarioController.listarCargos(req, res);
@@ -18,7 +20,7 @@ router.post("/autenticar", function (req, res) {
     usuarioController.autenticarUsuario(req, res);
 });
 
-router.post("/:idEmpresa", function (req, res) {
+router.post("/:idEmpresa", middleware.verificarToken, middleware.verificarCargo(["BioTrace", "Administrador"]), function (req, res) {
     usuarioController.cadastrarUsuario(req, res);
 })
 

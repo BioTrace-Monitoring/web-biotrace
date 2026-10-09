@@ -1,5 +1,6 @@
 // Importando o usuarioModel
-var usuarioModel = require("../models/usuarioModel");
+const usuarioModel = require("../models/usuarioModel");
+const jwt = require('jsonwebtoken');
 
 
 // Função que autentica um usuário
@@ -23,8 +24,13 @@ function autenticarUsuario(req, res) {
                     if (resultadoAutenticar.length == 1) {
                         console.log(resultadoAutenticar);
 
-                        // Retorna os dados para o front-end no formato JSON
-                        res.json({
+                        const token = jwt.sign(
+                            {id: resultadoAutenticar[0].id_usuario, email: resultadoAutenticar[0].email, nome: resultadoAutenticar[0].nome, empresa: resultadoAutenticar[0].empresa, cargo: resultadoAutenticar[0].cargo, fk_empresa: resultadoAutenticar[0].fk_empresa},
+                            process.env.JWT_SECRET,
+                            {expiresIn: process.env.JWT_EXPIRES_IN}
+                        );
+
+                        res.json({token,
                             id: resultadoAutenticar[0].id_usuario,
                             email: resultadoAutenticar[0].email,
                             nome: resultadoAutenticar[0].nome,
