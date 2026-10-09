@@ -54,7 +54,7 @@ function cadastrarUsuario(idEmpresa, nomeUsuario, dt_nascimento, telefone, cpf, 
     // É usado ? no lugar da interpolação para proteger de SQL Injection
     var instrucaoSql = `
     INSERT INTO usuario (nome_usuario, dt_nasc_usuario, telefone_usuario, cpf_usuario, email_usuario, senha_usuario, fk_cargo, fk_empresa) VALUES
-    (?, ?, ?, ?, ?, SHA2(?, 256), ? ?);
+    (?, ?, ?, ?, ?, SHA2(?, 256), ?, ?);
     `;
 
     console.log("Executando a instrução SQL: \n" + instrucaoSql);

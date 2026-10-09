@@ -10,7 +10,7 @@
 </head>
 
 <body>
-        <header class="cabecalho">
+    <header class="cabecalho">
         <div class="cabecalho-marca">
             <img src="../assets/icons/BioTrace (4).png" alt="Logo BioTrace" class="logo-biotrace">
 
@@ -114,7 +114,10 @@
 
 
         function listarEmpresas() {
-            fetch("/empresa")
+            fetch("/empresa", {
+                method: "GET",
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            })
                 .then(function (resposta) {
                     if (!resposta.ok) {
                         throw new Error("Erro ao buscar empresas: " + resposta.status);
@@ -229,21 +232,23 @@
 
             botao.disabled = true;
 
-            fetch("/empresa/" + empresa.id_empresa, { method: "DELETE" })
-                .then(function (resposta) {
-                    if (!resposta.ok) {
-                        throw new Error("Erro ao excluir empresa: " + resposta.status);
-                    }
-                    fecharModalExcluir();
+            fetch("/empresa/" + empresa.id_empresa, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json", 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            }).then(function (resposta) {
+                if (!resposta.ok) {
+                    throw new Error("Erro ao excluir empresa: " + resposta.status);
+                }
+                fecharModalExcluir();
 
-                    var linha = document.querySelector('#tabela-empresas tr[data-id="' + empresa.id_empresa + '"]');
-                    if (linha) {
-                        linha.classList.add("removendo");
-                        setTimeout(listarEmpresas, 300);
-                    } else {
-                        listarEmpresas();
-                    }
-                })
+                var linha = document.querySelector('#tabela-empresas tr[data-id="' + empresa.id_empresa + '"]');
+                if (linha) {
+                    linha.classList.add("removendo");
+                    setTimeout(listarEmpresas, 300);
+                } else {
+                    listarEmpresas();
+                }
+            })
                 .catch(function (erro) {
                     console.log(erro);
                     alert("Não foi possível excluir a empresa.");

@@ -130,7 +130,7 @@
         })
 
         IMask(document.getElementById("input-telefone"),{
-            mask: "(00)00000-0000"
+            mask: "(00) 00000-0000"
         });
     </script>
     <script>
@@ -213,7 +213,7 @@
 
             fetch("/empresa", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", 'Authorization': `Bearer ${localStorage.getItem('token')}` },
                 body: JSON.stringify({
                     razaoSocialServer: document.getElementById("input-razao-social").value.trim(),
                     cnpjServer: document.getElementById("input-cnpj").value.replace(/\D/g, ""),

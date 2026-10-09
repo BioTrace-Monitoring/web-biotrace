@@ -17,6 +17,19 @@ function verificarToken(req, res, next) {
     })
 }
 
+function verificarCargo(cargosPermitidos) {
+    return function (req, res, next) {
+        const cargoUsuario = req.usuario.cargo;
+
+        if (!cargosPermitidos.includes(cargoUsuario)) {
+            return res.status(403).json({ erro: "Você não tem permissão para realizar essa ação"})
+        }
+        
+        next();
+    }
+}
+
 module.exports = {
-    verificarToken
+    verificarToken,
+    verificarCargo
 };
