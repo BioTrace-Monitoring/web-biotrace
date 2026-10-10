@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BioTrace - Recuperar senha</title>
+    <link rel="icon" href="assets/icons/BioTrace (4).png" type="image/png">
     <link rel="stylesheet" href="css/style_login.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -99,5 +100,22 @@
         </div>
     </footer>
 </body>
+
+<script>
+    async function recuperarSenha() {
+        let emailVar = document.getElementById('ipt_email_recuperacao').value;
+
+        const resp = await fetch("/usuario/recuperarSenha", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email: emailVar
+            }),
+        });
+
+        const data = await resp.json();
+        console.log(data.mensagem);
+    }
+</script>
 
 </html>

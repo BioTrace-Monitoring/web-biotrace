@@ -63,11 +63,36 @@ function cadastrarUsuario(idEmpresa, nomeUsuario, dt_nascimento, telefone, cpf, 
     return database.executar(instrucaoSql, [nomeUsuario, dt_nascimento, telefone, cpf, email, senha, fkCargo, idEmpresa]);
 }
 
+function buscarEmail(email) {
+    console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function buscarEmail():", email);
+
+    var instrucaoSql = `
+        SELECT id_usuario, nome_usuario FROM usuario WHERE email = ?;
+    `;
+
+    console.log("Exeutando a instrução SQL: \n" + instrucaoSql);
+
+    return database.executar(instrucaoSql, [email]);
+}
+
+function atualizarSenha(id, novaSenha) {
+    console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function atualizarSenha():", id, novaSenha);
+
+    var instrucaoSql = `
+        UPDATE usuario SET senha_usuario = SHA2(?, 256) WHERE id_usuario = ?;
+    `;
+
+    console.log("Exeutando a instrução SQL: \n" + instrucaoSql);
+
+    return database.executar(instrucaoSql, [id, novaSenha]);
+}
 
 // Exportando as funções do model
 // Outros arquivos podem usar essas funções
 module.exports = {
     autenticarUsuario,
     cadastrarUsuario,
-    listarCargos
+    listarCargos,
+    buscarEmail,
+    atualizarSenha
 }

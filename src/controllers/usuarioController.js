@@ -1,6 +1,7 @@
 // Importando o usuarioModel
 const usuarioModel = require("../models/usuarioModel");
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 
 
 // Função que autentica um usuário
@@ -116,8 +117,15 @@ function cadastrarUsuario(req, res) {
     }
 }
 
+async function esqueciSenha(req, res) {
+    const email = req.body.email;
+
+
+}
+
 module.exports = {
     autenticarUsuario,
     cadastrarUsuario,
-    listarCargos
+    listarCargos,
+    esqueciSenha
 }

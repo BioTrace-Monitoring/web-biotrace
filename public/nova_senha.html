@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioTrace - Nova senha</title>
+    <link rel="icon" href="assets/icons/BioTrace (4).png" type="image/png">
+    <link rel="stylesheet" href="css/style_login.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="pagina-recuperacao">
+    <header class="header">
+        <div class="navbar">
+            <a class="container-img" href="index.html" aria-label="BioTrace - Início"></a>
+
+            <ul class="container-lista">
+                <li><a href="index.html#1">Início</a></li>
+                <li class="linha"></li>
+                <li><a href="index.html#2">Sobre nós</a></li>
+                <li class="linha"></li>
+                <li><a href="index.html#3">Solução</a></li>
+                <li class="linha"></li>
+                <li><a href="index.html#4">Faq</a></li>
+                <li class="linha"></li>
+                <li><a href="index.html#5">Contato</a></li>
+            </ul>
+
+            <div class="container-btn">
+                <a href="login.html" id="btn-login">Login</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="area-login">
+        <section class="cartao-login" aria-labelledby="titulo-nova-senha">
+            <div class="logo">
+                <img src="assets/icons/BioTrace (5).png" alt="BioTrace">
+            </div>
+
+            <h1 id="titulo-nova-senha">Crie uma nova senha</h1>
+            <p class="subtitulo">Escolha uma senha segura para voltar a acessar sua conta.</p>
+
+            <form id="form-nova-senha" onsubmit="return validarNovaSenha(event)">
+                <label class="label" for="ipt_nova_senha">Nova senha</label>
+                <div class="campo">
+                    <span class="icone" aria-hidden="true"></span>
+                    <input type="password" id="ipt_nova_senha" name="novaSenha" placeholder="Mínimo de 8 caracteres"
+                        autocomplete="new-password" minlength="8" required>
+                    <span class="olho" role="button" tabindex="0" aria-label="Mostrar nova senha"
+                        onclick="alternarVisibilidade('ipt_nova_senha', this)"
+                        onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); alternarVisibilidade('ipt_nova_senha', this); }"></span>
+                </div>
+
+                <label class="label" for="ipt_confirmar_senha">Confirmar nova senha</label>
+                <div class="campo">
+                    <span class="icone" aria-hidden="true"></span>
+                    <input type="password" id="ipt_confirmar_senha" name="confirmarSenha"
+                        placeholder="Digite a senha novamente" autocomplete="new-password" minlength="8" required>
+                    <span class="olho" role="button" tabindex="0" aria-label="Mostrar confirmação da senha"
+                        onclick="alternarVisibilidade('ipt_confirmar_senha', this)"
+                        onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); alternarVisibilidade('ipt_confirmar_senha', this); }"></span>
+                </div>
+
+                <p class="ajuda-email">Use pelo menos 8 caracteres. Confirme a senha para evitar erros.</p>
+                <button class="btnRec" type="submit">Salvar nova senha</button>
+                <p class="mensagem-recuperacao" id="mensagem-nova-senha" role="status" aria-live="polite" hidden></p>
+            </form>
+
+            <a class="esqueci-senha" href="login.html"><span aria-hidden="true">←</span> Voltar ao login</a>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-conteudo">
+            <div class="footer-marca">
+                <h2>BioTrace</h2>
+                <p>Tecnologia inteligente para cada leito.</p>
+            </div>
+
+            <div class="footer-coluna">
+                <h3>NAVEGAÇÃO</h3>
+                <a href="index.html">Home</a>
+                <a href="index.html#2">Sobre</a>
+                <a href="#">Serviços</a>
+                <a href="#">Portfólio</a>
+                <a href="#">Blog</a>
+            </div>
+
+            <div class="footer-coluna">
+                <h3>CONTATO</h3>
+                <p>contato.biotrace@hotmail.com</p>
+                <p>+55 11 9999-0000</p>
+                <p>Av. Paulista 1000, São Paulo</p>
+            </div>
+
+            <div class="footer-coluna">
+                <h3>REDES SOCIAIS</h3>
+                <div class="redes-sociais">
+                    <a href="#" title="Instagram">IG</a>
+                    <a href="#" title="LinkedIn">IN</a>
+                    <a href="#" title="X">X</a>
+                    <a href="https://github.com/BioTrace-Monitoring" target="_blank" rel="noopener noreferrer"
+                        title="GitHub">GH</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-final">
+            <p>© 2026 Biotrace. Todos os direitos reservados.</p>
+            <div>
+                <a href="#">Privacidade</a>
+                <a href="#">Termos</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function alternarVisibilidade(idCampo, controle) {
+            var campo = document.getElementById(idCampo);
+            var mostrando = campo.type === 'text';
+
+            campo.type = mostrando ? 'password' : 'text';
+            controle.classList.toggle('visivel', !mostrando);
+            controle.setAttribute('aria-label', mostrando ? 'Mostrar senha' : 'Ocultar senha');
+        }
+
+        function validarNovaSenha(event) {
+            event.preventDefault();
+
+            var senha = document.getElementById('ipt_nova_senha').value;
+            var confirmacao = document.getElementById('ipt_confirmar_senha').value;
+            var mensagem = document.getElementById('mensagem-nova-senha');
+
+            mensagem.hidden = false;
+            mensagem.classList.remove('erro');
+
+            if (senha !== confirmacao) {
+                mensagem.textContent = 'As senhas não coincidem. Confira os campos e tente novamente.';
+                mensagem.classList.add('erro');
+                return false;
+            }
+
+            mensagem.textContent = 'As senhas conferem. A atualização ainda precisa ser conectada ao serviço de redefinição.';
+            return false;
+        }
+    </script>
+</body>
+
+</html>
