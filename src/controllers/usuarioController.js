@@ -1,6 +1,9 @@
 // Importando o usuarioModel
 const usuarioModel = require("../models/usuarioModel");
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+const {mandarEmail} = require('../config/mailer');
+const {gerarTokenRecSenha, validarTokenRecSenha} = require('../middlewares/authMiddleware');
 
 
 // Função que autentica um usuário
@@ -116,8 +119,53 @@ function cadastrarUsuario(req, res) {
     }
 }
 
+async function esqueciSenha(req, res) {
+    const email = req.body.email;
+
+    const usuario = await usuarioModel.buscarEmail(email);
+
+    if (!usuario) {
+        return res.JSON({ mensagem: "Email não existe" });
+    }    
+
+    const token = gerarTokenRecSenha(usuario[0].id_usuario);
+
+    const link = `${process.env.APP_HOST}:${process.env.APP_PORT}/nova_senha.html?token=${token}`;
+
+    const emailMandar = await mandarEmail();
+    const info = await emailMandar.sendMail({
+        from: '"BioTrace" <no-reply@biotrace.com>',
+        to: email,
+        subject: 'Recuperação de senha - BioTrace',
+        html: `<p>Olá ${usuario.nome_usuario},</p>
+               <p>Clique no link abaixo para redefinir sua senha (válido por 15 min):</p>
+               <a href="${link}">${link}</a>`
+    });
+
+    console.log('Preview do email: ', nodemailer.getTestMessageUrl(info));
+    
+    res.json({ mensagem: 'Se o email existir enviaremos instruções' })
+}
+
+async function resetarSenha(req, res) {
+    const {token, novaSenha} = req.body;
+    let payload;
+
+    try {
+        payload = validarTokenRecSenha(token);
+    } catch (err) {
+        return res.status(400).json({ erro: 'Token inválido ou expirado' });
+    }
+
+    await usuarioModel.atualizarSenha(payload.id, novaSenha);
+
+    res.json({ mensagem: 'Senha atualizada com sucesso' })
+};
+
 module.exports = {
     autenticarUsuario,
     cadastrarUsuario,
-    listarCargos
+    listarCargos,
+    esqueciSenha,
+    resetarSenha
 }

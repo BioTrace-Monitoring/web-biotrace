@@ -29,7 +29,27 @@ function verificarCargo(cargosPermitidos) {
     }
 }
 
+// Funções referentes a recuperação de senha ->
+
+function gerarTokenRecSenha(usuarioId) {    
+    return jwt.sign(
+        { id: usuarioId, tipo: "recSenha" },
+        process.env.JWT_SECRET,
+        { expiresIn: "15m" }
+    );
+}
+
+function validarTokenRecSenha(token) {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    if (payload.tipo != 'recSenha') {
+        throw new Error("Token inválido para essa operação");
+    }
+    return payload;
+}
+
 module.exports = {
     verificarToken,
-    verificarCargo
+    verificarCargo,
+    gerarTokenRecSenha,
+    validarTokenRecSenha
 };

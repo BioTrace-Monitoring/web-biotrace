@@ -371,6 +371,18 @@ label {
     font-size: 16px;
 }
 
+.mensagem-recuperacao {
+    margin-top: 14px;
+    color: #267548;
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: left;
+}
+
+.mensagem-recuperacao.erro {
+    color: #b42318;
+}
+
 .pagina-recuperacao .esqueci-senha {
     display: flex;
     align-items: center;
