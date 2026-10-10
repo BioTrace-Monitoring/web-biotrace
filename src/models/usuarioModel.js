@@ -67,7 +67,7 @@ function buscarEmail(email) {
     console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function buscarEmail():", email);
 
     var instrucaoSql = `
-        SELECT id_usuario, nome_usuario FROM usuario WHERE email = ?;
+        SELECT id_usuario, nome_usuario FROM usuario WHERE email_usuario = ?;
     `;
 
     console.log("Exeutando a instrução SQL: \n" + instrucaoSql);
@@ -84,7 +84,7 @@ function atualizarSenha(id, novaSenha) {
 
     console.log("Exeutando a instrução SQL: \n" + instrucaoSql);
 
-    return database.executar(instrucaoSql, [id, novaSenha]);
+    return database.executar(instrucaoSql, [novaSenha, id]);
 }
 
 // Exportando as funções do model

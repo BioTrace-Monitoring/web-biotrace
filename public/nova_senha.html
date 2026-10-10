@@ -117,6 +117,9 @@
     </footer>
 
     <script>
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+
         function alternarVisibilidade(idCampo, controle) {
             var campo = document.getElementById(idCampo);
             var mostrando = campo.type === 'text';
@@ -126,24 +129,29 @@
             controle.setAttribute('aria-label', mostrando ? 'Mostrar senha' : 'Ocultar senha');
         }
 
-        function validarNovaSenha(event) {
+        async function validarNovaSenha(event) {
             event.preventDefault();
 
-            var senha = document.getElementById('ipt_nova_senha').value;
+            var novaSenha = document.getElementById('ipt_nova_senha').value;
             var confirmacao = document.getElementById('ipt_confirmar_senha').value;
             var mensagem = document.getElementById('mensagem-nova-senha');
 
             mensagem.hidden = false;
             mensagem.classList.remove('erro');
 
-            if (senha !== confirmacao) {
+            if (novaSenha !== confirmacao) {
                 mensagem.textContent = 'As senhas não coincidem. Confira os campos e tente novamente.';
                 mensagem.classList.add('erro');
                 return false;
             }
 
-            mensagem.textContent = 'As senhas conferem. A atualização ainda precisa ser conectada ao serviço de redefinição.';
-            return false;
+            const resp = await fetch('/usuario/recSenha', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({token, novaSenha})
+            });
+            const data = await resp.json();
+            console.log(data.mensagem);
         }
     </script>
 </body>

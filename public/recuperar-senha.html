@@ -105,7 +105,7 @@
     async function recuperarSenha() {
         let emailVar = document.getElementById('ipt_email_recuperacao').value;
 
-        const resp = await fetch("/usuario/recuperarSenha", {
+        const resp = await fetch("/usuario/enviarEmail", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

@@ -20,12 +20,16 @@ router.post("/autenticar", function (req, res) {
     usuarioController.autenticarUsuario(req, res);
 });
 
-router.post("/:idEmpresa", middleware.verificarToken, middleware.verificarCargo(["BioTrace", "Administrador"]), function (req, res) {
-    usuarioController.cadastrarUsuario(req, res);
+router.post("/enviarEmail", function (req, res) {
+    usuarioController.esqueciSenha(req, res);
 });
 
-router.post("/recuperarSenha", function (req, res) {
-    usuarioController.esqueciSenha(req, res);
+router.post("/recSenha", function (req, res) {
+    usuarioController.resetarSenha(req, res);
+});
+
+router.post("/:idEmpresa", middleware.verificarToken, middleware.verificarCargo(["BioTrace", "Administrador"]), function (req, res) {
+    usuarioController.cadastrarUsuario(req, res);
 });
 
 // Exportando o router
