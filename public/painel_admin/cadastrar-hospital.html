@@ -46,7 +46,6 @@
                 </div>
             </div> <button class="btnRec" type="button" onclick="recuperarSenha()"> Cadastrar hospital </button>
             <p id="mensagem-recuperacao" role="status" aria-live="polite" hidden></p>
-            <!-- <p class="texto-login"> Já tem uma conta? <a href="login.html">Fazer login</a> </p> -->
         </section>
     </main>
 
@@ -94,5 +93,16 @@
         </div>
     </footer>
 </body>
+<script src="https://unpkg.com/imask"></script>
+
+<script>
+    IMask(document.getElementById("ipt_cnpj_hospital"), {
+        mask: "00.000.000/0000-00"
+    });
+
+    IMask(document.getElementById("ipt_cep_hospital"), {
+        mask: "00000-000"
+    })
+</script>
 
 </html>
