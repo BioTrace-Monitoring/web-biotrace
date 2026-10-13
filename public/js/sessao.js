@@ -1,34 +1,50 @@
-function validarSessao()
-{
-    console.log("SESSION INICIO:", sessionStorage);
+function obterUsuarioLogado() {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
 
-    // Busca dados do usuário logado salvos no sessionStorage
-    var email = sessionStorage.EMAIL_USUARIO;
-    var nome = sessionStorage.NOME_USUARIO;
+    try {
+        const payloadBase64 = token.split('.')[1];
+        const payloadJson = atob(payloadBase64);
+        const payload = JSON.parse(payloadJson);
 
-    // Elementos do header onde o nome e email do user são exibidos
-    var b_usuario = document.getElementById("b_usuario");
-    var b_usuario_cliente = document.getElementById("b_usuario_cliente");
-    //var b_email = document.getElementById("b_email");
+        // "exp" vem em segundos (padrão JWT), Date.now() retorna milissegundos
+        const expirou = payload.exp && payload.exp * 1000 < Date.now();
 
-    // Se houver sessão ativa, exibe os dados do usuário na tela
-    if (email != null && nome != null)
-    {
-        b_usuario.innerHTML = nome;
-        b_usuario_cliente.innerHTML += nome + "!";
-        //b_email.innerHTML = email;
-    }
-    
-    // Sem sessão ativa: redireciona para o login
-    else
-    {
-        window.location = "login.html";
+        if (expirou) {
+            localStorage.removeItem('token');
+            return null;
+        }
+
+        return payload;
+    } catch (erro) {
+        // Token corrompido ou mal formado
+        localStorage.removeItem('token');
+        return null;
     }
 }
 
-function limparSessao()
-{
-    // Apaga todos os dados da sessão e redireciona para a página inicial
-    sessionStorage.clear();
-    window.location = "index.html";
+function exigirCargo(cargosPermitidos) {
+    const usuario = obterUsuarioLogado();
+
+    if (!usuario) {
+        window.location.href = "../login.html";
+        return null;
+    }
+
+    if (!cargosPermitidos.includes(usuario.cargo)) {
+        window.location.href = "../index.html";
+        return null;
+    }
+
+    return usuario;
+}
+
+function redirecionarUsuarioLogado() {
+    const usuario = obterUsuarioLogado();
+
+    if (usuario.cargo == "BioTrace") {
+        window.location.href = "./painel_admin/index.html";
+    } else {
+        window.location.href = "./painel_cliente/index.html";
+    }
 }

@@ -7,11 +7,12 @@
     <title>BioTrace Admin | Cadastrar Empresa</title>
     <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
     <link rel="stylesheet" href="./css/styles.css">
-
+    <script src="../js/sessao.js"></script>
+    <script>exigirCargo(["BioTrace"]);</script>
 </head>
 
 <body>
-        <header class="cabecalho">
+    <header class="cabecalho">
         <div class="cabecalho-marca">
             <img src="../assets/icons/BioTrace (4).png" alt="Logo BioTrace" class="logo-biotrace">
 
@@ -129,7 +130,7 @@
             mask: "00000-000"
         })
 
-        IMask(document.getElementById("input-telefone"),{
+        IMask(document.getElementById("input-telefone"), {
             mask: "(00) 00000-0000"
         });
     </script>
