@@ -4,7 +4,9 @@ function obterUsuarioLogado() {
 
     try {
         const payloadBase64 = token.split('.')[1];
-        const payloadJson = atob(payloadBase64);
+        const payloadJson = decodeURIComponent(atob(payloadBase64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
         const payload = JSON.parse(payloadJson);
 
         // "exp" vem em segundos (padrão JWT), Date.now() retorna milissegundos
