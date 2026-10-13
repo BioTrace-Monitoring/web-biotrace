@@ -38,3 +38,13 @@ function exigirCargo(cargosPermitidos) {
 
     return usuario;
 }
+
+function redirecionarUsuarioLogado() {
+    const usuario = obterUsuarioLogado();
+
+    if (usuario.cargo == "BioTrace") {
+        window.location.href = "./painel_admin/index.html";
+    } else {
+        window.location.href = "./painel_cliente/index.html";
+    }
+}
