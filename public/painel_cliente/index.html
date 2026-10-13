@@ -64,10 +64,10 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <script>
-        let idUsuario = sessionStorage.getItem('ID_USUARIO');
-        let nomeUsuario = sessionStorage.getItem('NOME_USUARIO');
-        let emailUsuario = sessionStorage.getItem('EMAIL_USUARIO');
-        let cargoUsuario = sessionStorage.getItem('CARGO_USUARIO');
+        let idUsuario = localStorage.getItem('ID_USUARIO');
+        let nomeUsuario = localStorage.getItem('NOME_USUARIO');
+        let emailUsuario = localStorage.getItem('EMAIL_USUARIO');
+        let cargoUsuario = localStorage.getItem('CARGO_USUARIO');
 
         document.getElementById('nome_cliente').textContent = nomeUsuario;
         document.getElementById('email_cliente').textContent = emailUsuario;
