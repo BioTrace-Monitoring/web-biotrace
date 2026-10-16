@@ -23,6 +23,7 @@ var app = express();
 // Cada router agrupa os endpoints de um módulo específico da aplicação
 var usuarioRouter = require("./src/routes/usuario");
 var empresaRouter = require("./src/routes/empresa");
+var hospitalRouter = require("./src/routes/hospital");
 
 // Habilita CORS para permitir requisições de outros domínios/portas
 app.use(cors());
@@ -39,6 +40,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // Cada rota é montada em um prefixo de URL correspondente ao seu módulo
 app.use("/usuario", usuarioRouter);
 app.use("/empresa", empresaRouter);
+app.use("/hospital", hospitalRouter)
 
 // Coloca o servidor para escutar na porta definida nas variáveis de ambiente
 app.listen(PORTA_APP, function ()
