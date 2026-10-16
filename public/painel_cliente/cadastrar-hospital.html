@@ -45,7 +45,7 @@
                             placeholder="Ex.: 1000"> </div>
                     <p class="ajuda-email"> Número do endereço. Até 10 caracteres. </p>
                 </div>
-            </div> <button class="btnRec" type="button" onclick="recuperarSenha()"> Cadastrar hospital </button>
+            </div> <button class="btnRec" type="button" onclick="cadastrarHospital()"> Cadastrar hospital </button>
             <p id="mensagem-recuperacao" role="status" aria-live="polite" hidden></p>
         </section>
     </main>
@@ -104,6 +104,141 @@
     IMask(document.getElementById("ipt_cep_hospital"), {
         mask: "00000-000"
     })
+</script>
+<script>
+    function buscarCep() {
+        var cep = document
+            .getElementById("ipt_cep_hospital")
+            .value.replace(/\D/g, "");
+
+        var mensagem = document.getElementById("mensagem-recuperacao");
+
+        mensagem.hidden = true;
+        mensagem.textContent = "";
+
+        if (cep.length === 0) {
+            return;
+        }
+
+        if (cep.length !== 8) {
+            return;
+        }
+
+        fetch("https://viacep.com.br/ws/" + cep + "/json/")
+            .then(function (resposta) {
+                if (!resposta.ok) {
+                    throw new Error("Erro ao consultar CEP.");
+                }
+
+                return resposta.json();
+            })
+            .then(function (dados) {
+                var cepAtual = document
+                    .getElementById("ipt_cep_hospital")
+                    .value.replace(/\D/g, "");
+
+                if (cepAtual !== cep) {
+                    return;
+                }
+
+                mensagem.hidden = false;
+
+                if (dados.erro) {
+                    mensagem.textContent = "CEP não encontrado.";
+                    return;
+                }
+
+                mensagem.textContent = "CEP válido.";
+            })
+            .catch(function (erro) {
+                console.log(erro);
+
+                mensagem.hidden = false;
+                mensagem.textContent =
+                    "Não foi possível consultar o CEP. Tente novamente.";
+            });
+    }
+
+    function validarFormulario() {
+        var nome = document.getElementById("ipt_nome_hospital").value;
+        var cnpj = document.getElementById("ipt_cnpj_hospital").value.replace(/\D/g, "");
+        var cep = document.getElementById("ipt_cep_hospital").value.replace(/\D/g, "");
+        var numero = document.getElementById("ipt_numero_hospital").value;
+
+        if (nome === "") {
+            return "Informe o nome do hospital.";
+        }
+
+        if (!/^\d{14}$/.test(cnpj)) {
+            return "O CNPJ deve ter 14 dígitos, somente números.";
+        }
+
+        if (cep !== "" && !/^\d{8}$/.test(cep)) {
+            return "O CEP deve ter 8 dígitos, somente números.";
+        }
+
+        if (numero.length > 10) {
+            return "O número deve ter até 10 caracteres.";
+        }
+
+        return "";
+    }
+
+
+    function cadastrarHospital() {
+        var mensagem = validarFormulario();
+        var elementoMensagem = document.getElementById("mensagem-recuperacao");
+
+        elementoMensagem.textContent = "";
+        elementoMensagem.hidden = true;
+
+        if (mensagem !== "") {
+            elementoMensagem.textContent = mensagem;
+            elementoMensagem.hidden = false;
+            return;
+        }
+
+        fetch("/hospital", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({
+                nomeServer: document.getElementById("ipt_nome_hospital").value.trim(),
+                cnpjServer: document.getElementById("ipt_cnpj_hospital").value.replace(/\D/g, ""),
+                cepServer: document.getElementById("ipt_cep_hospital").value.replace(/\D/g, ""),
+                numeroServer: document.getElementById("ipt_numero_hospital").value.trim()
+            })
+        })
+            .then(function (resposta) {
+                return resposta.json().then(function (dados) {
+                    if (resposta.ok) {
+                        elementoMensagem.textContent =
+                            dados.mensagem || "Hospital cadastrado com sucesso.";
+                        elementoMensagem.hidden = false;
+
+                        return;
+                    }
+
+                    elementoMensagem.textContent =
+                        dados.mensagem || "Não foi possível cadastrar o hospital.";
+                    elementoMensagem.hidden = false;
+                });
+            })
+            .catch(function (erro) {
+                console.log(erro);
+
+                elementoMensagem.textContent =
+                    "Não foi possível cadastrar o hospital. Tente novamente.";
+                elementoMensagem.hidden = false;
+            });
+    }
+
+
+
+    document.getElementById("ipt_cep_hospital").addEventListener("input", buscarCep);
+
 </script>
 
 </html>

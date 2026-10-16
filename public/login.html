@@ -191,7 +191,9 @@
 
                     if (Number(json.fk_empresa) === 1) {
                         destino = "painel_admin/index.html";
-                    } else {
+                    } else if(Number(json.cargo === "Administrador")){
+                        destino = "painel_cliente/cadastrar-hospital.html";
+                    }else{
                         destino = "painel_cliente/index.html";
                     }
 
