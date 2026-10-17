@@ -1762,3 +1762,76 @@ html {
         }
     }
 }
+/* Cards da seção Solução */
+.solucao-container {
+    padding: 5% 2%;
+}
+
+.solucao-content {
+    width: 95%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    padding: 0;
+}
+
+.solucao-box,
+.solucao-box:nth-child(odd),
+.solucao-box:nth-child(even) {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    margin-left: 0;
+    aspect-ratio: 1.75 / 1; /* proporção do SVG - ajuste se precisar */
+    background-size: 100% 100%;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.solucao-box-texto,
+.svg6 .solucao-box-texto {
+    width: 52%;
+    padding: 0 0 0 9%;
+    margin: 0;
+    gap: 14px;
+}
+
+.solucao-box-texto .box-titulo {
+    font-size: clamp(18px, 3vw, 40px);
+}
+
+.solucao-box-texto .box-texto {
+    font-size: clamp(13px, 1.8vw, 24px);
+    line-height: 1.5;
+}
+
+.solucao-box,
+.solucao-box:nth-child(odd),
+.solucao-box:nth-child(even) {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    aspect-ratio: 1.75 / 1;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    position: relative;
+}
+
+.solucao-box .solucao-box-texto,
+.svg6 .solucao-box-texto {
+    width: 52% !important;
+    margin: 0 !important;
+    padding: 0 0 0 11% !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+}
