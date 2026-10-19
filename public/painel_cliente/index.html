@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Cliente | BioTrace</title>
+    <title>Visão Geral | BioTrace</title>
     <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
     <link rel="stylesheet" href="./css/style.css">
     <script src="../js/sessao.js"></script>
@@ -13,19 +13,15 @@
     <div class="app">
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <a href="#" class="logo">
-                    <img src="../assets/icons/BioTrace (4).png" alt="Logo BioTrace">
+                <a href="index.html" class="logo">
+                    <img src="../assets/icons/BioTrace (4).png" alt="BioTrace Logo">
                 </a>
-
-                <button class="sidebar-close" id="sidebarClose">
-                    &times;
-                </button>
+                <button class="sidebar-close" id="sidebarClose">&times;</button>
             </div>
 
             <nav class="sidebar-nav">
-                <span class="nav-title">
-                    Principal
-                </span>
+                <span class="nav-title">Principal</span>
+                <a href="index.html" class="nav-item active"><span class="nav-icon">📊</span> Visão Geral</a>
 
                 <a href="#" class="nav-item active">
                     <span class="nav-icon">⌂</span>
@@ -38,33 +34,33 @@
             </nav>
 
             <div class="sidebar-footer">
-                <div id="usuario_avatar" class="user-avatar">
-                    BS
-                </div>
-
+                <div id="usuario_avatar" class="usuario-avatar">BT</div>
                 <div class="user-info">
-                    <strong id="nome_cliente">Cliente BioTrace</strong>
-                    <span id="email_cliente">cliente@biotrace.com</span>
+                    <strong id="nome_cliente">Usuário BioTrace</strong>
+                    <span id="email_cliente">perfil@biotrace.com</span>
                 </div>
             </div>
         </aside>
 
         <main class="main-content">
             <header class="mobile-header">
-                <button class="menu-button" id="menuButton">
-                    ☰
-                </button>
-
+                <button class="menu-button" id="menuButton" aria-label="Abrir menu">☰</button>
                 <img src="../assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo">
             </header>
 
             <div class="page-content">
-                <h1>Dashboard</h1>
-                <p>Bem-vindo ao painel BioTrace.</p>
+                <div class="page-heading">
+                    <div>
+                        <div class="eyebrow"><span class="eyebrow-dot"></span>PAINEL DE OBSERVABILIDADE</div>
+                        <h1>Visão Geral</h1>
+                        <p>Acompanhe a infraestrutura, os incidentes e os lotes da sua empresa.</p>
+                    </div>
+                </div>
+
+                
             </div>
         </main>
     </div>
-
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <script>

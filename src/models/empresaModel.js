@@ -49,6 +49,52 @@ function excluirEmpresa(idEmpresa) {
     return database.executar(instrucaoSql);
 }
 
+function cadastrarEquipamento(numeroSerie, idEmpresa) {
+    var instrucaoSql = `
+        INSERT INTO equipamento (
+            numero_serie,
+            fk_empresa
+        ) VALUES (
+            '${numeroSerie}',
+            ${idEmpresa}
+        );
+    `;
+
+    return database.executar(instrucaoSql);
+}
+
+function cadastrarCredencialEquipamento(idEquipamento, tokenHash) {
+    var instrucaoSql = `
+        INSERT INTO credencial_equipamento (
+            fk_equipamento,
+            token_hash
+        ) VALUES (
+            ${idEquipamento},
+            '${tokenHash}'
+        );
+    `;
+
+    return database.executar(instrucaoSql);
+}
+
+function buscarCredencialEquipamento(tokenHash) {
+    var instrucaoSql = `
+        SELECT e.id_equipamento AS idEquipamento,
+               e.fk_empresa AS idEmpresa
+        FROM credencial_equipamento ce
+        INNER JOIN equipamento e
+            ON e.id_equipamento = ce.fk_equipamento
+        WHERE ce.token_hash = ?
+          AND ce.revogada = FALSE
+          AND (ce.dt_expiracao IS NULL OR ce.dt_expiracao > CURRENT_TIMESTAMP)
+        LIMIT 1;
+    `;
+
+    return database.executar(instrucaoSql, [tokenHash])
+        .then(function (resultado) {
+            return resultado[0] || null;
+        });
+}
 
 // Exportando as funções do model
 // Outros arquivos podem usar essas funções
@@ -56,5 +102,8 @@ module.exports =
 {
     cadastrarEmpresa,
     listarEmpresas,
-    excluirEmpresa
+    excluirEmpresa,
+    cadastrarEquipamento,
+    cadastrarCredencialEquipamento,
+    buscarCredencialEquipamento
 };

@@ -21,6 +21,12 @@ router.delete("/:idEmpresa", middleware.verificarToken, middleware.verificarCarg
     empresaController.excluirEmpresa(req, res);
 })
 
+router.post("/:idEmpresa/equipamento", middleware.verificarToken, middleware.verificarCargo(["Gestor", "Administrador", "BioTrace"]), function (req, res) {
+    empresaController.cadastrarEquipamento(req, res);
+})
+
+router.get("/validarEquipamento", empresaController.validarEquipamento);
+
 // Exportando o router
 // Outros arquivos podem usar essas funções
 module.exports = router;
