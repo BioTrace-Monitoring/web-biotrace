@@ -8,8 +8,8 @@
     <link rel="icon" href="assets/icons/BioTrace (4).png" type="image/png">
     <link rel="stylesheet" href="css/style_login.css">
     <link rel="stylesheet" href="css/style.css">
-
-    <script src="js/sessao.js"></script>
+    <script src="./js/sessao.js"></script>
+    <script>redirecionarUsuarioLogado()</script>
 </head>
 
 <body>
@@ -177,21 +177,23 @@
                     console.log("LOGIN REALIZADO:", json);
 
                     // Salva os dados do usuário na sessão
-                    sessionStorage.EMAIL_USUARIO = json.email;
-                    sessionStorage.NOME_USUARIO = json.nome;
-                    sessionStorage.ID_USUARIO = json.id;
-                    sessionStorage.FK_EMPRESA = json.fk_empresa;
-                    sessionStorage.CARGO_USUARIO = json.cargo;
+                    localStorage.EMAIL_USUARIO = json.email;
+                    localStorage.NOME_USUARIO = json.nome;
+                    localStorage.ID_USUARIO = json.id;
+                    localStorage.FK_EMPRESA = json.fk_empresa;
+                    localStorage.CARGO_USUARIO = json.cargo;
                     localStorage.setItem('token', json.token);
 
-                    console.log("Sessão salva:", sessionStorage);
+                    console.log("Sessão salva:", localStorage);
 
                     // Define o painel de acordo com a empresa
                     var destino;
 
                     if (Number(json.fk_empresa) === 1) {
                         destino = "painel_admin/index.html";
-                    } else {
+                    } else if(Number(json.cargo === "Administrador")){
+                        destino = "painel_cliente/cadastrar-hospital.html";
+                    }else{
                         destino = "painel_cliente/index.html";
                     }
 

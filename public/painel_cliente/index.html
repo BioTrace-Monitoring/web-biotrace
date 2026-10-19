@@ -6,8 +6,8 @@
     <title>Visão Geral | BioTrace</title>
     <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
     <link rel="stylesheet" href="./css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js" defer></script>
-    <script src="./js/dashboard.js" defer></script>
+    <script src="../js/sessao.js"></script>
+    <script>exigirCargo(["Administrador", "Gestor", "Analista"]);</script>
 </head>
 <body>
     <div class="app">
@@ -23,6 +23,14 @@
                 <span class="nav-title">Principal</span>
                 <a href="index.html" class="nav-item active"><span class="nav-icon">📊</span> Visão Geral</a>
 
+                <a href="#" class="nav-item active">
+                    <span class="nav-icon">⌂</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">⌂</span>
+                    <span onclick="window.location.href='painel-cliente.html'">Acessar painel</span>
+                </a>
             </nav>
 
             <div class="sidebar-footer">
@@ -54,5 +62,39 @@
         </main>
     </div>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <script>
+        let idUsuario = localStorage.getItem('ID_USUARIO');
+        let nomeUsuario = localStorage.getItem('NOME_USUARIO');
+        let emailUsuario = localStorage.getItem('EMAIL_USUARIO');
+        let cargoUsuario = localStorage.getItem('CARGO_USUARIO');
+
+        document.getElementById('nome_cliente').textContent = nomeUsuario;
+        document.getElementById('email_cliente').textContent = emailUsuario;
+        let avatar_default = nomeUsuario[0] + nomeUsuario[nomeUsuario.indexOf(' ') + 1];
+        document.getElementById('usuario_avatar').textContent = avatar_default.toUpperCase();
+
+        const sidebar = document.getElementById('sidebar');
+        const menuButton = document.getElementById('menuButton');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function abrirSidebar() {
+            sidebar.classList.add('open');
+            sidebarOverlay.classList.add('active');
+        }
+
+
+        function fecharSidebar() {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+        }
+
+        menuButton.addEventListener('click', abrirSidebar);
+
+        sidebarClose.addEventListener('click', fecharSidebar);
+
+        sidebarOverlay.addEventListener('click', fecharSidebar);
+    </script>
 </body>
 </html>
