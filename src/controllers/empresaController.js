@@ -132,21 +132,14 @@ function cadastrarEquipamento(req, res) {
     var tokenEquipamento = crypto.randomBytes(32).toString("hex");
     var tokenHash = crypto.createHash("sha256").update(tokenEquipamento).digest("hex");
 
-    empresaModel.cadastrarEquipamento(numeroSerie, idEmpresa)
-        .then(function (resultado) {
-            var idEquipamento = resultado.insertId;
-
-            return empresaModel.cadastrarCredencialEquipamento(
-                idEquipamento,
-                tokenHash
-            ).then(function () {
-                return res.status(201).json({
-                    sucesso: true,
-                    idEquipamento: idEquipamento,
-                    numeroSerie: numeroSerie,
-                    tokenEquipamento: tokenEquipamento,
-                    mensagem: "Equipamento cadastrado com sucesso."
-                });
+    empresaModel.cadastrarEquipamentoComConfiguracao(numeroSerie, idEmpresa, tokenHash)
+        .then(function (idEquipamento) {
+            return res.status(201).json({
+                sucesso: true,
+                idEquipamento: idEquipamento,
+                numeroSerie: numeroSerie,
+                tokenEquipamento: tokenEquipamento,
+                mensagem: "Equipamento cadastrado com métricas configuradas com sucesso."
             });
         })
         .catch(function (erro) {

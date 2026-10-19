@@ -49,32 +49,108 @@ function excluirEmpresa(idEmpresa) {
     return database.executar(instrucaoSql);
 }
 
-function cadastrarEquipamento(numeroSerie, idEmpresa) {
-    var instrucaoSql = `
-        INSERT INTO equipamento (
-            numero_serie,
-            fk_empresa
-        ) VALUES (
-            '${numeroSerie}',
-            ${idEmpresa}
+var componentesPadrao = [
+    {
+        nome: "CPU",
+        metricas: [
+            { nome: "cpu_percent", unidade: "%", limiteUso: 80, limiteOciosidade: 20 },
+            { nome: "cpu_percent_por_nucleo", unidade: "%/nucleo", limiteUso: null, limiteOciosidade: null },
+            { nome: "nucleos_fisicos", unidade: "nucleos", limiteUso: null, limiteOciosidade: null },
+            { nome: "nucleos_logicos", unidade: "nucleos", limiteUso: null, limiteOciosidade: null }
+        ]
+    },
+    {
+        nome: "RAM",
+        metricas: [
+            { nome: "ram_total_bytes", unidade: "bytes", limiteUso: null, limiteOciosidade: null },
+            { nome: "ram_utilizada_bytes", unidade: "bytes", limiteUso: null, limiteOciosidade: null },
+            { nome: "ram_disponivel_bytes", unidade: "bytes", limiteUso: null, limiteOciosidade: null },
+            { nome: "ram_percent", unidade: "%", limiteUso: 80, limiteOciosidade: 20 }
+        ]
+    },
+    {
+        nome: "SWAP",
+        metricas: [
+            { nome: "swap_total_bytes", unidade: "bytes", limiteUso: null, limiteOciosidade: null },
+            { nome: "swap_utilizada_bytes", unidade: "bytes", limiteUso: null, limiteOciosidade: null },
+            { nome: "swap_percent", unidade: "%", limiteUso: 80, limiteOciosidade: 20 }
+        ]
+    },
+    {
+        nome: "DISCO",
+        metricas: [
+            { nome: "armazenamento_total_bytes", unidade: "bytes", limiteUso: null, limiteOciosidade: null },
+            { nome: "armazenamento_utilizado_bytes", unidade: "bytes", limiteUso: null, limiteOciosidade: null },
+            { nome: "armazenamento_disponivel_bytes", unidade: "bytes", limiteUso: null, limiteOciosidade: null },
+            { nome: "armazenamento_percent", unidade: "%", limiteUso: 90, limiteOciosidade: 10 }
+        ]
+    },
+    {
+        nome: "REDE",
+        metricas: [
+            { nome: "rede_bytes_enviados", unidade: "bytes", limiteUso: null, limiteOciosidade: null },
+            { nome: "rede_bytes_recebidos", unidade: "bytes", limiteUso: null, limiteOciosidade: null }
+        ]
+    },
+    {
+        nome: "PROCESSOS",
+        metricas: [
+            { nome: "processos_em_execucao", unidade: "processos", limiteUso: null, limiteOciosidade: null }
+        ]
+    }
+];
+
+function cadastrarEquipamentoComConfiguracao(numeroSerie, idEmpresa, tokenHash) {
+    return database.executar(
+        "INSERT INTO equipamento (numero_serie, fk_empresa) VALUES (?, ?)",
+        [numeroSerie, idEmpresa]
+    ).then(async function (equipamento) {
+        var idEquipamento = equipamento.insertId;
+
+        await database.executar(
+            "INSERT INTO credencial_equipamento (fk_equipamento, token_hash) VALUES (?, ?)",
+            [idEquipamento, tokenHash]
         );
-    `;
 
-    return database.executar(instrucaoSql);
-}
+        for (var componentePadrao of componentesPadrao) {
+            var tipoComponente = await database.executar(
+                `INSERT INTO tipo_componente (nome_componente) VALUES (?)
+                 ON DUPLICATE KEY UPDATE id_tipo_componente = LAST_INSERT_ID(id_tipo_componente)`,
+                [componentePadrao.nome]
+            );
 
-function cadastrarCredencialEquipamento(idEquipamento, tokenHash) {
-    var instrucaoSql = `
-        INSERT INTO credencial_equipamento (
-            fk_equipamento,
-            token_hash
-        ) VALUES (
-            ${idEquipamento},
-            '${tokenHash}'
-        );
-    `;
+            var componente = await database.executar(
+                `INSERT INTO componente (fk_equipamento, fk_tipo_componente) VALUES (?, ?)
+                 ON DUPLICATE KEY UPDATE id_componente = LAST_INSERT_ID(id_componente)`,
+                [idEquipamento, tipoComponente.insertId]
+            );
 
-    return database.executar(instrucaoSql);
+            for (var metricaPadrao of componentePadrao.metricas) {
+                var tipoMetrica = await database.executar(
+                    `INSERT INTO tipo_metrica (tipo_metrica, unidade) VALUES (?, ?)
+                     ON DUPLICATE KEY UPDATE id_tipo_metrica = LAST_INSERT_ID(id_tipo_metrica)`,
+                    [metricaPadrao.nome, metricaPadrao.unidade]
+                );
+
+                var metrica = await database.executar(
+                    `INSERT INTO metrica (fk_tipo_metrica, fk_componente) VALUES (?, ?)
+                     ON DUPLICATE KEY UPDATE id_metrica = LAST_INSERT_ID(id_metrica)`,
+                    [tipoMetrica.insertId, componente.insertId]
+                );
+
+                await database.executar(
+                    `INSERT INTO parametro_metrica
+                        (limite_uso, limite_ociosidade, habilitado, fk_metrica)
+                     VALUES (?, ?, TRUE, ?)
+                     ON DUPLICATE KEY UPDATE
+                        id_parametro_metrica = LAST_INSERT_ID(id_parametro_metrica)`,
+                    [metricaPadrao.limiteUso, metricaPadrao.limiteOciosidade, metrica.insertId]
+                );
+            }
+        }
+
+        return idEquipamento;
+    });
 }
 
 function buscarCredencialEquipamento(tokenHash) {
@@ -103,7 +179,6 @@ module.exports =
     cadastrarEmpresa,
     listarEmpresas,
     excluirEmpresa,
-    cadastrarEquipamento,
-    cadastrarCredencialEquipamento,
+    cadastrarEquipamentoComConfiguracao,
     buscarCredencialEquipamento
 };

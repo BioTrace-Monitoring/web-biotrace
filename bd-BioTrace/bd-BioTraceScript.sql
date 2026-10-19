@@ -93,20 +93,21 @@ CREATE TABLE credencial_equipamento (
 
 CREATE TABLE tipo_componente (
     id_tipo_componente INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    nome_componente VARCHAR(45) NOT NULL
+    nome_componente VARCHAR(45) NOT NULL UNIQUE
 );
 
 CREATE TABLE componente (
     id_componente INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     fk_equipamento INT NOT NULL,
     fk_tipo_componente INT NOT NULL,
+    CONSTRAINT uq_componente_equipamento_tipo UNIQUE (fk_equipamento, fk_tipo_componente),
     CONSTRAINT fk_componente_equipamento FOREIGN KEY (fk_equipamento) REFERENCES equipamento (id_equipamento),
     CONSTRAINT fk_componente_tipo FOREIGN KEY (fk_tipo_componente) REFERENCES tipo_componente (id_tipo_componente)
 );
 
 CREATE TABLE tipo_metrica (
     id_tipo_metrica INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    tipo_metrica VARCHAR(45) NOT NULL,
+    tipo_metrica VARCHAR(45) NOT NULL UNIQUE,
     unidade VARCHAR(10)
 );
 
@@ -114,6 +115,7 @@ CREATE TABLE metrica (
     id_metrica INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     fk_tipo_metrica INT NOT NULL,
     fk_componente INT NOT NULL,
+    CONSTRAINT uq_metrica_tipo_componente UNIQUE (fk_tipo_metrica, fk_componente),
     CONSTRAINT fk_metrica_tipo FOREIGN KEY (fk_tipo_metrica) REFERENCES tipo_metrica (id_tipo_metrica),
     CONSTRAINT fk_metrica_componente FOREIGN KEY (fk_componente) REFERENCES componente (id_componente)
 );
@@ -124,6 +126,7 @@ CREATE TABLE parametro_metrica (
     limite_ociosidade DECIMAL(5,2),
     habilitado BOOLEAN NOT NULL DEFAULT TRUE,
     fk_metrica INT NOT NULL,
+    CONSTRAINT uq_parametro_metrica UNIQUE (fk_metrica),
     CONSTRAINT fk_parametro_metrica FOREIGN KEY (fk_metrica) REFERENCES metrica (id_metrica)
 );
 
