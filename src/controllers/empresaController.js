@@ -1,5 +1,6 @@
 // Importando o empresaModel
 var empresaModel = require("../models/empresaModel");
+const crypto = require("crypto");
 
 // Função que cadastra uma nova empresa
 function cadastrarEmpresa(req, res) {
@@ -107,11 +108,113 @@ function excluirEmpresa(req, res) {
         });
 }
 
+function cadastrarEquipamento(req, res) {
+    var idEmpresa = Number(req.params.idEmpresa);
+    var numeroSerie = req.body.numeroSerieServer;
+
+    if (!Number.isInteger(idEmpresa) || idEmpresa <= 0) {
+        return res.status(400).json({
+            sucesso: false,
+            mensagem: "ID da empresa inválido."
+        });
+    }
+
+    if (typeof numeroSerie !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(numeroSerie)) {
+        return res.status(400).json({
+            sucesso: false,
+            mensagem: "UUID do equipamento inválido."
+        });
+    }
+
+    // IMPORTANTE: validar aqui se o usuário autenticado
+    // possui acesso à empresa informada na URL.
+
+    var tokenEquipamento = crypto.randomBytes(32).toString("hex");
+    var tokenHash = crypto.createHash("sha256").update(tokenEquipamento).digest("hex");
+
+    empresaModel.cadastrarEquipamento(numeroSerie, idEmpresa)
+        .then(function (resultado) {
+            var idEquipamento = resultado.insertId;
+
+            return empresaModel.cadastrarCredencialEquipamento(
+                idEquipamento,
+                tokenHash
+            ).then(function () {
+                return res.status(201).json({
+                    sucesso: true,
+                    idEquipamento: idEquipamento,
+                    numeroSerie: numeroSerie,
+                    tokenEquipamento: tokenEquipamento,
+                    mensagem: "Equipamento cadastrado com sucesso."
+                });
+            });
+        })
+        .catch(function (erro) {
+            console.error("Erro ao cadastrar equipamento:", erro);
+
+            if (erro.code === "ER_DUP_ENTRY") {
+                return res.status(409).json({
+                    sucesso: false,
+                    mensagem: "Equipamento já cadastrado."
+                });
+            }
+
+            return res.status(500).json({
+                sucesso: false,
+                mensagem: "Erro ao cadastrar equipamento."
+            });
+        });
+}
+
+async function validarEquipamento(req, res) {
+    const authorization = req.headers.authorization;
+
+    if (!authorization || !authorization.startsWith("Bearer ")) {
+        return res.status(401).json({
+            sucesso: false,
+            erro: "Token de equipamento não informado."
+        });
+    }
+
+    const token = authorization.substring(7).trim();
+
+    if (!token) {
+        return res.status(401).json({
+            sucesso: false,
+            erro: "Token de equipamento não informado."
+        });
+    }
+
+    try {
+        const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+        const equipamento = await empresaModel.buscarCredencialEquipamento(tokenHash);
+
+        if (!equipamento) {
+            return res.status(403).json({
+                sucesso: false,
+                erro: "Token de equipamento inválido, expirado ou revogado."
+            });
+        }
+
+        return res.status(200).json({
+            sucesso: true,
+            equipamento: equipamento
+        });
+    } catch (erro) {
+        console.error("Erro ao validar credencial do equipamento:", erro);
+        return res.status(500).json({
+            sucesso: false,
+            erro: "Não foi possível validar a credencial do equipamento."
+        });
+    }
+}
 
 // Exportando as funções do controller
 // Outros arquivos podem usar essas funções
 module.exports = {
     cadastrarEmpresa,
     listarEmpresas,
-    excluirEmpresa
-}
+    excluirEmpresa,
+    cadastrarEquipamento,
+    validarEquipamento
+};

@@ -69,10 +69,24 @@ CREATE TABLE lote_equipamento (
 CREATE TABLE equipamento (
     id_equipamento INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     numero_serie VARCHAR(60) NOT NULL UNIQUE,
-    fk_hospital INT NOT NULL,
-    fk_lote INT NOT NULL,
-    CONSTRAINT fk_equipamento_hospital FOREIGN KEY (fk_hospital) REFERENCES hospital (id_hospital),
-    CONSTRAINT fk_equipamento_lote FOREIGN KEY (fk_lote) REFERENCES lote_equipamento (id_lote_equipamento)
+    ultimo_contato DATETIME,
+    fk_empresa INT NOT NULL,
+    fk_hospital INT,
+    fk_lote INT,
+
+    CONSTRAINT fk_equipamento_empresa FOREIGN KEY (fk_empresa) REFERENCES empresa(id_empresa),
+    CONSTRAINT fk_equipamento_hospital FOREIGN KEY (fk_hospital) REFERENCES hospital(id_hospital),
+    CONSTRAINT fk_equipamento_lote FOREIGN KEY (fk_lote) REFERENCES lote_equipamento(id_lote_equipamento)
+);
+
+CREATE TABLE credencial_equipamento (
+    id_credencial INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    fk_equipamento INT NOT NULL,
+    token_hash CHAR(64) NOT NULL UNIQUE,
+    dt_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    dt_expiracao DATETIME,
+    revogada BOOLEAN NOT NULL DEFAULT FALSE,
+    CONSTRAINT fk_credencial_equipamento FOREIGN KEY (fk_equipamento) REFERENCES equipamento (id_equipamento)
 );
 
 -- COMPONENTES E MÉTRICAS -------------------------------------------
