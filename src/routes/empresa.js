@@ -9,19 +9,19 @@ var empresaController = require("../controllers/empresaController");
 // Importando o middleware
 const middleware = require("../middlewares/authMiddleware");
 
-router.post("/", middleware.verificarToken, middleware.verificarCargo(["BioTrace"]), function (req, res) {
+router.post("/", function (req, res) {
     empresaController.cadastrarEmpresa(req, res);
 })
 
-router.get("/", middleware.verificarToken, middleware.verificarCargo(["BioTrace"]), function (req, res) {
+router.get("/", function (req, res) {
     empresaController.listarEmpresas(req, res);
 })
 
-router.delete("/:idEmpresa", middleware.verificarToken, middleware.verificarCargo(["BioTrace"]), function (req, res) {
+router.delete("/:idEmpresa", function (req, res) {
     empresaController.excluirEmpresa(req, res);
 })
 
-router.post("/:idEmpresa/equipamento", middleware.verificarToken, middleware.verificarCargo(["Gestor", "Administrador", "BioTrace"]), function (req, res) {
+router.post("/:idEmpresa/equipamento", function (req, res) {
     empresaController.cadastrarEquipamento(req, res);
 })
 
