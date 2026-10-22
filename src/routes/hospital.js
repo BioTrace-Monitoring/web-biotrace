@@ -6,7 +6,7 @@ var hospitalController = require("../controllers/hospitalController");
 
 const middleware = require("../middlewares/authMiddleware");
 
-router.post("/", middleware.verificarToken, middleware.verificarCargo(["Administrador"]), function (req, res) {
+router.post("/", function (req, res) {
     hospitalController.cadastrarHospital(req, res);
 })
 

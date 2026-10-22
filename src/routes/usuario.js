@@ -28,7 +28,7 @@ router.post("/recSenha", function (req, res) {
     usuarioController.resetarSenha(req, res);
 });
 
-router.post("/:idEmpresa", middleware.verificarToken, middleware.verificarCargo(["BioTrace", "Administrador"]), function (req, res) {
+router.post("/:idEmpresa", function (req, res) {
     usuarioController.cadastrarUsuario(req, res);
 });
 
