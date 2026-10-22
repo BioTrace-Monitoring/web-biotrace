@@ -8,7 +8,6 @@ import psutil
 
 
 ARQUIVO_METRICAS = "metricas_maquina.csv"
-ARQUIVO_PROCESSOS = "processos.csv"
 
 INTERVALO_CAPTURA = 5
 
@@ -94,91 +93,8 @@ def coletar_metricas_maquina():
         dados.keys()
     )
 
-
-def coletar_processos():
-    machine_id = obter_identificador_maquina()
-    timestamp = obter_timestamp()
-
-    campos = [
-        "timestamp",
-        "machine_id",
-        "pid",
-        "nome",
-        "status",
-        "usuario",
-        "cpu_percent",
-        "memoria_percent",
-        "memoria_rss_mb",
-        "threads"
-    ]
-
-    arquivo_existe = os.path.exists(ARQUIVO_PROCESSOS)
-
-    with open(
-        ARQUIVO_PROCESSOS,
-        "a",
-        newline="",
-        encoding="utf-8"
-    ) as csvfile:
-
-        writer = csv.DictWriter(csvfile, fieldnames=campos)
-
-        if not arquivo_existe:
-            writer.writeheader()
-
-        for processo in psutil.process_iter([
-            "pid",
-            "name",
-            "status",
-            "username",
-            "cpu_percent",
-            "memory_percent",
-            "memory_info",
-            "num_threads"
-        ]):
-            try:
-                info = processo.info
-
-                memoria_rss = info["memory_info"]
-
-                if memoria_rss:
-                    memoria_rss_mb = round(
-                        memoria_rss.rss / (1024 ** 2),
-                        2
-                    )
-                else:
-                    memoria_rss_mb = 0
-
-                dados = {
-                    "timestamp": timestamp,
-                    "machine_id": machine_id,
-                    "pid": info["pid"],
-                    "nome": info["name"],
-                    "status": info["status"],
-                    "usuario": info["username"],
-                    "cpu_percent": info["cpu_percent"],
-                    "memoria_percent": round(
-                        info["memory_percent"] or 0,
-                        2
-                    ),
-                    "memoria_rss_mb": memoria_rss_mb,
-                    "threads": info["num_threads"]
-                }
-
-                writer.writerow(dados)
-
-            except (
-                psutil.NoSuchProcess,
-                psutil.AccessDenied,
-                psutil.ZombieProcess
-            ):
-                continue
-
-
 def realizar_captura():
     coletar_metricas_maquina()
-    coletar_processos()
-
 
 def main():
     print("Monitoramento iniciado.")
