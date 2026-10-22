@@ -30,8 +30,14 @@ a {
     text-decoration: none;
 }
 
-button, select {
+button, input, select {
     font: inherit;
+}
+
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
 }
 
 .app {
@@ -183,6 +189,180 @@ button, select {
     padding: 36px 36px 22px;
 }
 
+.page-heading {
+    margin-bottom: 28px;
+}
+
+.eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.eyebrow-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--primary);
+}
+
+.page-heading h1 {
+    margin-bottom: 8px;
+    font-size: clamp(24px, 3vw, 30px);
+    letter-spacing: -0.5px;
+}
+
+.page-heading p {
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.form-card {
+    max-width: 960px;
+    padding: 28px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--white);
+}
+
+.form-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 22px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.form-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--primary-light);
+    font-size: 23px;
+}
+
+.form-card-header h2 {
+    margin-bottom: 6px;
+    font-size: 17px;
+}
+
+.form-card-header p,
+.field-help {
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.required-mark {
+    color: var(--primary);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 9px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.optional {
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.form-field input {
+    width: 100%;
+    min-height: 46px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--background);
+    color: var(--text);
+    font-size: 14px;
+}
+
+.form-field input:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 1px;
+}
+
+.field-help {
+    margin-top: 7px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+}
+
+.button-primary,
+.button-secondary {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 44px;
+    padding: 11px 20px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.button-primary {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.button-primary:hover {
+    background: var(--primary-dark);
+}
+
+.button-primary:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
+.button-secondary {
+    border-color: var(--border);
+    color: var(--text-secondary);
+}
+
+.button-secondary:hover {
+    background: var(--background);
+}
+
+.form-message {
+    margin-top: 18px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--background);
+    font-size: 13px;
+    line-height: 1.5;
+}
 
 .mobile-header {
     display: none;
@@ -250,5 +430,21 @@ button, select {
 
     .sidebar-overlay.active {
         display: block;
+    }
+}
+
+@media (max-width: 600px) {
+    .form-card {
+        padding: 20px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
     }
 }
