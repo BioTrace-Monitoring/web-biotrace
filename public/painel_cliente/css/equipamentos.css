@@ -1,0 +1,521 @@
+[hidden] {
+  display: none !important;
+}
+#infraestrutura {
+  --acento: #9035e8;
+  --suave: #f4ebff;
+  --verde: #08b98a;
+  padding-bottom: 56px;
+}
+#cabecalho {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 10px 0 28px;
+}
+#cabecalho h1 {
+  font-size: clamp(24px, 2.4vw, 32px);
+  letter-spacing: -0.7px;
+  margin-bottom: 8px;
+}
+#cabecalho p,
+#infraestrutura aside p,
+#resumo p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+#infraestrutura button,
+dialog button {
+  cursor: pointer;
+  border: 0;
+  border-radius: 24px;
+  background: #9035e8;
+  color: white;
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: 13px;
+}
+#novoCadastro {
+  white-space: nowrap;
+}
+#infraestrutura button:hover,
+dialog button:hover {
+  filter: brightness(0.96);
+}
+#infraestrutura button:disabled,
+dialog button:disabled {
+  cursor: wait;
+  opacity: 0.5;
+}
+#infraestrutura [data-secundario],
+dialog [data-secundario] {
+  background: white;
+  color: var(--primary);
+  border: 1px solid var(--border);
+}
+#feedback,
+#estadoCarga {
+  padding: 16px 20px;
+  margin: 20px 0;
+  border-radius: 12px;
+  background: white;
+  border: 1px solid var(--border);
+}
+#feedback[data-tipo="sucesso"] {
+  border-color: #9ce3c8;
+  background: #eafaf3;
+  color: #087957;
+}
+#feedback[data-tipo="erro"],
+#erroParametros,
+dialog [role="alert"] {
+  background: #fff0ef;
+  border: 1px solid #f4b8b3;
+  color: #b42626;
+  border-radius: 10px;
+  padding: 12px;
+  line-height: 1.5;
+  font-size: 13px;
+}
+#abas {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 26px;
+}
+#abas button {
+  border-radius: 0;
+  padding: 16px 22px;
+  background: transparent;
+  color: var(--text-secondary);
+  border-bottom: 3px solid transparent;
+  font-size: 14px;
+}
+#abas button[aria-selected="true"] {
+  color: var(--acento);
+  border-color: var(--acento);
+}
+#resumo {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+}
+#resumo article,
+#infraestrutura [data-cartao] {
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: white;
+}
+#resumo article {
+  padding: 24px;
+}
+#resumo h2 {
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+#resumo strong {
+  display: block;
+  font-size: 36px;
+  margin: 10px 0 8px;
+  line-height: 1.1;
+}
+#visaoLotes,
+#visaoParametros {
+  display: grid;
+  grid-template-columns: minmax(0, 2.3fr) minmax(280px, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+#infraestrutura [data-cartao] {
+  overflow: hidden;
+}
+#infraestrutura aside[data-cartao] {
+  padding: 26px;
+}
+#infraestrutura [data-vazio] {
+  text-align: center;
+  padding: 42px 8px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+#infraestrutura [data-filtros] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 18px 20px;
+  background: #fcfaff;
+}
+#infraestrutura input:not([type="checkbox"]):not([type="range"]),
+#infraestrutura select,
+dialog input:not([type="checkbox"]),
+dialog select {
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: white;
+  color: var(--text);
+  padding: 12px 14px;
+  font-size: 14px;
+  min-width: 0;
+}
+#buscaLotes {
+  width: min(100%, 360px);
+}
+#infraestrutura [data-filtros] select {
+  max-width: 100%;
+  flex: 1 1 150px;
+}
+#infraestrutura [data-rolagem] {
+  overflow-x: auto;
+}
+#infraestrutura table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+#infraestrutura th {
+  background: #fbf9ff;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-size: 10px;
+  padding: 20px 16px;
+  white-space: nowrap;
+}
+#infraestrutura td {
+  padding: 20px 16px;
+  border-top: 1px solid var(--border);
+  line-height: 1.5;
+}
+#infraestrutura tbody tr[data-selecionavel] {
+  cursor: pointer;
+}
+#infraestrutura tbody tr[data-selecionavel]:hover {
+  background: #fcf8ff;
+}
+#infraestrutura tbody tr[aria-selected="true"] {
+  background: var(--suave);
+}
+#infraestrutura tbody tr:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: -2px;
+}
+#infraestrutura td small {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+#infraestrutura [data-serie] {
+  font-family: ui-monospace, monospace;
+  font-weight: 700;
+}
+#infraestrutura progress {
+  appearance: none;
+  width: 100%;
+  min-width: 100px;
+  height: 6px;
+  display: block;
+  margin-top: 6px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--border);
+  overflow: hidden;
+}
+#infraestrutura progress::-webkit-progress-bar {
+  background: var(--border);
+}
+#infraestrutura progress::-webkit-progress-value {
+  background: var(--verde);
+}
+#infraestrutura progress::-moz-progress-bar {
+  background: var(--verde);
+}
+#infraestrutura progress[data-parcial]::-webkit-progress-value {
+  background: #f59e0b;
+}
+#infraestrutura progress[data-parcial]::-moz-progress-bar {
+  background: #f59e0b;
+}
+#infraestrutura [data-selo] {
+  display: inline-block;
+  border-radius: 20px;
+  padding: 6px 11px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: #def8ed;
+  color: #008f68;
+}
+#infraestrutura [data-selo="aviso"] {
+  background: #fff1c6;
+  color: #b46b00;
+}
+#infraestrutura [data-selo="neutro"] {
+  background: #eeebf3;
+  color: #797386;
+}
+#infraestrutura [data-sobretitulo] {
+  display: block;
+  color: var(--acento);
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+#infraestrutura aside h2 {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+#infraestrutura [data-mini-resumo] {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+  padding-top: 20px;
+}
+#infraestrutura [data-mini-resumo] div {
+  background: #fbf9ff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  text-align: center;
+  padding: 16px 4px;
+}
+#infraestrutura [data-mini-resumo] strong {
+  display: block;
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+#infraestrutura [data-mini-resumo] small {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+#infraestrutura [data-equipamento] {
+  border: 1px solid var(--border);
+  background: #fcfaff;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+#infraestrutura [data-equipamento] header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+#infraestrutura [data-equipamento] nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+#infraestrutura [data-equipamento] button {
+  padding: 7px 10px;
+  font-size: 11px;
+}
+#infraestrutura [data-equipamentos] {
+  max-height: 490px;
+  overflow-y: auto;
+  margin: 16px 0;
+}
+#infraestrutura [data-acao-lote] {
+  width: 100%;
+}
+#formParametros > label {
+  display: block;
+  margin: 20px 0 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+#formParametros > select {
+  width: 100%;
+  background: #fbf9ff;
+}
+#subtituloParametro {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+#infraestrutura [data-limite] {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  margin-top: 22px;
+  align-items: center;
+}
+#infraestrutura [data-limite] label {
+  font-size: 12px;
+  font-weight: 600;
+}
+#infraestrutura [data-limite] div {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+#infraestrutura [data-limite] input[type="number"] {
+  width: 85px;
+  padding: 6px;
+  text-align: right;
+}
+#infraestrutura input[type="range"] {
+  grid-column: 1 / -1;
+  width: 100%;
+  cursor: pointer;
+  accent-color: #ef4444;
+}
+#sliderOciosidade {
+  accent-color: #3b82f6 !important;
+}
+#infraestrutura #habilitar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fbf9ff;
+  font-weight: 600;
+  color: var(--text);
+}
+#infraestrutura input[type="checkbox"],
+dialog input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #9035e8;
+  cursor: pointer;
+}
+#impacto,
+#avisoDivergencia {
+  background: var(--suave);
+  color: #7c2cce !important;
+  border: 1px solid #e6d2ff;
+  border-radius: 12px;
+  padding: 12px;
+  margin: 16px 0;
+  font-size: 12px !important;
+  line-height: 1.5;
+}
+#avisoDivergencia {
+  background: #fff7df;
+  border-color: #f1db9f;
+  color: #906200 !important;
+}
+#aplicarParametros {
+  width: 100%;
+  margin-top: 4px;
+}
+#infraestrutura [data-ajuda],
+dialog [data-ajuda] {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 10px 0;
+}
+[data-somente-leitor] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+dialog {
+  width: min(520px, calc(100% - 32px));
+  max-height: calc(100vh - 48px);
+  margin: auto;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+  color: var(--text);
+  box-shadow: 0 24px 90px #24133733;
+}
+dialog::backdrop {
+  background: #24133766;
+}
+dialog [data-topo-dialog] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+dialog h2 {
+  font-size: 21px;
+}
+dialog [data-topo-dialog] button {
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 4px 10px;
+  font-size: 26px;
+}
+dialog label {
+  display: block;
+  margin: 16px 0 7px;
+  font-size: 13px;
+  font-weight: 600;
+}
+dialog input:not([type="checkbox"]),
+dialog select {
+  width: 100%;
+}
+dialog [data-dupla] {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+dialog footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+dialog [role="alert"] {
+  margin-top: 16px;
+}
+@media (min-width: 1251px) {
+  #editor {
+    position: sticky;
+    top: 24px;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+  }
+}
+@media (max-width: 1250px) {
+  #visaoLotes,
+  #visaoParametros {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #infraestrutura aside[data-cartao] {
+    max-width: none;
+  }
+  #resumo article {
+    padding: 20px 16px;
+  }
+}
+@media (max-width: 700px) {
+  #cabecalho {
+    flex-direction: column;
+  }
+  #resumo {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  #resumo strong {
+    font-size: 30px;
+  }
+  #abas button {
+    font-size: 12px;
+    padding: 14px;
+  }
+  #infraestrutura aside[data-cartao] {
+    padding: 20px;
+  }
+  dialog {
+    padding: 22px;
+  }
+}
