@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioTrace | Painel de infraestrutura</title>
+
+    <link rel="stylesheet" href="css/style_inicio.css">
+    <link rel="stylesheet" href="css/style_equipamentos.css">
+    <link rel="stylesheet" href="css/style_dashboard.css">
+
+    <script src="js/dashboard.js"></script>
+</head>
+<body onload="verificarSessaoGestor(); carregarTudo()">
+
+    <header class="cabecalho">
+        <div class="cabecalho-marca">
+            <img src="assets/icons/BioTrace (4).png" alt="Logo BioTrace" class="logo-biotrace">
+
+            <div class="cabecalho-logo-texto">
+                <h1>Painel de infraestrutura</h1>
+            </div>
+        </div>
+
+        <div class="cabecalho-usuario">
+            <div class="cabecalho-usuario-info">
+                <p id="b_usuario">nomeUser</p>
+            </div>
+            <a href="inicio.html"><button class="btn-sair">Voltar</button></a>
+            <button class="btn-sair" onclick="sair()">Sair</button>
+        </div>
+    </header>
+
+    <section class="container-dashboard">
+
+        <div class="cabecalho-inicio">
+            <div>
+                <h2>Equipamentos e parâmetros</h2>
+                <p>Veja quais lotes estão em cada hospital e controle os limites de uso e ociosidade de cada componente.</p>
+            </div>
+        </div>
+
+        <div class="abas">
+            <button id="aba_lotes" class="aba ativa" onclick="trocarAba('lotes')">Lotes e clientes</button>
+            <button id="aba_limites" class="aba" onclick="trocarAba('limites')">Limites e parâmetros</button>
+        </div>
+
+        <!-- ===================== ABA: LOTES ===================== -->
+        <div id="tela_lotes">
+
+            <div class="kpis">
+                <div class="kpi">
+                    <div class="kpi-titulo">Lotes</div>
+                    <div class="kpi-valor" id="kpi_lotes">-</div>
+                    <div class="kpi-detalhe">cadastrados na empresa</div>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-titulo">Equipamentos</div>
+                    <div class="kpi-valor" id="kpi_equipamentos">-</div>
+                    <div class="kpi-detalhe">vinculados a lotes</div>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-titulo">Hospitais</div>
+                    <div class="kpi-valor" id="kpi_hospitais">-</div>
+                    <div class="kpi-detalhe">com equipamentos instalados</div>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-titulo">Métricas habilitadas</div>
+                    <div class="kpi-valor" id="kpi_metricas">-</div>
+                    <div class="kpi-detalhe" id="kpi_metricas_detalhe">de - parâmetros</div>
+                </div>
+            </div>
+
+            <div class="grade-duas-colunas">
+
+                <div class="card-tabela">
+                    <div class="barra-filtros">
+                        <input type="text" id="ipt_busca_lote" placeholder="Buscar por lote, modelo ou hospital" oninput="renderizarLotes()">
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>LOTE</th>
+                                <th>MODELO</th>
+                                <th>HOSPITAIS</th>
+                                <th>EQUIP.</th>
+                                <th>COMPONENTES</th>
+                                <th>MÉTRICAS HABILITADAS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpo_tabela_lotes"></tbody>
+                    </table>
+                </div>
+
+                <aside class="painel-lateral" id="painel_lote">
+                    <div class="painel-vazio">Selecione um lote na tabela para ver os equipamentos e hospitais.</div>
+                </aside>
+
+            </div>
+        </div>
+
+        <!-- ===================== ABA: LIMITES ===================== -->
+        <div id="tela_limites" class="oculto">
+
+            <div class="grade-duas-colunas">
+
+                <div class="card-tabela">
+                    <div class="barra-filtros">
+                        <select id="sel_filtro_lote" onchange="renderizarParametros()">
+                            <option value="">Todos os lotes</option>
+                        </select>
+
+                        <select id="sel_filtro_componente" onchange="renderizarParametros()">
+                            <option value="">Todos os componentes</option>
+                        </select>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>LOTE</th>
+                                <th>COMPONENTE</th>
+                                <th>LIMITE DE USO</th>
+                                <th>OCIOSIDADE</th>
+                                <th>HABILITADA</th>
+                                <th>PADRONIZAÇÃO</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpo_tabela_parametros"></tbody>
+                    </table>
+                </div>
+
+                <aside class="painel-lateral">
+                    <div id="painel_parametro_vazio" class="painel-vazio">Selecione uma linha da tabela para ajustar os limites.</div>
+
+                    <div id="painel_parametro" class="oculto">
+                        <div class="painel-rotulo">Configuração de parâmetros</div>
+                        <div class="painel-titulo" id="prm_titulo"></div>
+                        <div class="painel-subtitulo" id="prm_subtitulo"></div>
+
+                        <div class="campo-slider">
+                            <div class="campo-slider-topo">
+                                <span>Limite de uso (máximo)</span>
+                                <span id="lbl_uso">85%</span>
+                            </div>
+                            <input type="range" id="rng_uso" class="slider-uso" min="0" max="100" step="0.5" value="85" oninput="atualizarRotulos()">
+                        </div>
+
+                        <div class="campo-slider">
+                            <div class="campo-slider-topo">
+                                <span>Limite de ociosidade (mínimo)</span>
+                                <span id="lbl_ociosidade">15%</span>
+                            </div>
+                            <input type="range" id="rng_ociosidade" class="slider-ociosidade" min="0" max="100" step="0.5" value="15" oninput="atualizarRotulos()">
+                        </div>
+
+                        <label class="linha-toggle">
+                            <span>Métrica habilitada</span>
+                            <input type="checkbox" id="chk_habilitado" checked>
+                        </label>
+
+                        <div class="campo-select">
+                            <label for="sel_escopo">Aplicar a</label>
+                            <select id="sel_escopo" onchange="atualizarImpacto()">
+                                <option value="lote">Somente este lote</option>
+                                <option value="modelo">Todos os lotes deste modelo</option>
+                            </select>
+                        </div>
+
+                        <div class="aviso-impacto" id="txt_impacto"></div>
+
+                        <button class="btn-largo" id="btn_aplicar" onclick="salvarParametro()">Aplicar parâmetros</button>
+                    </div>
+                </aside>
+
+            </div>
+        </div>
+
+    </section>
+
+</body>
+</html>
