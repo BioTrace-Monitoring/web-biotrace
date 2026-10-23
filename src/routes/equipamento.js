@@ -1,6 +1,11 @@
 var express = require("express");
 var router = express.Router();
 var equipamentoController = require("../controllers/equipamentoController");
+var parametroController = require("../controllers/parametroController");
+
+router.get("/infraestrutura/:idEmpresa", parametroController.painel);
+router.get("/parametro/:idEmpresa/previa", parametroController.previa);
+router.put("/parametro/:idEmpresa", parametroController.salvar);
 
 router.get("/modelo/:idEmpresa", equipamentoController.listarModelos);
 router.post("/modelo/:idEmpresa", equipamentoController.cadastrarModelo);

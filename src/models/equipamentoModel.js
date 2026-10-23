@@ -58,8 +58,41 @@ function cadastrarEquipamento(numeroSerie, idLote, idHospital, idEmpresa) {
     return cadastrarEquipamentos([numeroSerie], idLote, idHospital, idEmpresa);
 }
 
-function cadastrarEquipamentos(numerosSerie, idLote, idHospital, idEmpresa) {
-    var seriesSql = numerosSerie.map(function () { return "SELECT ? AS numero_serie"; }).join(" UNION ALL ");
+async function cadastrarEquipamentos(numerosSerie, idLote, idHospital, idEmpresa) {
+    var conexao = database.conectar();
+
+    try {
+        // Equipamentos, componentes e métricas são salvos juntos.
+        await conexao.beginTransaction();
+        var resultado = await inserirEquipamentos(numerosSerie, idLote, idHospital, idEmpresa, conexao);
+
+        if (resultado.affectedRows > 0) {
+            var componentes = await cadastrarComponentes(numerosSerie, idLote, conexao);
+            var metricas = await vincularMetricas(numerosSerie, idLote, conexao);
+            validarVinculos(componentes, metricas, numerosSerie.length);
+            await cadastrarParametros(numerosSerie, idLote, conexao);
+        }
+
+        await conexao.commit();
+        return resultado;
+    } catch (erro) {
+        await conexao.rollback();
+        throw erro;
+    } finally {
+        await conexao.end();
+    }
+}
+
+function inserirEquipamentos(numerosSerie, idLote, idHospital, idEmpresa, conexao) {
+    var consultasSeries = [];
+
+    for (var numeroSerie of numerosSerie) {
+        consultasSeries.push("SELECT ? AS numero_serie");
+    }
+
+    var seriesSql = consultasSeries.join(" UNION ALL ");
+    var parametros = [idHospital].concat(numerosSerie, [idLote, idEmpresa, idHospital, idHospital]);
+
     return database.executar(`
         INSERT INTO equipamento (numero_serie, fk_hospital, fk_lote)
         SELECT series.numero_serie, ?, l.id_lote_equipamento
@@ -72,7 +105,97 @@ function cadastrarEquipamentos(numerosSerie, idLote, idHospital, idEmpresa) {
           AND (? IS NULL OR EXISTS (
               SELECT 1 FROM hospital h WHERE h.id_hospital = ? AND h.fk_empresa = l.fk_empresa
           ));
-    `, [idHospital].concat(numerosSerie, [idLote, idEmpresa, idHospital, idHospital]));
+    `, parametros, conexao);
+}
+
+function gerarMarcadores(numerosSerie) {
+    var marcadores = [];
+
+    for (var numeroSerie of numerosSerie) {
+        marcadores.push("?");
+    }
+
+    return marcadores.join(",");
+}
+
+function cadastrarComponentes(numerosSerie, idLote, conexao) {
+    var marcadores = gerarMarcadores(numerosSerie);
+    var parametros = [idLote].concat(numerosSerie);
+
+    return database.executar(`
+        INSERT INTO componente (fk_equipamento, fk_tipo_componente)
+        SELECT e.id_equipamento, tc.id_tipo_componente
+        FROM equipamento e
+        CROSS JOIN tipo_componente tc
+        WHERE e.fk_lote = ? AND e.numero_serie IN (${marcadores})
+          AND tc.nome_componente IN ('CPU', 'Memória RAM', 'Disco', 'Rede', 'Sistema Operacional');
+    `, parametros, conexao);
+}
+
+function vincularMetricas(numerosSerie, idLote, conexao) {
+    var marcadores = gerarMarcadores(numerosSerie);
+    var parametros = [idLote].concat(numerosSerie);
+
+    return database.executar(`
+        INSERT INTO metrica (fk_tipo_metrica, fk_componente)
+        SELECT tm.id_tipo_metrica, c.id_componente
+        FROM componente c
+        JOIN equipamento e ON e.id_equipamento = c.fk_equipamento
+        JOIN tipo_componente tc ON tc.id_tipo_componente = c.fk_tipo_componente
+        JOIN tipo_metrica tm ON (
+            (tc.nome_componente = 'CPU'
+                AND tm.tipo_metrica IN ('cpu_percent', 'cpu_por_nucleo', 'temperatura_cpu'))
+            OR (tc.nome_componente = 'Memória RAM'
+                AND tm.tipo_metrica IN ('memoria_percent', 'memoria_disponivel_gb'))
+            OR (tc.nome_componente = 'Disco'
+                AND tm.tipo_metrica IN ('disco_percent', 'disco_livre_gb'))
+            OR (tc.nome_componente = 'Rede'
+                AND tm.tipo_metrica IN ('rede_bytes_enviados', 'rede_bytes_recebidos', 'rede_erros_entrada', 'rede_erros_saida'))
+            OR (tc.nome_componente = 'Sistema Operacional'
+                AND tm.tipo_metrica IN ('uptime_horas', 'processos_ativos'))
+        )
+        WHERE e.fk_lote = ? AND e.numero_serie IN (${marcadores});
+    `, parametros, conexao);
+}
+
+function validarVinculos(componentes, metricas, quantidadeEquipamentos) {
+    var totalComponentes = quantidadeEquipamentos * 5;
+    var totalMetricas = quantidadeEquipamentos * 13;
+
+    if (componentes.affectedRows !== totalComponentes || metricas.affectedRows !== totalMetricas) {
+        var erro = new Error("Confira os INSERTs de tipo_componente e tipo_metrica do init.sql. Cada equipamento precisa dos 5 componentes e das 13 métricas padrão.");
+        erro.status = 400;
+        throw erro;
+    }
+}
+
+function cadastrarParametros(numerosSerie, idLote, conexao) {
+    var marcadores = gerarMarcadores(numerosSerie);
+    var parametros = [idLote].concat(numerosSerie);
+
+    return database.executar(`
+        INSERT INTO parametro_metrica (limite_uso, limite_ociosidade, habilitado, fk_metrica)
+        SELECT
+            CASE tm.tipo_metrica
+                WHEN 'cpu_percent' THEN 90.00
+                WHEN 'memoria_percent' THEN 90.00
+                WHEN 'disco_percent' THEN 90.00
+                ELSE NULL
+            END,
+            CASE tm.tipo_metrica
+                WHEN 'cpu_percent' THEN 5.00
+                WHEN 'memoria_percent' THEN 10.00
+                WHEN 'disco_percent' THEN 10.00
+                ELSE NULL
+            END,
+            TRUE,
+            m.id_metrica
+        FROM metrica m
+        JOIN tipo_metrica tm ON tm.id_tipo_metrica = m.fk_tipo_metrica
+        JOIN componente c ON c.id_componente = m.fk_componente
+        JOIN equipamento e ON e.id_equipamento = c.fk_equipamento
+        WHERE e.fk_lote = ? AND e.numero_serie IN (${marcadores});
+    `, parametros, conexao);
 }
 
 function atualizarHospital(idEquipamento, idHospital, idEmpresa) {

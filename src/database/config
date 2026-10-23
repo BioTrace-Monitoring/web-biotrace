@@ -1,38 +1,39 @@
 var mysql = require("mysql2");
 
-// CONEXÃO DO BANCO MYSQL SERVER
 var mySqlConfig = {
     host: process.env.DB_HOST,
     database: process.env.DB_DATABASE,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT
+    port: process.env.DB_PORT,
+    charset: "utf8mb4"
 };
 
-function executar(instrucao, params) {
+function conectar() {
+    var ambiente = process.env.AMBIENTE_PROCESSO;
 
-    if (process.env.AMBIENTE_PROCESSO !== "producao" && process.env.AMBIENTE_PROCESSO !== "desenvolvimento") {
-        console.log("\nO AMBIENTE (produção OU desenvolvimento) NÃO FOI DEFINIDO EM .env OU dev.env OU app.js\n");
-        return Promise.reject("AMBIENTE NÃO CONFIGURADO EM .env");
+    if (ambiente !== "producao" && ambiente !== "desenvolvimento") {
+        throw new Error("Ambiente do banco não configurado.");
     }
 
-    return new Promise(function (resolve, reject) {
-        var conexao = mysql.createConnection(mySqlConfig);
-        conexao.connect();
-        conexao.query(instrucao,params, function (erro, resultados) {
-            conexao.end();
-            if (erro) {
-                reject(erro);
-            }
-            console.log(resultados);
-            resolve(resultados);
-        });
-        conexao.on('error', function (erro) {
-            return ("ERRO NO MySQL SERVER: ", erro.sqlMessage);
-        });
-    });
+    return mysql.createConnection(mySqlConfig).promise();
+}
+
+async function executar(instrucao, parametros, conexaoTransacao) {
+    // Na transação, todas as consultas usam a mesma conexão.
+    var conexao = conexaoTransacao || conectar();
+
+    try {
+        var resultado = await conexao.query(instrucao, parametros);
+        return resultado[0];
+    } finally {
+        if (!conexaoTransacao) {
+            await conexao.end();
+        }
+    }
 }
 
 module.exports = {
-    executar
+    executar,
+    conectar
 };
