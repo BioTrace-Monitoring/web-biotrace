@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
     <link rel="stylesheet" href="./css/style.css">
 </head>
+
 <body>
     <div class="app">
         <aside class="sidebar" id="sidebar">
@@ -19,35 +21,49 @@
 
             <nav class="sidebar-nav" aria-label="Menu principal">
                 <span class="nav-title">Principal</span>
-                <a href="index.html" class="nav-item active" aria-current="page"><span class="nav-icon" aria-hidden="true">📊</span> Visão Geral</a>
-
+                <a href="index.html" class="nav-item active" aria-current="page">
+                    <span class="nav-icon" aria-hidden="true">📊</span>
+                    <span>Visão Geral</span>
+                </a>
                 <a href="#" class="nav-item">
-                    <span class="nav-icon">⌂</span>
+                    <span class="nav-icon" aria-hidden="true">⌂</span>
                     <span>Dashboard</span>
                 </a>
+                <a href="equipamentos.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">▣</span>
+                    <span>Equipamentos</span>
+                </a>
                 <span class="nav-title nav-title-spacing">Cadastros</span>
-                <a href="cadastrar-hospital.html" class="nav-item">
+                <a href="hospitais.html" class="nav-item">
                     <span class="nav-icon" aria-hidden="true">🏥</span>
                     <span>Cadastrar hospital</span>
                 </a>
-                <a href="listar-hospitais.html" class="nav-item">
-                    <span class="nav-icon" aria-hidden="true">📋</span>
-                    <span>Hospitais cadastrados</span>
+                <a href="cadastrar-usuario.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">👤</span>
+                    <span>Cadastrar usuário</span>
                 </a>
             </nav>
 
             <div class="sidebar-footer">
-                <div id="usuario_avatar" class="usuario-avatar">BT</div>
-                <div class="user-info">
-                    <strong id="nome_cliente">Usuário BioTrace</strong>
-                    <span id="email_cliente">perfil@biotrace.com</span>
+                <div class="sidebar-user">
+                    <div id="usuario_avatar" class="usuario-avatar">BT</div>
+                    <div class="user-info">
+                        <strong id="nome_cliente">Usuário BioTrace</strong>
+                        <span id="email_cliente">perfil@biotrace.com</span>
+                    </div>
                 </div>
+                <button class="sidebar-logout" id="btnSair" type="button" aria-label="Sair da conta" title="Sair da conta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M9 5H5v14h4M10 12h10m-4-4 4 4-4 4" />
+                    </svg>
+                </button>
             </div>
         </aside>
 
         <main class="main-content">
             <header class="mobile-header">
-                <button class="menu-button" id="menuButton" type="button" aria-label="Abrir menu" aria-controls="sidebar" aria-expanded="false">☰</button>
+                <button class="menu-button" id="menuButton" type="button" aria-label="Abrir menu"
+                    aria-controls="sidebar" aria-expanded="false">☰</button>
                 <img src="../assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo">
             </header>
 
@@ -60,7 +76,7 @@
                     </div>
                 </div>
 
-                
+
             </div>
         </main>
     </div>
@@ -68,4 +84,5 @@
 
     <script src="./js/dashboard.js"></script>
 </body>
+
 </html>

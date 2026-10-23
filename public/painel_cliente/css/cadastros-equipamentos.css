@@ -1,0 +1,49 @@
+/* Elementos compartilhados pelos cadastros de modelos, lotes e equipamentos. */
+#titulo-pagina { margin-bottom: 24px; }
+#titulo-pagina h1 { margin: 10px 0; font-size: clamp(24px, 3vw, 30px); }
+#titulo-pagina p, #orientacao-cadastro, #estado-lista, #quantidade-recursos, #previa-intervalo {
+    color: var(--text-secondary); font-size: 13px; line-height: 1.6;
+}
+#titulo-pagina small { color: var(--primary); font-weight: 700; letter-spacing: 1px; }
+#etapas-cadastro { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+#etapas-cadastro a { padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary); background: var(--white); font-size: 13px; }
+#etapas-cadastro a[aria-current="step"] { color: var(--primary); background: var(--primary-light); border-color: var(--primary); font-weight: 700; }
+#cadastro-recursos, #lista-recursos { padding: 26px; margin-bottom: 24px; border: 1px solid var(--border); border-radius: 12px; background: var(--white); }
+#cadastro-recursos h2, #lista-recursos h2 { font-size: 18px; margin-bottom: 8px; }
+#orientacao-cadastro { margin-bottom: 24px; }
+#orientacao-cadastro a, #lista-recursos a, #proximo-passo { color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
+#campos-cadastro, #campos-intervalo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+#campos-intervalo { grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+#form-cadastro label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+#form-cadastro input, #form-cadastro select, #buscar-recursos, #lista-recursos select {
+    width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--background); color: var(--text); font: inherit; font-size: 13px;
+}
+#form-cadastro input:focus, #form-cadastro select:focus, #buscar-recursos:focus, #lista-recursos select:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+#form-cadastro input:disabled, #form-cadastro select:disabled { opacity: 0.6; }
+#form-cadastro small { display: block; margin-top: 6px; font-size: 12px; color: var(--text-secondary); }
+#acoes-cadastro { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+#salvar-cadastro, #lista-recursos button { min-height: 40px; padding: 10px 16px; border: 0; border-radius: 8px; background: var(--primary); color: var(--white); font: inherit; font-size: 13px; cursor: pointer; }
+#salvar-cadastro:hover, #lista-recursos button:hover { background: var(--primary-dark); }
+#salvar-cadastro:disabled, #lista-recursos button:disabled { opacity: 0.55; cursor: default; }
+#proximo-passo { font-size: 13px; font-weight: 600; }
+#aviso-cadastro { margin-top: 20px; padding: 16px 18px; border: 1px solid #fecaca; border-left: 4px solid #dc2626; border-radius: 10px; background: #fef2f2; color: #991b1b; font-size: 14px; line-height: 1.6; }
+#aviso-cadastro[data-tipo="sucesso"] { border-color: #a7f3d0; border-left-color: #059669; color: #065f46; background: #ecfdf5; }
+#lista-recursos > header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px; }
+#lista-recursos > label { display: block; margin-bottom: 8px; font-size: 13px; }
+#buscar-recursos { margin-bottom: 18px; }
+#rolagem-tabela { overflow-x: auto; }
+#rolagem-tabela table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+#rolagem-tabela th { background: var(--background); color: var(--text-secondary); font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
+#rolagem-tabela th, #rolagem-tabela td { padding: 15px 12px; border-bottom: 1px solid var(--border); }
+#rolagem-tabela td { min-width: 125px; overflow-wrap: anywhere; }
+#rolagem-tabela select { min-width: 200px; }
+#estado-lista { padding: 16px 0; }
+#estado-lista[data-tipo="erro"] { color: #b91c1c; }
+#previa-intervalo { margin-top: 14px; padding: 12px; background: var(--primary-light); border-radius: 8px; }
+#campos-intervalo[hidden], #serie-individual[hidden], #proximo-passo[hidden] { display: none; }
+
+@media (max-width: 600px) {
+    #cadastro-recursos, #lista-recursos { padding: 20px; }
+    #campos-cadastro, #campos-intervalo { grid-template-columns: 1fr; }
+    #salvar-cadastro { width: 100%; }
+}

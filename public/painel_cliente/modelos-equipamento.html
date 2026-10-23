@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelos de equipamento | BioTrace</title>
+    <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/cadastros-equipamentos.css">
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="logo">
+                    <img src="../assets/icons/BioTrace (4).png" alt="BioTrace Logo">
+                </a>
+                <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Fechar menu">&times;</button>
+            </div>
+
+            <nav class="sidebar-nav" aria-label="Menu principal">
+                <span class="nav-title">Principal</span>
+                <a href="index.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">📊</span>
+                    <span>Visão Geral</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">⌂</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="equipamentos.html" class="nav-item active" aria-current="page">
+                    <span class="nav-icon" aria-hidden="true">▣</span>
+                    <span>Equipamentos</span>
+                </a>
+                <span class="nav-title nav-title-spacing">Cadastros</span>
+                <a href="cadastrar-hospital.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">🏥</span>
+                    <span>Cadastrar hospital</span>
+                </a>
+                <a href="cadastrar-usuario.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">👤</span>
+                    <span>Cadastrar usuário</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div id="usuario_avatar" class="usuario-avatar">BT</div>
+                    <div class="user-info">
+                        <strong id="nome_cliente">Usuário BioTrace</strong>
+                        <span id="email_cliente">perfil@biotrace.com</span>
+                    </div>
+                </div>
+                <button class="sidebar-logout" id="btnSair" type="button">Sair</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="mobile-header">
+                <button class="menu-button" id="menuButton" type="button" aria-label="Abrir menu" aria-controls="sidebar" aria-expanded="false">☰</button>
+                <img src="../assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo">
+            </header>
+            <div class="page-content">
+                <header id="titulo-pagina">
+                    <small>CADASTRO DE EQUIPAMENTOS</small>
+                    <h1>Modelos de equipamento</h1>
+                    <p>Cadastre os modelos que sua empresa utiliza para organizar lotes e equipamentos.</p>
+                </header>
+                <nav id="etapas-cadastro" aria-label="Etapas do cadastro"><a href="modelos-equipamento.html" aria-current="step">1. Modelos</a> <a href="lotes-equipamento.html">2. Lotes</a> <a href="equipamentos.html">3. Equipamentos</a></nav>
+                <section id="cadastro-recursos" aria-labelledby="titulo-cadastro">
+                    <h2 id="titulo-cadastro">Novo cadastro</h2>
+                    <p id="orientacao-cadastro">Comece pelo nome do modelo. Depois, cadastre os lotes associados a ele.</p>
+                    <form id="form-cadastro" novalidate>
+                        <div id="campos-cadastro">
+                            <div>
+                                <label for="nome-modelo">Nome do modelo *</label>
+                                <input id="nome-modelo" type="text" maxlength="60" placeholder="Ex.: Monitor X100" required aria-describedby="ajuda-modelo">
+                                <small id="ajuda-modelo">Até 60 caracteres. O modelo ficará cadastrado na sua empresa.</small>
+                            </div>
+                        </div>
+                        <div id="acoes-cadastro">
+                            <button type="submit" id="salvar-cadastro" disabled>Cadastrar</button>
+                            <a id="proximo-passo" hidden>Ir para a próxima etapa →</a>
+                        </div>
+                    </form>
+                    <p id="aviso-cadastro" role="status" aria-live="polite" hidden></p>
+                </section>
+                <section id="lista-recursos" aria-labelledby="titulo-lista">
+                    <header>
+                        <div><h2 id="titulo-lista">Modelos de equipamento cadastrados</h2><p id="quantidade-recursos" role="status">Carregando...</p></div>
+                        <button type="button" id="atualizar-lista">Atualizar</button>
+                    </header>
+                    
+                    <p id="estado-lista" role="status" aria-live="polite">Carregando...</p>
+                    <div id="rolagem-tabela" role="region" aria-label="Modelos de equipamento cadastrados" tabindex="0">
+                        <table aria-labelledby="titulo-lista">
+                            <thead><tr><th scope="col">Modelo</th><th scope="col">Próxima etapa</th></tr></thead>
+                            <tbody id="linhas-recursos"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <script src="./js/dashboard.js"></script>
+    <script src="./js/cadastros-equipamentos.js"></script>
+    <script>
+        async function carregarModelos() {
+            var estado = document.getElementById('estado-lista');
+            var linhas = document.getElementById('linhas-recursos');
+            estado.hidden = false;
+            estado.dataset.tipo = '';
+            estado.textContent = 'Carregando modelos...';
+            linhas.replaceChildren();
+            document.getElementById('quantidade-recursos').textContent = 'Carregando...';
+            try {
+                var empresa = obterEmpresaCadastro();
+                document.getElementById('salvar-cadastro').disabled = false;
+                var dados = await requisitarCadastro(`/equipamento/modelo/${empresa}`);
+                document.getElementById('quantidade-recursos').textContent = dados.modelos.length + ' modelo(s)';
+                estado.hidden = dados.modelos.length > 0;
+                estado.textContent = 'Nenhum modelo cadastrado. Cadastre o primeiro acima.';
+                dados.modelos.forEach(function (modelo) {
+                    var linha = document.createElement('tr');
+                    adicionarCelulaCadastro(linha, modelo.nome_modelo);
+                    var acao = adicionarCelulaCadastro(linha, '');
+                    var link = document.createElement('a');
+                    link.href = 'lotes-equipamento.html?modelo=' + modelo.id_modelo_equipamento;
+                    link.textContent = 'Cadastrar lote →';
+                    acao.appendChild(link);
+                    linhas.appendChild(linha);
+                });
+            } catch (erro) {
+                estado.textContent = erro.message;
+                estado.dataset.tipo = 'erro';
+                document.getElementById('quantidade-recursos').textContent = 'Listagem indisponível';
+            }
+        }
+
+        document.getElementById('form-cadastro').addEventListener('submit', async function (evento) {
+            evento.preventDefault();
+            var botao = document.getElementById('salvar-cadastro');
+            if (botao.disabled) return;
+            document.getElementById('aviso-cadastro').hidden = true;
+            document.getElementById('proximo-passo').hidden = true;
+            var nome = document.getElementById('nome-modelo').value.trim();
+            if (!nome || nome.length > 60) return mostrarAvisoCadastro('Informe o nome do modelo com até 60 caracteres.', 'erro');
+            botao.disabled = true;
+            botao.textContent = 'Cadastrando...';
+            try {
+                var dados = await requisitarCadastro(`/equipamento/modelo/${obterEmpresaCadastro()}`, { nomeServer: nome });
+                document.getElementById('nome-modelo').value = '';
+                mostrarAvisoCadastro(dados.mensagem, 'sucesso');
+                var proximo = document.getElementById('proximo-passo');
+                proximo.href = 'lotes-equipamento.html?modelo=' + dados.idInserido;
+                proximo.textContent = 'Cadastrar um lote deste modelo →';
+                proximo.hidden = false;
+                await carregarModelos();
+            } catch (erro) {
+                mostrarAvisoCadastro(erro.message, 'erro');
+            } finally {
+                botao.disabled = false;
+                botao.textContent = 'Cadastrar modelo';
+            }
+        });
+        document.getElementById('salvar-cadastro').textContent = 'Cadastrar modelo';
+        document.getElementById('atualizar-lista').addEventListener('click', carregarModelos);
+        carregarModelos();
+    </script>
+</body>
+</html>

@@ -4,11 +4,9 @@ var router = express.Router();
 
 var hospitalController = require("../controllers/hospitalController");
 
-const middleware = require("../middlewares/authMiddleware");
+router.get("/:idEmpresa", hospitalController.listarHospitais);
 
-router.get("/", middleware.verificarToken, hospitalController.listarHospitais);
-
-router.post("/", middleware.verificarToken, function (req, res) {
+router.post("/:idEmpresa", function (req, res) {
     hospitalController.cadastrarHospital(req, res);
 })
 

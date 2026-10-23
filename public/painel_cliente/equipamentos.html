@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipamentos | BioTrace</title>
+    <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/cadastros-equipamentos.css">
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="logo">
+                    <img src="../assets/icons/BioTrace (4).png" alt="BioTrace Logo">
+                </a>
+                <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Fechar menu">&times;</button>
+            </div>
+
+            <nav class="sidebar-nav" aria-label="Menu principal">
+                <span class="nav-title">Principal</span>
+                <a href="index.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">📊</span>
+                    <span>Visão Geral</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">⌂</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="equipamentos.html" class="nav-item active" aria-current="page">
+                    <span class="nav-icon" aria-hidden="true">▣</span>
+                    <span>Equipamentos</span>
+                </a>
+                <span class="nav-title nav-title-spacing">Cadastros</span>
+                <a href="cadastrar-hospital.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">🏥</span>
+                    <span>Cadastrar hospital</span>
+                </a>
+                <a href="cadastrar-usuario.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">👤</span>
+                    <span>Cadastrar usuário</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div id="usuario_avatar" class="usuario-avatar">BT</div>
+                    <div class="user-info">
+                        <strong id="nome_cliente">Usuário BioTrace</strong>
+                        <span id="email_cliente">perfil@biotrace.com</span>
+                    </div>
+                </div>
+                <button class="sidebar-logout" id="btnSair" type="button">Sair</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="mobile-header">
+                <button class="menu-button" id="menuButton" type="button" aria-label="Abrir menu" aria-controls="sidebar" aria-expanded="false">☰</button>
+                <img src="../assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo">
+            </header>
+            <div class="page-content">
+                <header id="titulo-pagina">
+                    <small>CADASTRO DE EQUIPAMENTOS</small>
+                    <h1>Equipamentos</h1>
+                    <p>Cadastre os equipamentos de cada lote e defina o hospital quando necessário.</p>
+                </header>
+                <nav id="etapas-cadastro" aria-label="Etapas do cadastro"><a href="modelos-equipamento.html">1. Modelos</a> <a href="lotes-equipamento.html">2. Lotes</a> <a href="equipamentos.html" aria-current="step">3. Equipamentos</a></nav>
+                <section id="cadastro-recursos" aria-labelledby="titulo-cadastro">
+                    <h2 id="titulo-cadastro">Novo cadastro</h2>
+                    <p id="orientacao-cadastro">Cadastre uma série individual ou um intervalo. O hospital é opcional e pode ser alterado a qualquer momento.</p>
+                    <form id="form-cadastro" novalidate>
+                        <div id="campos-cadastro">
+                            <div>
+                                <label for="tipo-cadastro">Forma de cadastro</label>
+                                <select id="tipo-cadastro"><option value="individual">Um equipamento</option><option value="intervalo">Vários equipamentos por intervalo</option></select>
+                            </div>
+                            <div>
+                                <label for="lote-equipamento">Lote *</label>
+                                <select id="lote-equipamento" required disabled><option value="">Carregando lotes...</option></select>
+                                <small>O modelo é definido pelo lote. <a href="lotes-equipamento.html">Cadastrar lote</a>.</small>
+                            </div>
+                            <div id="serie-individual">
+                                <label for="numero-serie">Número de série *</label>
+                                <input id="numero-serie" type="text" maxlength="60" placeholder="Ex.: SLA-001">
+                                <small>Até 60 caracteres. Cada equipamento tem uma série única.</small>
+                            </div>
+                            <div>
+                                <label for="hospital-equipamento">Hospital (opcional)</label>
+                                <select id="hospital-equipamento" disabled><option value="">Sem hospital vinculado</option></select>
+                                <small>Você pode definir ou alterar o hospital depois, na lista abaixo.</small>
+                            </div>
+                            <div id="campos-intervalo" hidden>
+                                <div><label for="prefixo-serie">Prefixo</label><input id="prefixo-serie" type="text" maxlength="50" placeholder="Ex.: SLA-"><small>Inclua o hífen se ele fizer parte da série.</small></div>
+                                <div><label for="inicio-serie">Número inicial *</label><input id="inicio-serie" type="text" inputmode="numeric" maxlength="9" placeholder="001"><small>Mantenha os zeros: 001.</small></div>
+                                <div><label for="fim-serie">Número final *</label><input id="fim-serie" type="text" inputmode="numeric" maxlength="9" placeholder="040"><small>Até 500 equipamentos por envio.</small></div>
+                            </div>
+                        </div>
+                        <p id="previa-intervalo" role="status" hidden>Informe o intervalo para visualizar as séries.</p>
+                        <div id="acoes-cadastro">
+                            <button type="submit" id="salvar-cadastro" disabled>Cadastrar</button>
+                            <a id="proximo-passo" hidden>Ir para a próxima etapa →</a>
+                        </div>
+                    </form>
+                    <p id="aviso-cadastro" role="status" aria-live="polite" hidden></p>
+                </section>
+                <section id="lista-recursos" aria-labelledby="titulo-lista">
+                    <header>
+                        <div><h2 id="titulo-lista">Equipamentos cadastrados</h2><p id="quantidade-recursos" role="status">Carregando...</p></div>
+                        <button type="button" id="atualizar-lista">Atualizar</button>
+                    </header>
+                    <label for="buscar-recursos">Buscar por série, modelo, lote ou hospital</label><input type="search" id="buscar-recursos" placeholder="Buscar equipamentos" disabled>
+                    <p id="estado-lista" role="status" aria-live="polite">Carregando...</p>
+                    <div id="rolagem-tabela" role="region" aria-label="Equipamentos cadastrados" tabindex="0">
+                        <table aria-labelledby="titulo-lista">
+                            <thead><tr><th scope="col">Série</th><th scope="col">Modelo</th><th scope="col">Lote</th><th scope="col">Hospital</th><th scope="col">Ação</th></tr></thead>
+                            <tbody id="linhas-recursos"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <script src="./js/dashboard.js"></script>
+    <script src="./js/cadastros-equipamentos.js"></script>
+    <script>
+        var equipamentosDisponiveis = [];
+        var lotesDisponiveis = [];
+        var hospitaisDisponiveis = [];
+
+        function preencherHospitais(selecao, escolhido) {
+            selecao.replaceChildren();
+            adicionarOpcaoCadastro(selecao, '', 'Sem hospital vinculado');
+            hospitaisDisponiveis.forEach(function (hospital) { adicionarOpcaoCadastro(selecao, hospital.id_hospital, hospital.nome_hospital); });
+            selecao.value = escolhido == null ? '' : String(escolhido);
+        }
+
+        function montarEquipamentos() {
+            var linhas = document.getElementById('linhas-recursos');
+            var busca = document.getElementById('buscar-recursos').value.trim().toLowerCase();
+            var equipamentos = equipamentosDisponiveis.filter(function (equipamento) {
+                return [equipamento.numero_serie, equipamento.nome_modelo, equipamento.numero_lote, equipamento.nome_hospital || 'Sem hospital vinculado'].join(' ').toLowerCase().includes(busca);
+            });
+            linhas.replaceChildren();
+            document.getElementById('quantidade-recursos').textContent = equipamentos.length + ' equipamento(s)';
+            var estado = document.getElementById('estado-lista');
+            estado.dataset.tipo = '';
+            estado.hidden = equipamentos.length > 0;
+            estado.textContent = equipamentosDisponiveis.length ? 'Nenhum equipamento encontrado para esta busca.' : 'Nenhum equipamento cadastrado. Comece selecionando um lote acima.';
+            equipamentos.forEach(function (equipamento) {
+                var linha = document.createElement('tr');
+                adicionarCelulaCadastro(linha, equipamento.numero_serie);
+                adicionarCelulaCadastro(linha, equipamento.nome_modelo);
+                adicionarCelulaCadastro(linha, equipamento.numero_lote);
+                var hospital = adicionarCelulaCadastro(linha, '');
+                var selecao = document.createElement('select');
+                selecao.setAttribute('aria-label', 'Hospital do equipamento ' + equipamento.numero_serie);
+                preencherHospitais(selecao, equipamento.fk_hospital);
+                hospital.appendChild(selecao);
+                var acao = adicionarCelulaCadastro(linha, '');
+                var salvar = document.createElement('button');
+                salvar.type = 'button';
+                salvar.textContent = 'Salvar hospital';
+                salvar.disabled = true;
+                acao.appendChild(salvar);
+                var hospitalSalvo = selecao.value;
+                selecao.addEventListener('change', function () { salvar.disabled = selecao.value === hospitalSalvo; });
+                salvar.addEventListener('click', async function () {
+                    salvar.disabled = true;
+                    selecao.disabled = true;
+                    salvar.textContent = 'Salvando...';
+                    try {
+                        var dados = await requisitarCadastro(`/equipamento/${obterEmpresaCadastro()}/${equipamento.id_equipamento}/hospital`, { idHospitalServer: selecao.value || null }, 'PATCH');
+                        hospitalSalvo = selecao.value;
+                        equipamento.fk_hospital = hospitalSalvo ? Number(hospitalSalvo) : null;
+                        var selecionado = hospitaisDisponiveis.find(function (h) { return String(h.id_hospital) === hospitalSalvo; });
+                        equipamento.nome_hospital = selecionado ? selecionado.nome_hospital : null;
+                        mostrarAvisoCadastro(dados.mensagem, 'sucesso');
+                    } catch (erro) {
+                        mostrarAvisoCadastro(erro.message, 'erro');
+                    } finally {
+                        salvar.textContent = 'Salvar hospital';
+                        selecao.disabled = false;
+                        salvar.disabled = selecao.value === hospitalSalvo;
+                    }
+                });
+                linhas.appendChild(linha);
+            });
+        }
+
+        async function carregarEquipamentos() {
+            var estado = document.getElementById('estado-lista');
+            var selecao = document.getElementById('lote-equipamento');
+            var loteSelecionado = selecao.value || new URLSearchParams(window.location.search).get('lote');
+            var hospitalSelecionado = document.getElementById('hospital-equipamento').value;
+            estado.hidden = false;
+            estado.dataset.tipo = '';
+            estado.textContent = 'Carregando equipamentos...';
+            document.getElementById('linhas-recursos').replaceChildren();
+            document.getElementById('salvar-cadastro').disabled = true;
+            document.getElementById('buscar-recursos').disabled = true;
+            document.getElementById('quantidade-recursos').textContent = 'Carregando...';
+            selecao.disabled = true;
+            document.getElementById('hospital-equipamento').disabled = true;
+            try {
+                var empresa = obterEmpresaCadastro();
+                var dados = await Promise.all([
+                    requisitarCadastro(`/equipamento/lote/${empresa}`),
+                    requisitarCadastro(`/hospital/${empresa}`),
+                    requisitarCadastro(`/equipamento/${empresa}`)
+                ]);
+                lotesDisponiveis = dados[0].lotes;
+                hospitaisDisponiveis = dados[1].hospitais;
+                equipamentosDisponiveis = dados[2].equipamentos;
+                selecao.replaceChildren();
+                adicionarOpcaoCadastro(selecao, '', lotesDisponiveis.length ? 'Selecione um lote' : 'Cadastre um lote primeiro');
+                lotesDisponiveis.forEach(function (lote) { adicionarOpcaoCadastro(selecao, lote.id_lote_equipamento, lote.numero_lote + ' — ' + lote.nome_modelo); });
+                if (lotesDisponiveis.some(function (l) { return String(l.id_lote_equipamento) === loteSelecionado; })) selecao.value = loteSelecionado;
+                preencherHospitais(document.getElementById('hospital-equipamento'), hospitalSelecionado);
+                selecao.disabled = lotesDisponiveis.length === 0;
+                document.getElementById('hospital-equipamento').disabled = false;
+                document.getElementById('salvar-cadastro').disabled = lotesDisponiveis.length === 0;
+                document.getElementById('buscar-recursos').disabled = false;
+                montarEquipamentos();
+                if (!lotesDisponiveis.length) {
+                    estado.hidden = false;
+                    estado.textContent = 'Cadastre um modelo e um lote para começar a cadastrar equipamentos.';
+                }
+            } catch (erro) {
+                estado.textContent = erro.message;
+                estado.dataset.tipo = 'erro';
+                document.getElementById('quantidade-recursos').textContent = 'Listagem indisponível';
+            }
+        }
+
+        function obterIntervalo() {
+            var inicio = document.getElementById('inicio-serie').value;
+            var fim = document.getElementById('fim-serie').value;
+            var prefixo = document.getElementById('prefixo-serie').value.trim();
+            if (!/^\d{1,9}$/.test(inicio) || !/^\d{1,9}$/.test(fim)) throw new Error('Informe o início e o fim com até 9 dígitos. Exemplo: 001 até 040.');
+            var quantidade = Number(fim) - Number(inicio) + 1;
+            if (quantidade < 1 || quantidade > 500) throw new Error('O intervalo deve conter de 1 a 500 equipamentos.');
+            var largura = Math.max(inicio.length, fim.length);
+            return { prefixoServer: prefixo, inicioServer: inicio, fimServer: fim, quantidade: quantidade,
+                primeira: prefixo + inicio.padStart(largura, '0'), ultima: prefixo + fim.padStart(largura, '0') };
+        }
+
+        function atualizarModoCadastro() {
+            var intervalo = document.getElementById('tipo-cadastro').value === 'intervalo';
+            document.getElementById('campos-intervalo').hidden = !intervalo;
+            document.getElementById('serie-individual').hidden = intervalo;
+            document.getElementById('previa-intervalo').hidden = !intervalo;
+            document.getElementById('salvar-cadastro').textContent = intervalo ? 'Cadastrar equipamentos' : 'Cadastrar equipamento';
+            if (intervalo) {
+                try {
+                    var dados = obterIntervalo();
+                    document.getElementById('previa-intervalo').textContent = dados.quantidade + ' equipamento(s): ' + dados.primeira + ' até ' + dados.ultima + '. Todos serão associados ao lote e hospital selecionados.';
+                } catch (erro) { document.getElementById('previa-intervalo').textContent = erro.message; }
+            }
+        }
+
+        document.getElementById('form-cadastro').addEventListener('submit', async function (evento) {
+            evento.preventDefault();
+            var botao = document.getElementById('salvar-cadastro');
+            if (botao.disabled) return;
+            document.getElementById('aviso-cadastro').hidden = true;
+            var intervalo = document.getElementById('tipo-cadastro').value === 'intervalo';
+            var lote = document.getElementById('lote-equipamento').value;
+            var hospital = document.getElementById('hospital-equipamento').value;
+            if (!lote) return mostrarAvisoCadastro('Selecione o lote dos equipamentos.', 'erro');
+            var dados = { idLoteServer: lote, idHospitalServer: hospital || null };
+            try {
+                if (intervalo) {
+                    var faixa = obterIntervalo();
+                    dados.prefixoServer = faixa.prefixoServer;
+                    dados.inicioServer = faixa.inicioServer;
+                    dados.fimServer = faixa.fimServer;
+                } else {
+                    dados.numeroSerieServer = document.getElementById('numero-serie').value.trim();
+                    if (!dados.numeroSerieServer || dados.numeroSerieServer.length > 60) throw new Error('Informe a série do equipamento com até 60 caracteres.');
+                }
+                botao.disabled = true;
+                botao.textContent = 'Cadastrando...';
+                var url = intervalo ? `/equipamento/intervalo/${obterEmpresaCadastro()}` : `/equipamento/${obterEmpresaCadastro()}`;
+                var resultado = await requisitarCadastro(url, dados);
+                mostrarAvisoCadastro(resultado.mensagem, 'sucesso');
+                document.getElementById('numero-serie').value = '';
+                document.getElementById('inicio-serie').value = '';
+                document.getElementById('fim-serie').value = '';
+                await carregarEquipamentos();
+            } catch (erro) {
+                mostrarAvisoCadastro(erro.message, 'erro');
+            } finally {
+                botao.disabled = lotesDisponiveis.length === 0;
+                atualizarModoCadastro();
+            }
+        });
+        document.getElementById('buscar-recursos').addEventListener('input', montarEquipamentos);
+        document.getElementById('tipo-cadastro').addEventListener('change', atualizarModoCadastro);
+        ['prefixo-serie', 'inicio-serie', 'fim-serie'].forEach(function (id) { document.getElementById(id).addEventListener('input', atualizarModoCadastro); });
+        document.getElementById('atualizar-lista').addEventListener('click', carregarEquipamentos);
+        atualizarModoCadastro();
+        carregarEquipamentos();
+    </script>
+</body>
+</html>

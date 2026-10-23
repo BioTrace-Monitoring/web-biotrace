@@ -1,12 +1,12 @@
 var hospitalModel = require("../models/hospitalModel");
 
 function cadastrarHospital(req, res) {
-    var idEmpresa = Number(req.usuario && req.usuario.fk_empresa);
+    var idEmpresa = Number(req.params.idEmpresa);
 
     if (!Number.isSafeInteger(idEmpresa) || idEmpresa <= 0) {
-        return res.status(403).json({
+        return res.status(400).json({
             sucesso: false,
-            mensagem: "Usuário sem empresa válida. Faça login novamente."
+            mensagem: "ID da empresa inválido."
         });
     }
 
@@ -55,12 +55,12 @@ function cadastrarHospital(req, res) {
 }
 
 function listarHospitais(req, res) {
-    var idEmpresa = Number(req.usuario && req.usuario.fk_empresa);
+    var idEmpresa = Number(req.params.idEmpresa);
 
     if (!Number.isSafeInteger(idEmpresa) || idEmpresa <= 0) {
-        return res.status(403).json({
+        return res.status(400).json({
             sucesso: false,
-            mensagem: "Usuário sem empresa válida. Faça login novamente."
+            mensagem: "ID da empresa inválido."
         });
     }
 

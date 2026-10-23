@@ -138,8 +138,16 @@ button:focus-visible {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 18px 10px 4px;
+    padding: 18px 6px 4px;
     border-top: 1px solid var(--border);
+}
+
+.sidebar-user {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .usuario-avatar {
@@ -157,6 +165,7 @@ button:focus-visible {
 }
 
 .user-info {
+    flex: 1;
     min-width: 0;
 }
 
@@ -176,6 +185,32 @@ button:focus-visible {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.sidebar-logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    padding: 6px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background .2s, color .2s;
+}
+
+.sidebar-logout:hover {
+    background: #fff5f4;
+    color: #a12622;
+}
+
+.sidebar-logout svg {
+    width: 20px;
+    height: 20px;
 }
 
 .main-content {
