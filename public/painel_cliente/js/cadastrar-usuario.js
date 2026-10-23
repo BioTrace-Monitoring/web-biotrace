@@ -104,6 +104,18 @@ document.getElementById("ipt_dt_nasc_user").addEventListener("input", function (
     this.value = mascararData(this.value);
 });
 
+document.querySelectorAll(".password-toggle").forEach(function (botao) {
+    botao.addEventListener("click", function () {
+        const input = document.getElementById(this.dataset.target);
+        const mostrar = input.type === "password";
+
+        input.type = mostrar ? "text" : "password";
+        this.setAttribute("aria-label", mostrar ? "Ocultar senha" : "Mostrar senha");
+        this.setAttribute("aria-pressed", String(mostrar));
+        this.classList.toggle("visivel", mostrar);
+    });
+});
+
 formularioCadastro.addEventListener("submit", async function (evento) {
     evento.preventDefault();
     exibirMensagem("");

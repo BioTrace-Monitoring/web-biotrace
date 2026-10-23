@@ -21,11 +21,12 @@
 
             <nav class="sidebar-nav" aria-label="Menu principal">
                 <span class="nav-title">Principal</span>
-                <a href="index.html" class="nav-item"><span class="nav-icon" aria-hidden="true">📊</span> Visão
-                    Geral</a>
-
+                <a href="index.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">📊</span>
+                    <span>Visão Geral</span>
+                </a>
                 <a href="#" class="nav-item">
-                    <span class="nav-icon">⌂</span>
+                    <span class="nav-icon" aria-hidden="true">⌂</span>
                     <span>Dashboard</span>
                 </a>
                 <span class="nav-title nav-title-spacing">Cadastros</span>
@@ -33,14 +34,21 @@
                     <span class="nav-icon" aria-hidden="true">🏥</span>
                     <span>Cadastrar hospital</span>
                 </a>
+                <a href="cadastrar-usuario.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">👤</span>
+                    <span>Cadastrar usuário</span>
+                </a>
             </nav>
 
             <div class="sidebar-footer">
-                <div id="usuario_avatar" class="usuario-avatar">BT</div>
-                <div class="user-info">
-                    <strong id="nome_cliente">Usuário BioTrace</strong>
-                    <span id="email_cliente">perfil@biotrace.com</span>
+                <div class="sidebar-user">
+                    <div id="usuario_avatar" class="usuario-avatar">BT</div>
+                    <div class="user-info">
+                        <strong id="nome_cliente">Usuário BioTrace</strong>
+                        <span id="email_cliente">perfil@biotrace.com</span>
+                    </div>
                 </div>
+                <button class="sidebar-logout" id="btnSair" type="button">Sair</button>
             </div>
         </aside>
 

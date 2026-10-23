@@ -35,7 +35,16 @@ function configurarSidebar() {
     });
 }
 
+function configurarLogout() {
+    document.getElementById('btnSair').addEventListener('click', () => {
+        sessionStorage.clear();
+        localStorage.clear();
+        window.location.href = '../login.html';
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     configurarUsuario();
     configurarSidebar();
+    configurarLogout();
 });
