@@ -105,6 +105,18 @@
         </div>
     </main>
 
+    <div class="sucesso-fundo" id="sucesso-cadastro" role="dialog" aria-modal="true"
+        aria-labelledby="titulo-sucesso" aria-describedby="descricao-sucesso" tabindex="-1">
+        <div class="sucesso-card">
+            <svg class="sucesso-icone" viewBox="0 0 52 52" aria-hidden="true">
+                <circle class="sucesso-circulo" cx="26" cy="26" r="24" fill="none" />
+                <path class="sucesso-check" fill="none" d="M14 27l8 8 16-17" />
+            </svg>
+            <h3 id="titulo-sucesso">Gestor cadastrado!</h3>
+            <p id="descricao-sucesso">Redirecionando para a listagem...</p>
+        </div>
+    </div>
+
     <script src="./js/utils.js"></script>
     <script src="https://unpkg.com/imask"></script>
     <script>
@@ -217,6 +229,8 @@
         }
 
         document.getElementById("btn-cadastrar").addEventListener("click", function () {
+            const botao = document.getElementById("btn-cadastrar");
+            if (botao.disabled) return;
             limparErro();
 
             const idEmpresa = obterIdEmpresa();
@@ -290,6 +304,9 @@
                 telefoneServer: telefone.replace(/\D/g, "")
             };
 
+            botao.disabled = true;
+            botao.textContent = "Cadastrando...";
+
             fetch(`/usuario/${idEmpresa}`, {
                 method: "POST",
                 headers: {
@@ -305,14 +322,20 @@
 
                 return resposta.json();
             }).then(function (resultado) {
-                console.log("Usuário cadastrado:", resultado);
+                if (!resultado.sucesso) {
+                    throw new Error(resultado.mensagem || "Não foi possível cadastrar o gestor.");
+                }
 
-                // TODO: Exibir mensagem de sucesso e redirecionar para a página de listagem de empresas
-                alert("Gestor cadastrado com sucesso!");
-
-                window.location.href = `listar-empresas.html`;
+                const modal = document.getElementById("sucesso-cadastro");
+                modal.classList.add("aberto");
+                modal.focus();
+                setTimeout(function () {
+                    window.location.href = "listar-empresas.html";
+                }, 2000);
             }).catch(function (erro) {
                 console.error("Erro ao cadastrar gestor:", erro);
+                botao.disabled = false;
+                botao.textContent = "Cadastrar gestor";
 
                 mostrarErro(
                     erro.message || "Erro ao cadastrar gestor."
