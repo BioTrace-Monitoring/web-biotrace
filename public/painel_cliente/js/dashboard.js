@@ -1,3 +1,65 @@
+function normalizarCargo(cargo) {
+    return (cargo || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim()
+        .toLowerCase();
+}
+
+function obterCargoDaSessao() {
+    const cargoSalvo = localStorage.getItem("CARGO_USUARIO");
+    if (cargoSalvo) return cargoSalvo;
+
+    try {
+        const token = localStorage.getItem("token");
+        if (!token) return "";
+        const payloadCodificado = token.split(".")[1]
+            .replace(/-/g, "+")
+            .replace(/_/g, "/");
+        const payloadBase64 = payloadCodificado.padEnd(Math.ceil(payloadCodificado.length / 4) * 4, "=");
+        const payloadJson = decodeURIComponent(atob(payloadBase64).split("").map((caractere) => {
+            return `%${caractere.charCodeAt(0).toString(16).padStart(2, "0")}`;
+        }).join(""));
+        const payload = JSON.parse(payloadJson);
+        return payload.cargo || "";
+    } catch {
+        return "";
+    }
+}
+
+const cargoAtual = normalizarCargo(obterCargoDaSessao());
+window.bioTraceAccess = {
+    cargo: cargoAtual,
+    podeCadastrarHospital: cargoAtual === "administrador",
+    podeCadastrarUsuario: cargoAtual === "administrador" || cargoAtual === "gestor",
+    cargosPermitidos: cargoAtual === "administrador"
+        ? ["administrador", "gestor", "analista"]
+        : cargoAtual === "gestor"
+            ? ["analista"]
+            : []
+};
+
+function configurarPermissoesVisuais() {
+    const acesso = window.bioTraceAccess;
+    const linkHospital = document.querySelector('a[href="cadastrar-hospital.html"]');
+    const linkUsuario = document.querySelector('a[href="cadastrar-usuario.html"]');
+    const tituloCadastros = document.querySelector(".nav-title-spacing");
+
+    if (linkHospital && !acesso.podeCadastrarHospital) linkHospital.style.display = "none";
+    if (linkUsuario && !acesso.podeCadastrarUsuario) linkUsuario.style.display = "none";
+    if (tituloCadastros && !acesso.podeCadastrarHospital && !acesso.podeCadastrarUsuario) {
+        tituloCadastros.style.display = "none";
+    }
+
+    const paginaAtual = window.location.pathname.split("/").pop();
+    if (paginaAtual === "cadastrar-hospital.html" && !acesso.podeCadastrarHospital) {
+        window.location.replace("index.html");
+    }
+    if (paginaAtual === "cadastrar-usuario.html" && !acesso.podeCadastrarUsuario) {
+        window.location.replace("index.html");
+    }
+}
+
 function configurarUsuario() {
     const nome = (localStorage.getItem('NOME_USUARIO') || '').trim() || 'Usuário BioTrace';
     const email = (localStorage.getItem('EMAIL_USUARIO') || 'usuario@biotrace.com');
@@ -44,6 +106,7 @@ function configurarLogout() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    configurarPermissoesVisuais();
     configurarUsuario();
     configurarSidebar();
     configurarLogout();
