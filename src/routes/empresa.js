@@ -25,7 +25,6 @@ router.post("/:idEmpresa/equipamento", function (req, res) {
     empresaController.cadastrarEquipamento(req, res);
 })
 
-router.get("/validarEquipamento", empresaController.validarEquipamento);
 
 // Exportando o router
 // Outros arquivos podem usar essas funções
