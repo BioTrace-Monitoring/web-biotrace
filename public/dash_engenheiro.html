@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BioTrace - Validação de Lote</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="./css/style_engenheiro.css">
+</head>
+<body>
+  <div class="container fade-content" id="mainContainer">
+    <header>
+      <div class="brand">
+        <img src="assets/icons/BioTrace (4).png" alt="BioTrace" class="brand-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <span class="brand-title-fallback" style="display:none;">BioTrace</span>
+        <span style="color:#CBD5E1;">|</span>
+        <span class="header-title">Validação de lote</span>
+      </div>
+      <div class="user-profile">
+        <div class="user-avatar">LP</div>
+        <span>Luís Phelipe · Engenheiro de Hardware</span>
+      </div>
+    </header>
+
+    <section class="batch-selector-card">
+      <div class="batch-select-wrapper">
+        <label class="batch-select-label" for="selectLote">Selecione o Lote de Fabricação</label>
+        <select id="selectLote" class="batch-select" onchange="alterarLote(this.value)"></select>
+      </div>
+      <div class="batch-meta" id="batchMeta"></div>
+    </section>
+
+    <section id="verdictBanner" class="verdict-banner"></section>
+
+    <section class="kpi-grid" id="kpiGrid"></section>
+
+    <section class="filter-bar">
+      <div class="filter-left">
+        <label class="toggle-wrapper">
+          <span class="switch">
+            <input type="checkbox" id="toggleProblemas" checked onchange="atualizarFiltros()">
+            <span class="slider"></span>
+          </span>
+          <span class="toggle-label">Mostrar apenas problemas</span>
+        </label>
+        <div class="component-chips" id="componentChips"></div>
+      </div>
+      <div class="filter-right">
+        <input type="text" id="inputBusca" class="search-input" placeholder="Buscar por nº de série..." oninput="atualizarFiltros()">
+        <button class="btn-export" onclick="exportarCSV()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Exportar problemas (CSV)
+        </button>
+      </div>
+    </section>
+
+    <main class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Componente</th>
+            <th>Equipamento / Hospital</th>
+            <th>Valor Atual</th>
+            <th>Régua de Limites</th>
+            <th>Margem</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </main>
+
+    <footer>
+      BioTrace Hardware Intelligence &copy; 2026 · Dados simulados para demonstração
+    </footer>
+  </div>
+
+  <div class="drawer-overlay" id="drawerOverlay" onclick="fecharDrawer(event)">
+    <div class="drawer" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div class="drawer-title" id="drawerTitle">Detalhes do Componente</div>
+        <button class="btn-close" onclick="fecharDrawerDirect()">&times;</button>
+      </div>
+      <div class="drawer-body" id="drawerBody"></div>
+    </div>
+  </div>
+
+  <script src="./js/script_engenheiro.js"></script>
+</body>
+</html>
