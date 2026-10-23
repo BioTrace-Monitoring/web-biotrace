@@ -7,7 +7,6 @@
     <title>Hospitais | BioTrace</title>
     <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/cadastros-equipamentos.css">
     <style>
         #mensagem-recuperacao {
             display: flex;
@@ -91,6 +90,85 @@
         @media (prefers-reduced-motion: reduce) {
             #mensagem-recuperacao { animation: none; }
         }
+
+        #cadastro-recursos, #lista-recursos {
+            padding: 26px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--white);
+        }
+        #cadastro-recursos h2, #lista-recursos h2 {
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+        #quantidade-recursos, #estado-lista {
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        #lista-recursos > header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+        #lista-recursos > label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        #buscar-recursos {
+            width: 100%;
+            min-height: 44px;
+            margin-bottom: 18px;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--background);
+            color: var(--text);
+            font-size: 13px;
+        }
+        #buscar-recursos:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 1px;
+        }
+        #lista-recursos button {
+            min-height: 40px;
+            padding: 10px 16px;
+            border: 0;
+            border-radius: 8px;
+            background: var(--primary);
+            color: var(--white);
+            font-size: 13px;
+            cursor: pointer;
+        }
+        #lista-recursos button:hover { background: var(--primary-dark); }
+        #rolagem-tabela { overflow-x: auto; }
+        #rolagem-tabela table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+        #rolagem-tabela th {
+            background: var(--background);
+            color: var(--text-secondary);
+            font-size: 11px;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+        }
+        #rolagem-tabela th, #rolagem-tabela td {
+            padding: 15px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        #rolagem-tabela td { min-width: 125px; overflow-wrap: anywhere; }
+        #estado-lista { padding: 16px 0; }
+        #estado-lista[data-tipo="erro"] { color: #b91c1c; }
+        @media (max-width: 600px) {
+            #cadastro-recursos, #lista-recursos { padding: 20px; }
+        }
     </style>
 </head>
 
@@ -113,10 +191,6 @@
                 <a href="#" class="nav-item">
                     <span class="nav-icon" aria-hidden="true">⌂</span>
                     <span>Dashboard</span>
-                </a>
-                <a href="equipamentos.html" class="nav-item">
-                    <span class="nav-icon" aria-hidden="true">▣</span>
-                    <span>Equipamentos</span>
                 </a>
                 <span class="nav-title nav-title-spacing">Cadastros</span>
                 <a href="hospitais.html" class="nav-item active" aria-current="page">
