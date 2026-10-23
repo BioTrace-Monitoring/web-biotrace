@@ -1,0 +1,169 @@
+.pagina-recuperacao .area-cadastro {
+    padding: 40px 20px 60px;
+}
+
+.pagina-recuperacao .cartao-cadastro {
+    max-width: 920px;
+    padding: 34px 42px;
+    text-align: center;
+}
+
+.cartao-cadastro .logo {
+    height: 48px;
+    margin-bottom: 12px;
+}
+
+.cartao-cadastro .logo img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+}
+
+.cartao-cadastro h1 {
+    margin-bottom: 7px;
+    color: #202434;
+    font-size: 29px;
+}
+
+.cartao-cadastro .subtitulo {
+    margin-bottom: 18px;
+}
+
+.aviso-obrigatorio {
+    margin-bottom: 18px;
+    color: #737b8c;
+    font-size: 12px;
+    text-align: left;
+}
+
+.aviso-obrigatorio span,
+.grupo-campos label span {
+    color: #b42318;
+}
+
+#formulario-cadastro {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 20px;
+    text-align: left;
+}
+
+.grupo-campos {
+    min-width: 0;
+}
+
+.grupo-campos.campo-largo {
+    grid-column: 1 / -1;
+}
+
+.grupo-campos .label {
+    margin-bottom: 7px;
+    color: #202434;
+    font-size: 12px;
+}
+
+.pagina-recuperacao .grupo-campos .campo {
+    height: 46px;
+    margin-bottom: 5px;
+    padding: 0 10px;
+    border-radius: 9px;
+}
+
+.grupo-campos .campo input,
+.grupo-campos .campo select {
+    width: 100%;
+    height: 100%;
+    padding: 0 4px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #40434a;
+    font: inherit;
+    font-size: 13px;
+}
+
+.grupo-campos .campo select:invalid {
+    color: #858891;
+}
+
+.grupo-campos .campo select option {
+    color: #40434a;
+}
+
+.grupo-campos .ajuda-email {
+    margin: 0 0 2px;
+    color: #737b8c;
+    font-size: 11px;
+    text-align: left;
+}
+
+.pagina-recuperacao .cartao-cadastro .btnRec {
+    width: 100%;
+    margin-top: 22px;
+}
+
+.pagina-recuperacao .cartao-cadastro .btnRec:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+#mensagem-cadastro {
+    margin-top: 14px;
+    color: #a12622;
+    font-size: 13px;
+    text-align: left;
+}
+
+#mensagem-cadastro.sucesso {
+    color: #18794e;
+}
+
+#cadastro-sucesso .sucesso-check,
+#cadastro-sucesso .sucesso-check span,
+#cadastro-sucesso .sucesso-carregando span {
+    animation: none;
+}
+
+#cadastro-sucesso .sucesso-check {
+    transform: scale(0);
+}
+
+#cadastro-sucesso .sucesso-check span {
+    opacity: 0;
+    transform: scale(0.5);
+}
+
+#cadastro-sucesso .sucesso-carregando span {
+    transform: translateX(-100%);
+}
+
+#cadastro-sucesso.ativo .sucesso-check {
+    animation: aparecerCheck 0.5s 0.25s forwards;
+}
+
+#cadastro-sucesso.ativo .sucesso-check span {
+    animation: aparecerSimbolo 0.3s 0.6s forwards;
+}
+
+#cadastro-sucesso.ativo .sucesso-carregando span {
+    animation: carregar 1.8s linear forwards;
+}
+
+@media (max-width: 640px) {
+    .pagina-recuperacao .area-cadastro {
+        padding: 24px 14px 36px;
+    }
+
+    .pagina-recuperacao .cartao-cadastro {
+        padding: 28px 20px;
+    }
+
+    #formulario-cadastro {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .grupo-campos.campo-largo {
+        grid-column: auto;
+    }
+}

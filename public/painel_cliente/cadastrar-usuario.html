@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioTrace - Cadastrar usuário</title>
+    <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
+    <link rel="stylesheet" href="../css/style_hospital.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/style_cadastro_usuario.css">
+</head>
+
+<body class="pagina-recuperacao">
+    <header class="header"></header>
+
+    <main class="area-cadastro">
+        <section class="cartao-cadastro" aria-labelledby="titulo-cadastro">
+            <div class="logo">
+                <img src="../assets/icons/BioTrace (5).png" alt="BioTrace">
+            </div>
+            <h1 id="titulo-cadastro">Cadastrar usuário</h1>
+            <p class="subtitulo">Preencha os dados para adicionar um usuário à sua empresa.</p>
+            <p class="aviso-obrigatorio"><span>*</span> Campos obrigatórios</p>
+
+            <form id="formulario-cadastro" novalidate>
+                <div class="grupo-campos campo-largo">
+                    <label class="label" for="ipt_nome_user">Nome completo <span>*</span></label>
+                    <div class="campo">
+                        <input type="text" id="ipt_nome_user" maxlength="100" autocomplete="name"
+                            placeholder="Ex.: Maria da Silva" required>
+                    </div>
+                </div>
+
+                <div class="grupo-campos">
+                    <label class="label" for="ipt_email_user">E-mail <span>*</span></label>
+                    <div class="campo">
+                        <input type="email" id="ipt_email_user" autocomplete="email" placeholder="nome@empresa.com.br"
+                            required>
+                    </div>
+                </div>
+
+                <div class="grupo-campos">
+                    <label class="label" for="ipt_cargo_user">Cargo <span>*</span></label>
+                    <div class="campo">
+                        <select id="ipt_cargo_user" required>
+                            <option value="">Carregando cargos...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grupo-campos">
+                    <label class="label" for="ipt_cpf_user">CPF <span>*</span></label>
+                    <div class="campo">
+                        <input type="text" id="ipt_cpf_user" inputmode="numeric" maxlength="14" autocomplete="off"
+                            placeholder="000.000.000-00" required>
+                    </div>
+                    <p class="ajuda-email">Informe os 11 dígitos do CPF.</p>
+                </div>
+
+                <div class="grupo-campos">
+                    <label class="label" for="ipt_telefone_user">Telefone <span>*</span></label>
+                    <div class="campo">
+                        <input type="tel" id="ipt_telefone_user" inputmode="numeric" maxlength="15" autocomplete="tel"
+                            placeholder="(00) 00000-0000" required>
+                    </div>
+                </div>
+
+                <div class="grupo-campos">
+                    <label class="label" for="ipt_dt_nasc_user">Data de nascimento <span>*</span></label>
+                    <div class="campo">
+                        <input type="text" id="ipt_dt_nasc_user" inputmode="numeric" maxlength="10" autocomplete="bday"
+                            placeholder="DD/MM/AAAA" required>
+                    </div>
+                </div>
+
+                <div class="grupo-campos">
+                    <label class="label" for="ipt_senha_user">Senha <span>*</span></label>
+                    <div class="campo">
+                        <input type="password" id="ipt_senha_user" minlength="8" autocomplete="new-password"
+                            placeholder="Mínimo de 8 caracteres" required>
+                    </div>
+                </div>
+
+                <div class="grupo-campos">
+                    <label class="label" for="ipt_conf_senha_user">Confirmar senha <span>*</span></label>
+                    <div class="campo">
+                        <input type="password" id="ipt_conf_senha_user" minlength="8" autocomplete="new-password"
+                            placeholder="Digite a senha novamente" required>
+                    </div>
+                </div>
+            </form>
+
+            <button class="btnRec" id="btn_cadastrar_usuario" type="submit" form="formulario-cadastro">
+                Cadastrar usuário
+            </button>
+            <p id="mensagem-cadastro" role="status" aria-live="polite" hidden></p>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-conteudo">
+            <div class="footer-marca">
+                <h2>BioTrace</h2>
+                <p>Tecnologia inteligente para cada leito.</p>
+            </div>
+
+            <div class="footer-coluna">
+                <h3>NAVEGAÇÃO</h3>
+                <a href="index.html">Painel</a>
+                <a href="painel-cliente.html">Acessar painel</a>
+                <a href="cadastrar-hospital.html">Cadastrar hospital</a>
+            </div>
+
+            <div class="footer-coluna">
+                <h3>CONTATO</h3>
+                <p>contato.biotrace@hotmail.com</p>
+                <p>+55 11 9999-0000</p>
+                <p>Av. Paulista 1000, São Paulo</p>
+            </div>
+
+            <div class="footer-coluna">
+                <h3>REDES SOCIAIS</h3>
+                <div class="redes-sociais">
+                    <a href="#" title="Instagram">IG</a>
+                    <a href="#" title="LinkedIn">IN</a>
+                    <a href="#" title="X">X</a>
+                    <a href="https://github.com/BioTrace-Monitoring" target="_blank" rel="noopener noreferrer"
+                        title="GitHub">GH</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-final">
+            <p>© 2026 Biotrace. Todos os direitos reservados.</p>
+            <div>
+                <a href="#">Privacidade</a>
+                <a href="#">Termos</a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="cadastro-sucesso" class="login-sucesso" role="status" aria-live="polite">
+        <div class="sucesso-card">
+            <div class="sucesso-check">
+                <span>✓</span>
+            </div>
+            <h2>Cadastro realizado!</h2>
+            <p id="mensagem-sucesso-cadastro"></p>
+            <div class="sucesso-carregando">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/cadastrar-usuario.js"></script>
+</body>
+
+</html>
