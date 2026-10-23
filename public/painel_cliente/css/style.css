@@ -136,14 +136,14 @@ button:focus-visible {
 
 .sidebar-footer {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 14px;
+    align-items: center;
+    gap: 10px;
     padding: 18px 6px 4px;
     border-top: 1px solid var(--border);
 }
 
 .sidebar-user {
+    flex: 1;
     min-width: 0;
     display: flex;
     align-items: center;
@@ -165,6 +165,7 @@ button:focus-visible {
 }
 
 .user-info {
+    flex: 1;
     min-width: 0;
 }
 
@@ -187,23 +188,29 @@ button:focus-visible {
 }
 
 .sidebar-logout {
-    min-height: 38px;
-    padding: 8px 12px;
-    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    padding: 6px;
+    border: 0;
     border-radius: 8px;
-    background: var(--white);
+    background: transparent;
     color: var(--text-secondary);
-    font-size: 13px;
-    font-weight: 600;
-    text-align: left;
     cursor: pointer;
-    transition: border-color .2s, background .2s, color .2s;
+    transition: background .2s, color .2s;
 }
 
 .sidebar-logout:hover {
-    border-color: #e5c8c8;
     background: #fff5f4;
     color: #a12622;
+}
+
+.sidebar-logout svg {
+    width: 20px;
+    height: 20px;
 }
 
 .main-content {

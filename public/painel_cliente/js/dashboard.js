@@ -41,7 +41,7 @@ window.bioTraceAccess = {
 
 function configurarPermissoesVisuais() {
     const acesso = window.bioTraceAccess;
-    const linkHospital = document.querySelector('a[href="cadastrar-hospital.html"]');
+    const linkHospital = document.querySelector('a[href="hospitais.html"]');
     const linkUsuario = document.querySelector('a[href="cadastrar-usuario.html"]');
     const tituloCadastros = document.querySelector(".nav-title-spacing");
 
@@ -52,7 +52,7 @@ function configurarPermissoesVisuais() {
     }
 
     const paginaAtual = window.location.pathname.split("/").pop();
-    if (paginaAtual === "cadastrar-hospital.html" && !acesso.podeCadastrarHospital) {
+    if (paginaAtual === "hospitais.html" && !acesso.podeCadastrarHospital) {
         window.location.replace("index.html");
     }
     if (paginaAtual === "cadastrar-usuario.html" && !acesso.podeCadastrarUsuario) {

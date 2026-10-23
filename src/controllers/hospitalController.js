@@ -1,6 +1,15 @@
 var hospitalModel = require("../models/hospitalModel");
 
 function cadastrarHospital(req, res) {
+    var idEmpresa = Number(req.params.idEmpresa);
+
+    if (!Number.isSafeInteger(idEmpresa) || idEmpresa <= 0) {
+        return res.status(400).json({
+            sucesso: false,
+            mensagem: "ID da empresa inválido."
+        });
+    }
+
     var nome = req.body.nomeServer;
     var cnpj = req.body.cnpjServer;
     var cep = req.body.cepServer;
@@ -16,7 +25,7 @@ function cadastrarHospital(req, res) {
     } else if (numero == undefined) {
         res.status(400).send("Número está undefined!");
     } else {
-        hospitalModel.cadastrarHospital(nome, cnpj, cep, numero)
+        return hospitalModel.cadastrarHospital(nome, cnpj, cep, numero, idEmpresa)
             .then(function (resultado) {
                 console.log("Hospital cadastrado!");
                 res.json({
@@ -32,19 +41,43 @@ function cadastrarHospital(req, res) {
                     return res.status(409).json({
                         sucesso: false,
                         idInserido: null,
-                        mensagem: "Já existe um hospital com esse CNPJ."
+                        mensagem: "Sua empresa já cadastrou um hospital com esse CNPJ."
                     });
                 }
 
                 res.status(500).json({
                     sucesso: false,
                     idInserido: null,
-                    mensagem: "Erro ao cadastrar empresa"
+                    mensagem: "Erro ao cadastrar hospital"
                 });
             });
     }
 }
 
+function listarHospitais(req, res) {
+    var idEmpresa = Number(req.params.idEmpresa);
+
+    if (!Number.isSafeInteger(idEmpresa) || idEmpresa <= 0) {
+        return res.status(400).json({
+            sucesso: false,
+            mensagem: "ID da empresa inválido."
+        });
+    }
+
+    return hospitalModel.listarHospitais(idEmpresa)
+        .then(function (hospitais) {
+            return res.status(200).json({ sucesso: true, hospitais: hospitais });
+        })
+        .catch(function (erro) {
+            console.error("Erro ao listar hospitais:", erro);
+            return res.status(500).json({
+                sucesso: false,
+                mensagem: "Não foi possível carregar os hospitais. Tente novamente."
+            });
+        });
+}
+
 module.exports = {
-    cadastrarHospital
+    cadastrarHospital,
+    listarHospitais
 }
