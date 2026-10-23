@@ -33,6 +33,10 @@
                     <span class="nav-icon" aria-hidden="true">🏥</span>
                     <span>Cadastrar hospital</span>
                 </a>
+                <a href="listar-hospitais.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">📋</span>
+                    <span>Hospitais cadastrados</span>
+                </a>
             </nav>
 
             <div class="sidebar-footer">
@@ -80,7 +84,7 @@
                                 <label for="ipt_cnpj_hospital">CNPJ <span class="required-mark">*</span></label>
                                 <input type="text" id="ipt_cnpj_hospital" name="cnpj" inputmode="numeric" maxlength="18"
                                     placeholder="00.000.000/0000-00" aria-describedby="ajuda-cnpj" required>
-                                <p class="field-help" id="ajuda-cnpj">14 dígitos. Informe um CNPJ não cadastrado.</p>
+                                <p class="field-help" id="ajuda-cnpj">14 dígitos. O CNPJ não pode se repetir nos hospitais da sua empresa.</p>
                             </div>
                             <div class="form-field">
                                 <label for="ipt_cep_hospital">CEP <span class="optional">(opcional)</span></label>
@@ -215,6 +219,13 @@
                 return;
             }
 
+            var token = localStorage.getItem("token");
+            if (!token || token === "null" || token === "undefined") {
+                elementoMensagem.textContent = "Sua sessão não foi encontrada. Faça login novamente.";
+                elementoMensagem.hidden = false;
+                return;
+            }
+
             var botao = document.getElementById("btn-cadastrar-hospital");
             if (botao.disabled) return;
             botao.disabled = true;
@@ -224,7 +235,7 @@
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     nomeServer: document.getElementById("ipt_nome_hospital").value.trim(),
@@ -244,7 +255,15 @@
                         }
 
                         elementoMensagem.textContent =
-                            dados.mensagem || "Não foi possível cadastrar o hospital.";
+                            dados.mensagem || dados.erro || "Não foi possível cadastrar o hospital.";
+                        if (resposta.status === 401 || resposta.status === 403) {
+                            if (!elementoMensagem.textContent.includes("Faça login novamente")) {
+                                if (!elementoMensagem.textContent.endsWith(".")) {
+                                    elementoMensagem.textContent += ".";
+                                }
+                                elementoMensagem.textContent += " Faça login novamente.";
+                            }
+                        }
                         elementoMensagem.hidden = false;
                     });
                 })

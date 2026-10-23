@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospitais cadastrados | BioTrace</title>
+    <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
+    <link rel="stylesheet" href="./css/style.css">
+    <style>
+        .list-heading,
+        .list-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .list-heading .button-primary {
+            flex-shrink: 0;
+        }
+
+        .list-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--white);
+            overflow: hidden;
+        }
+
+        .list-toolbar {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .list-toolbar h2 {
+            margin-bottom: 6px;
+            font-size: 17px;
+        }
+
+        .list-count {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .list-search {
+            width: min(100%, 340px);
+        }
+
+        .list-search label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .list-search input {
+            width: 100%;
+            min-height: 44px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--background);
+            color: var(--text);
+            font-size: 13px;
+        }
+
+        .list-search input:focus,
+        .table-container:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: -2px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .hospital-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .hospital-table th {
+            padding: 15px 24px;
+            background: var(--background);
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .hospital-table td {
+            padding: 20px 24px;
+            border-top: 1px solid var(--border);
+            line-height: 1.5;
+        }
+
+        .hospital-table td:first-child {
+            min-width: 220px;
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        .hospital-table td:not(:first-child) {
+            white-space: nowrap;
+            color: var(--text-secondary);
+        }
+
+        .hospital-table tbody tr:hover {
+            background: var(--background);
+        }
+
+        .list-state {
+            padding: 48px 24px;
+            text-align: center;
+        }
+
+        .list-state p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .list-state button {
+            margin-top: 16px;
+        }
+
+        .list-state button[hidden] {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            .list-heading,
+            .list-toolbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .list-search {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .list-toolbar {
+                padding: 20px;
+            }
+
+            .list-heading .button-primary {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="logo">
+                    <img src="../assets/icons/BioTrace (4).png" alt="BioTrace Logo">
+                </a>
+                <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Fechar menu">&times;</button>
+            </div>
+
+            <nav class="sidebar-nav" aria-label="Menu principal">
+                <span class="nav-title">Principal</span>
+                <a href="index.html" class="nav-item"><span class="nav-icon" aria-hidden="true">📊</span> Visão Geral</a>
+
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">⌂</span>
+                    <span>Dashboard</span>
+                </a>
+                <span class="nav-title nav-title-spacing">Cadastros</span>
+                <a href="cadastrar-hospital.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">🏥</span>
+                    <span>Cadastrar hospital</span>
+                </a>
+                <a href="listar-hospitais.html" class="nav-item active" aria-current="page">
+                    <span class="nav-icon" aria-hidden="true">📋</span>
+                    <span>Hospitais cadastrados</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div id="usuario_avatar" class="usuario-avatar">BT</div>
+                <div class="user-info">
+                    <strong id="nome_cliente">Usuário BioTrace</strong>
+                    <span id="email_cliente">perfil@biotrace.com</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="mobile-header">
+                <button class="menu-button" id="menuButton" type="button" aria-label="Abrir menu" aria-controls="sidebar" aria-expanded="false">☰</button>
+                <img src="../assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo">
+            </header>
+
+            <div class="page-content">
+                <div class="page-heading list-heading">
+                    <div>
+                        <div class="eyebrow"><span class="eyebrow-dot"></span>PAINEL DE OBSERVABILIDADE</div>
+                        <h1>Hospitais cadastrados</h1>
+                        <p>Consulte os hospitais cadastrados no BioTrace.</p>
+                    </div>
+                    <a href="cadastrar-hospital.html" class="button-primary">+ Cadastrar hospital</a>
+                </div>
+
+                <section class="list-card" aria-labelledby="titulo-hospitais">
+                    <div class="list-toolbar">
+                        <div>
+                            <h2 id="titulo-hospitais">Hospitais</h2>
+                            <p class="list-count" id="quantidade-hospitais" role="status" aria-live="polite">Carregando...</p>
+                        </div>
+                        <div class="list-search">
+                            <label for="filtro-hospitais">Buscar hospital</label>
+                            <input type="search" id="filtro-hospitais" placeholder="Digite o nome ou CNPJ" autocomplete="off" disabled>
+                        </div>
+                    </div>
+
+                    <div class="table-container" id="tabela-container" role="region" aria-label="Tabela de hospitais cadastrados" tabindex="0" hidden>
+                        <table class="hospital-table" aria-labelledby="titulo-hospitais">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Hospital</th>
+                                    <th scope="col">CNPJ</th>
+                                    <th scope="col">CEP</th>
+                                    <th scope="col">Número</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-hospitais"></tbody>
+                        </table>
+                    </div>
+                    <div class="list-state" id="estado-listagem">
+                        <p id="mensagem-listagem" role="status" aria-live="polite">Carregando hospitais...</p>
+                        <button type="button" class="button-secondary" id="tentar-novamente" hidden>Tentar novamente</button>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <script src="./js/dashboard.js"></script>
+    <script>
+        let hospitaisCadastrados = [];
+
+        const tabelaHospitais = document.getElementById('tabela-hospitais');
+        const tabelaContainer = document.getElementById('tabela-container');
+        const filtroHospitais = document.getElementById('filtro-hospitais');
+        const quantidadeHospitais = document.getElementById('quantidade-hospitais');
+        const estadoListagem = document.getElementById('estado-listagem');
+        const mensagemListagem = document.getElementById('mensagem-listagem');
+        const botaoTentarNovamente = document.getElementById('tentar-novamente');
+
+        function normalizarBusca(valor) {
+            return String(valor ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        }
+
+        function formatarCnpj(valor) {
+            const digitos = String(valor ?? '').replace(/\D/g, '');
+            return digitos.length === 14
+                ? digitos.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5')
+                : (valor || 'Não informado');
+        }
+
+        function formatarCep(valor) {
+            const digitos = String(valor ?? '').replace(/\D/g, '');
+            return digitos.length === 8 ? digitos.replace(/^(\d{5})(\d{3})$/, '$1-$2') : (valor || 'Não informado');
+        }
+
+        function mostrarEstado(mensagem, permitirTentarNovamente = false) {
+            tabelaContainer.hidden = true;
+            estadoListagem.hidden = false;
+            mensagemListagem.textContent = mensagem;
+            botaoTentarNovamente.hidden = !permitirTentarNovamente;
+        }
+
+        function aplicarFiltroHospitais() {
+            const busca = normalizarBusca(filtroHospitais.value.trim());
+            const digitosBusca = busca.replace(/\D/g, '');
+            const buscaPorCnpj = /^[\d.\/\s-]+$/.test(busca) && digitosBusca.length > 0;
+            const hospitais = hospitaisCadastrados.filter(function (hospital) {
+                return normalizarBusca(hospital.nome_hospital).includes(busca)
+                    || (buscaPorCnpj && String(hospital.cnpj ?? '').replace(/\D/g, '').includes(digitosBusca));
+            });
+
+            quantidadeHospitais.textContent = hospitais.length + (hospitais.length === 1 ? ' hospital' : ' hospitais');
+            tabelaHospitais.replaceChildren();
+
+            if (hospitais.length === 0) {
+                mostrarEstado(hospitaisCadastrados.length === 0
+                    ? 'Nenhum hospital cadastrado. Clique em “Cadastrar hospital” para adicionar o primeiro.'
+                    : 'Nenhum hospital encontrado para esta busca.');
+                return;
+            }
+
+            estadoListagem.hidden = true;
+            tabelaContainer.hidden = false;
+
+            hospitais.forEach(function (hospital) {
+                const linha = document.createElement('tr');
+                const valores = [hospital.nome_hospital, formatarCnpj(hospital.cnpj), formatarCep(hospital.cep), hospital.numero];
+
+                valores.forEach(function (valor) {
+                    const celula = document.createElement('td');
+                    celula.textContent = valor == null || String(valor).trim() === '' ? 'Não informado' : valor;
+                    linha.appendChild(celula);
+                });
+
+                tabelaHospitais.appendChild(linha);
+            });
+        }
+
+        async function listarHospitais() {
+            hospitaisCadastrados = [];
+            tabelaHospitais.replaceChildren();
+            filtroHospitais.disabled = true;
+            quantidadeHospitais.textContent = 'Carregando...';
+            mostrarEstado('Carregando hospitais...');
+
+            try {
+                const resposta = await fetch('/hospital', {
+                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                });
+
+                if (resposta.status === 401 || resposta.status === 403) {
+                    throw new Error('Sua sessão expirou ou não é válida. Faça login novamente para consultar os hospitais.');
+                }
+
+                if (!resposta.ok) {
+                    throw new Error('Não foi possível carregar os hospitais. Tente novamente.');
+                }
+
+                const dados = await resposta.json();
+                if (!dados.sucesso || !Array.isArray(dados.hospitais)) {
+                    throw new Error('Não foi possível carregar os hospitais. Tente novamente.');
+                }
+
+                hospitaisCadastrados = dados.hospitais;
+                filtroHospitais.disabled = false;
+                aplicarFiltroHospitais();
+            } catch (erro) {
+                quantidadeHospitais.textContent = 'Listagem indisponível';
+                mostrarEstado(erro instanceof TypeError || erro instanceof SyntaxError
+                    ? 'Não foi possível carregar os hospitais. Verifique sua conexão e tente novamente.'
+                    : erro.message, true);
+            }
+        }
+
+        filtroHospitais.addEventListener('input', aplicarFiltroHospitais);
+        botaoTentarNovamente.addEventListener('click', listarHospitais);
+        listarHospitais();
+    </script>
+</body>
+</html>

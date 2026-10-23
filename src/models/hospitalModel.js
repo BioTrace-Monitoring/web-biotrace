@@ -1,19 +1,27 @@
 var database = require("../database/config");
 
-function cadastrarHospital(nome, cnpj, cep, numero) {
-    console.log("ACESSEI O HOSPITAL MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function cadastrarHospital():", nome, cnpj, cep, numero);
-
+function cadastrarHospital(nome, cnpj, cep, numero, idEmpresa) {
     var instrucaoSql = `
-    INSERT INTO hospital (nome_hospital, cnpj, cep, numero) VALUES
-    ('${nome}', '${cnpj}', '${cep}', '${numero}');
+        INSERT INTO hospital (nome_hospital, cnpj, cep, numero, fk_empresa)
+        VALUES (?, ?, ?, ?, ?);
     `;
 
-    console.log("Executando a instrução SQL: \n" + instrucaoSql);
+    return database.executar(instrucaoSql, [nome, cnpj, cep, numero, idEmpresa]);
+}
 
-    return database.executar(instrucaoSql);
+function listarHospitais(idEmpresa) {
+    var instrucaoSql = `
+        SELECT id_hospital, nome_hospital, cnpj, cep, numero
+        FROM hospital
+        WHERE fk_empresa = ?
+        ORDER BY nome_hospital, id_hospital;
+    `;
+
+    return database.executar(instrucaoSql, [idEmpresa]);
 }
 
 module.exports =
 {
-    cadastrarHospital
+    cadastrarHospital,
+    listarHospitais
 };
