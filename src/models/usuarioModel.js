@@ -89,7 +89,44 @@ function atualizarSenha(id, novaSenha) {
 
 // Exportando as funções do model
 // Outros arquivos podem usar essas funções
+function listarUsuarios(idEmpresa) {
+    var instrucaoSql = `
+        SELECT u.id_usuario, u.nome_usuario, u.email_usuario, u.fk_cargo, c.nome AS cargo
+        FROM usuario u JOIN cargo c ON c.id_cargo = u.fk_cargo
+        WHERE u.fk_empresa = ? ORDER BY u.nome_usuario, u.id_usuario;
+    `;
+    return database.executar(instrucaoSql, [idEmpresa]);
+}
+
+function buscarUsuario(idEmpresa, idUsuario) {
+    var instrucaoSql = `
+        SELECT id_usuario, nome_usuario, DATE_FORMAT(dt_nasc_usuario, '%Y-%m-%d') AS dt_nasc_usuario,
+               telefone_usuario, cpf_usuario, email_usuario, fk_cargo
+        FROM usuario WHERE fk_empresa = ? AND id_usuario = ?;
+    `;
+    return database.executar(instrucaoSql, [idEmpresa, idUsuario]);
+}
+
+function alterarUsuario(idEmpresa, idUsuario, nome, dataNascimento, telefone, cpf, email, cargo, senha) {
+    var instrucaoSql = `
+        UPDATE usuario SET nome_usuario = ?, dt_nasc_usuario = ?, telefone_usuario = ?,
+            cpf_usuario = ?, email_usuario = ?, fk_cargo = ?,
+            senha_usuario = IF(? = '', senha_usuario, SHA2(?, 256))
+        WHERE fk_empresa = ? AND id_usuario = ?;
+    `;
+    return database.executar(instrucaoSql, [nome, dataNascimento, telefone, cpf, email, cargo, senha, senha, idEmpresa, idUsuario]);
+}
+
+function excluirUsuario(idEmpresa, idUsuario) {
+    var instrucaoSql = `DELETE FROM usuario WHERE fk_empresa = ? AND id_usuario = ?;`;
+    return database.executar(instrucaoSql, [idEmpresa, idUsuario]);
+}
+
 module.exports = {
+    listarUsuarios,
+    buscarUsuario,
+    alterarUsuario,
+    excluirUsuario,
     autenticarUsuario,
     cadastrarUsuario,
     listarCargos,

@@ -16,4 +16,41 @@ router.get("/:idEmpresa", equipamentoController.listarEquipamentos);
 router.post("/:idEmpresa", equipamentoController.cadastrarEquipamento);
 router.patch("/:idEmpresa/:idEquipamento/hospital", equipamentoController.atualizarHospital);
 
+// Rotas para consultar, alterar e excluir os cadastros.
+router.get("/modelo/:idEmpresa/:idModelo", function (req, res) {
+    equipamentoController.buscarModelo(req, res);
+});
+
+router.put("/modelo/:idEmpresa/:idModelo", function (req, res) {
+    equipamentoController.alterarModelo(req, res);
+});
+
+router.delete("/modelo/:idEmpresa/:idModelo", function (req, res) {
+    equipamentoController.excluirModelo(req, res);
+});
+
+router.get("/lote/:idEmpresa/:idLote", function (req, res) {
+    equipamentoController.buscarLote(req, res);
+});
+
+router.put("/lote/:idEmpresa/:idLote", function (req, res) {
+    equipamentoController.alterarLote(req, res);
+});
+
+router.delete("/lote/:idEmpresa/:idLote", function (req, res) {
+    equipamentoController.excluirLote(req, res);
+});
+
+router.get("/:idEmpresa/:idEquipamento", function (req, res) {
+    equipamentoController.buscarEquipamento(req, res);
+});
+
+router.put("/:idEmpresa/:idEquipamento", function (req, res) {
+    equipamentoController.alterarEquipamento(req, res);
+});
+
+router.delete("/:idEmpresa/:idEquipamento", function (req, res) {
+    equipamentoController.excluirEquipamento(req, res);
+});
+
 module.exports = router;

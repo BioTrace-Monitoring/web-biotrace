@@ -162,7 +162,105 @@ async function resetarSenha(req, res) {
     res.json({ mensagem: 'Senha atualizada com sucesso' })
 };
 
+function cargosGerenciaveis() {
+    return [2, 3, 4];
+}
+
+function listarUsuarios(req, res) {
+    usuarioModel.listarUsuarios(Number(req.params.idEmpresa))
+        .then(function (usuarios) {
+            var permitidos = cargosGerenciaveis();
+            var usuariosPermitidos = usuarios.filter(function (usuario) {
+                return permitidos.includes(Number(usuario.fk_cargo));
+            });
+            res.json({ sucesso: true, usuarios: usuariosPermitidos });
+        }).catch(function (erro) { tratarErroUsuario(res, erro); });
+}
+
+async function buscarUsuarioPermitido(req) {
+    var idUsuario = Number(req.params.idUsuario);
+    if (!Number.isSafeInteger(idUsuario) || idUsuario <= 0) {
+        var erroId = new Error("Usuário inválido.");
+        erroId.status = 400;
+        throw erroId;
+    }
+    var usuarios = await usuarioModel.buscarUsuario(Number(req.params.idEmpresa), idUsuario);
+    if (!usuarios.length) {
+        var erroAusente = new Error("Usuário não encontrado.");
+        erroAusente.status = 404;
+        throw erroAusente;
+    }
+    if (!cargosGerenciaveis().includes(Number(usuarios[0].fk_cargo))) {
+        var erroCargo = new Error("Seu perfil não permite gerenciar este usuário.");
+        erroCargo.status = 403;
+        throw erroCargo;
+    }
+    return usuarios[0];
+}
+
+async function buscarUsuario(req, res) {
+    try {
+        var usuario = await buscarUsuarioPermitido(req);
+        res.json({ sucesso: true, usuario: usuario });
+    } catch (erro) { tratarErroUsuario(res, erro); }
+}
+
+async function alterarUsuario(req, res) {
+    var nome = req.body.nomeServer;
+    var email = req.body.emailServer;
+    var telefone = req.body.telefoneServer;
+    var cpf = req.body.cpfServer;
+    var nascimento = req.body.dtNascimentoServer;
+    var cargo = Number(req.body.cargoServer);
+    var senha = req.body.senhaServer === undefined ? "" : req.body.senhaServer;
+    var data = new Date(nascimento + "T00:00:00Z");
+
+    if (typeof nome !== "string" || !nome.trim() || nome.length > 45 ||
+        typeof email !== "string" || email.length > 100 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+        !/^\d{10,11}$/.test(telefone) || !/^\d{11}$/.test(cpf) ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(nascimento) || !Number.isFinite(data.getTime()) ||
+        data.toISOString().slice(0, 10) !== nascimento || data > new Date() ||
+        typeof senha !== "string" || (senha !== "" && senha.length < 8)) {
+        return res.status(400).json({ sucesso: false, mensagem: "Confira os dados do usuário. A nova senha deve ter pelo menos 8 caracteres." });
+    }
+    if (!cargosGerenciaveis().includes(cargo)) {
+        return res.status(403).json({ sucesso: false, mensagem: "Você não tem permissão para atribuir este cargo." });
+    }
+    try {
+        await buscarUsuarioPermitido(req);
+        var resultado = await usuarioModel.alterarUsuario(Number(req.params.idEmpresa), Number(req.params.idUsuario),
+            nome.trim(), nascimento, telefone, cpf, email.trim(), cargo, senha);
+        if (!resultado.affectedRows) return res.status(404).json({ sucesso: false, mensagem: "Usuário não encontrado." });
+        res.json({ sucesso: true, mensagem: "Usuário alterado com sucesso." });
+    } catch (erro) { tratarErroUsuario(res, erro); }
+}
+
+async function excluirUsuario(req, res) {
+    try {
+        await buscarUsuarioPermitido(req);
+        var resultado = await usuarioModel.excluirUsuario(Number(req.params.idEmpresa), Number(req.params.idUsuario));
+        if (!resultado.affectedRows) return res.status(404).json({ sucesso: false, mensagem: "Usuário não encontrado." });
+        res.json({ sucesso: true, mensagem: "Usuário excluído com sucesso." });
+    } catch (erro) { tratarErroUsuario(res, erro); }
+}
+
+function tratarErroUsuario(res, erro) {
+    if (erro.status) return res.status(erro.status).json({ sucesso: false, mensagem: erro.message });
+    if (erro.code === "ER_DUP_ENTRY") {
+        return res.status(409).json({ sucesso: false, mensagem: "Já existe um usuário com esse CPF ou e-mail." });
+    }
+    if (erro.code === "ER_ROW_IS_REFERENCED_2") {
+        return res.status(409).json({ sucesso: false, mensagem: "Este usuário possui registros vinculados e não pode ser excluído." });
+    }
+    console.error("Erro ao gerenciar usuário:", erro);
+    res.status(500).json({ sucesso: false, mensagem: "Não foi possível concluir a operação no usuário." });
+}
+
 module.exports = {
+    listarUsuarios,
+    buscarUsuario,
+    alterarUsuario,
+    excluirUsuario,
     autenticarUsuario,
     cadastrarUsuario,
     listarCargos,

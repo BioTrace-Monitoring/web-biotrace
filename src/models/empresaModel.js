@@ -51,8 +51,26 @@ function excluirEmpresa(idEmpresa) {
 
 // Exportando as funções do model
 // Outros arquivos podem usar essas funções
+function buscarEmpresa(idEmpresa) {
+    var instrucaoSql = `
+        SELECT id_empresa, razao_social, cnpj, telefone_comercial, cep, numero
+        FROM empresa WHERE id_empresa = ? AND ativo = TRUE;
+    `;
+    return database.executar(instrucaoSql, [idEmpresa]);
+}
+
+function alterarEmpresa(idEmpresa, razaoSocial, cnpj, telefone, cep, numero) {
+    var instrucaoSql = `
+        UPDATE empresa SET razao_social = ?, cnpj = ?, telefone_comercial = ?, cep = ?, numero = ?
+        WHERE id_empresa = ? AND ativo = TRUE;
+    `;
+    return database.executar(instrucaoSql, [razaoSocial, cnpj, telefone, cep, numero, idEmpresa]);
+}
+
 module.exports =
 {
+    buscarEmpresa,
+    alterarEmpresa,
     cadastrarEmpresa,
     listarEmpresas,
     excluirEmpresa

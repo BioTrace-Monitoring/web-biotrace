@@ -483,3 +483,91 @@ button:focus-visible {
         align-items: stretch;
     }
 }
+
+/* Listagens de cadastros e ações nas tabelas. */
+.lista-cadastros {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--white);
+    overflow: hidden;
+}
+
+.cabecalho-lista, .filtros-cadastro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.cabecalho-lista h2 {
+    font-size: 18px;
+}
+
+.filtros-cadastro input {
+    flex: 1;
+    max-width: 400px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--background);
+}
+
+.lista-cadastros > .form-message {
+    margin: 16px 24px;
+}
+
+.tabela-container-cadastro {
+    overflow-x: auto;
+}
+
+.tabela-cadastros {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 14px;
+}
+
+.tabela-cadastros th, .tabela-cadastros td {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.tabela-cadastros th {
+    color: var(--text-secondary);
+    background: var(--background);
+}
+
+.acoes-cadastro {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.button-danger {
+    padding: 11px 20px;
+    border: 1px solid #dc2626;
+    border-radius: 8px;
+    color: #dc2626;
+    background: var(--white);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.button-danger:hover {
+    color: var(--white);
+    background: #dc2626;
+}
+
+.button-danger:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
+[hidden] {
+    display: none !important;
+}

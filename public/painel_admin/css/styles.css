@@ -721,3 +721,26 @@ button {
         stroke-dashoffset: 0;
     }
 }
+/* Campos das telas de edição seguem o mesmo formulário dos cadastros. */
+.campo select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    background: #FFFFFF;
+    font-family: var(--paragrafo);
+    font-size: 14px;
+}
+
+.mensagem-lista, #estado-carga {
+    margin: 16px 24px;
+    line-height: 1.5;
+}
+
+.acoes {
+    flex-wrap: wrap;
+}
+
+[hidden] {
+    display: none !important;
+}

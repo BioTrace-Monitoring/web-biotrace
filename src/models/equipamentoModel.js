@@ -210,7 +210,115 @@ function atualizarHospital(idEquipamento, idHospital, idEmpresa) {
     `, [idHospital, idEquipamento, idEmpresa, idHospital, idHospital]);
 }
 
+function buscarModelo(idEmpresa, idModelo) {
+    return database.executar(`
+        SELECT id_modelo_equipamento, nome_modelo FROM modelo_equipamento
+        WHERE fk_empresa = ? AND id_modelo_equipamento = ?;
+    `, [idEmpresa, idModelo]);
+}
+
+function alterarModelo(idEmpresa, idModelo, nome) {
+    return database.executar(`
+        UPDATE modelo_equipamento SET nome_modelo = ?
+        WHERE fk_empresa = ? AND id_modelo_equipamento = ?;
+    `, [nome, idEmpresa, idModelo]);
+}
+
+function excluirModelo(idEmpresa, idModelo) {
+    return database.executar(`
+        DELETE FROM modelo_equipamento WHERE fk_empresa = ? AND id_modelo_equipamento = ?;
+    `, [idEmpresa, idModelo]);
+}
+
+function buscarLote(idEmpresa, idLote) {
+    return database.executar(`
+        SELECT id_lote_equipamento, numero_lote, fk_modelo_equipamento FROM lote_equipamento
+        WHERE fk_empresa = ? AND id_lote_equipamento = ?;
+    `, [idEmpresa, idLote]);
+}
+
+function alterarLote(idEmpresa, idLote, numero, idModelo) {
+    return database.executar(`
+        UPDATE lote_equipamento l
+        JOIN modelo_equipamento m ON m.id_modelo_equipamento = ? AND m.fk_empresa = l.fk_empresa
+        SET l.numero_lote = ?, l.fk_modelo_equipamento = m.id_modelo_equipamento
+        WHERE l.fk_empresa = ? AND l.id_lote_equipamento = ?;
+    `, [idModelo, numero, idEmpresa, idLote]);
+}
+
+function excluirLote(idEmpresa, idLote) {
+    return database.executar(`
+        DELETE FROM lote_equipamento WHERE fk_empresa = ? AND id_lote_equipamento = ?;
+    `, [idEmpresa, idLote]);
+}
+
+function buscarEquipamento(idEmpresa, idEquipamento) {
+    return database.executar(`
+        SELECT e.id_equipamento, e.numero_serie, e.fk_lote, e.fk_hospital
+        FROM equipamento e JOIN lote_equipamento l ON l.id_lote_equipamento = e.fk_lote
+        WHERE l.fk_empresa = ? AND e.id_equipamento = ?;
+    `, [idEmpresa, idEquipamento]);
+}
+
+function alterarEquipamento(idEmpresa, idEquipamento, numeroSerie, idLote, idHospital) {
+    return database.executar(`
+        UPDATE equipamento e
+        JOIN lote_equipamento atual ON atual.id_lote_equipamento = e.fk_lote
+        JOIN lote_equipamento novo ON novo.id_lote_equipamento = ? AND novo.fk_empresa = atual.fk_empresa
+        SET e.numero_serie = ?, e.fk_lote = novo.id_lote_equipamento, e.fk_hospital = ?
+        WHERE atual.fk_empresa = ? AND e.id_equipamento = ?
+          AND (? IS NULL OR EXISTS (
+              SELECT 1 FROM hospital WHERE id_hospital = ? AND fk_empresa = atual.fk_empresa
+          ));
+    `, [idLote, numeroSerie, idHospital, idEmpresa, idEquipamento, idHospital, idHospital]);
+}
+
+async function excluirEquipamento(idEmpresa, idEquipamento) {
+    var conexao = database.conectar();
+    try {
+        await conexao.beginTransaction();
+        var equipamentos = await database.executar(`
+            SELECT e.id_equipamento FROM equipamento e
+            JOIN lote_equipamento l ON l.id_lote_equipamento = e.fk_lote
+            WHERE l.fk_empresa = ? AND e.id_equipamento = ? FOR UPDATE;
+        `, [idEmpresa, idEquipamento], conexao);
+
+        if (equipamentos.length === 0) {
+            await conexao.commit();
+            return { affectedRows: 0 };
+        }
+
+        // Os vínculos automáticos são excluídos junto com o equipamento.
+        await database.executar(`
+            DELETE p FROM parametro_metrica p JOIN metrica m ON m.id_metrica = p.fk_metrica
+            JOIN componente c ON c.id_componente = m.fk_componente WHERE c.fk_equipamento = ?;
+        `, [idEquipamento], conexao);
+        await database.executar(`
+            DELETE m FROM metrica m JOIN componente c ON c.id_componente = m.fk_componente
+            WHERE c.fk_equipamento = ?;
+        `, [idEquipamento], conexao);
+        await database.executar('DELETE FROM componente WHERE fk_equipamento = ?;', [idEquipamento], conexao);
+        var resultado = await database.executar('DELETE FROM equipamento WHERE id_equipamento = ?;', [idEquipamento], conexao);
+        await conexao.commit();
+        return resultado;
+    } catch (erro) {
+        await conexao.rollback();
+        throw erro;
+    } finally {
+        await conexao.end();
+    }
+}
+
 module.exports = {
+    buscarModelo,
+    alterarModelo,
+    excluirModelo,
+    buscarLote,
+    alterarLote,
+    excluirLote,
+    buscarEquipamento,
+    alterarEquipamento,
+    excluirEquipamento,
     listarModelos, cadastrarModelo, listarLotes, cadastrarLote,
     listarEquipamentos, cadastrarEquipamento, cadastrarEquipamentos, atualizarHospital
 };

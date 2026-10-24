@@ -52,10 +52,10 @@ function configurarPermissoesVisuais() {
     }
 
     const paginaAtual = window.location.pathname.split("/").pop();
-    if (paginaAtual === "hospitais.html" && !acesso.podeCadastrarHospital) {
+    if (["hospitais.html", "editar-hospital.html"].includes(paginaAtual) && !acesso.podeCadastrarHospital) {
         window.location.replace("index.html");
     }
-    if (paginaAtual === "cadastrar-usuario.html" && !acesso.podeCadastrarUsuario) {
+    if (["cadastrar-usuario.html", "listar-usuarios.html", "editar-usuario.html"].includes(paginaAtual) && !acesso.podeCadastrarUsuario) {
         window.location.replace("index.html");
     }
 }
