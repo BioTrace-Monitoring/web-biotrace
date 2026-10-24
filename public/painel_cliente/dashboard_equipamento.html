@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard do equipamento | BioTrace</title>
+        <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
+        <link rel="stylesheet" href="./css/style.css">
+        <link rel="stylesheet" href="./css/engenheiro.css">
+        <link rel="stylesheet" href="./css/dashboard_equipamento.css">
+    </head>
+
+    <body>
+        <div class="app">
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <a href="index.html" class="logo">
+                        <img src="../assets/icons/BioTrace (4).png" alt="BioTrace Logo">
+                    </a>
+                    <button class="sidebar-close" id="sidebarClose" type="button">
+                        &times;
+                    </button>
+                </div>
+
+                <nav class="sidebar-nav">
+                    <span class="nav-title">Principal</span>
+                    <a href="index.html" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span>Visão Geral</span>
+                    </a>
+                    <a href="equipamentos.html" class="nav-item">
+                        <span class="nav-icon">📟</span>
+                        <span>Equipamentos</span>
+                    </a>
+
+                    <span class="nav-title nav-title-dashboards">Dashboards</span>
+                    <a href="dash_engenheiro.html" class="nav-item active">
+                        <span class="nav-icon">📈</span>
+                        <span>Equipamentos por lote</span>
+                    </a>
+
+                    <span class="nav-title nav-title-spacing">Cadastros</span>
+                    <a href="hospitais.html" class="nav-item">
+                        <span class="nav-icon">🏥</span>
+                        <span>Cadastrar hospital</span>
+                    </a>
+                    <a href="cadastrar-usuario.html" class="nav-item">
+                        <span class="nav-icon">👤</span>
+                        <span>Cadastrar usuário</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-footer">
+                    <div class="sidebar-user">
+                        <div id="usuario_avatar" class="usuario-avatar">BT</div>
+                        <div class="user-info">
+                            <strong id="nome_cliente">Usuário BioTrace</strong>
+                            <span id="email_cliente">perfil@biotrace.com</span>
+                        </div>
+                    </div>
+                    <button class="sidebar-logout" id="btnSair" type="button">
+                        <svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 5H5v14h4M10 12h10m-4-4 4 4-4 4">
+                        </svg>
+                    </button>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <header class="mobile-header">
+                    <button class="menu-button" id="menuButton" type="button">
+                        ☰
+                    </button>
+                    <img src="../assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo">
+                </header>
+
+                <div class="page-content dashboard-equipamento">
+                    <div class="acoes-equipamento">
+                        <a id="voltarDashboard" href="dash_engenheiro.html?lote=lote-001">← Voltar para os equipamentos</a>
+                        <a id="abrirOutraAba" href="dashboard_equipamento.html?serie=ECG12-0001" target="_blank" rel="noopener">Abrir em outra aba ↗</a>
+                    </div>
+                    <div class="page-heading">
+                        <div class="eyebrow"><span class="eyebrow-dot"></span>MONITORAMENTO DO EQUIPAMENTO</div>
+                        <h1 id="nomeEquipamento">Equipamento ECG12-0001</h1>
+                        <p>Acompanhe os valores e compare os gráficos das métricas deste equipamento.</p>
+                    </div>
+                    <section class="seletor-lote">
+                        <div>
+                            <label for="selectEquipamento">EQUIPAMENTO</label>
+                            <select id="selectEquipamento">
+                                <option value="ECG12-0001">ECG12-0001</option>
+                                <option value="ECG12-0002">ECG12-0002</option>
+                                <option value="ECG12-0003">ECG12-0003</option>
+                                <option value="ECG12-0004">ECG12-0004</option>
+                                <option value="ECG12-0005">ECG12-0005</option>
+                                <option value="BPAP-0101">BPAP-0101</option>
+                                <option value="BPAP-0102">BPAP-0102</option>
+                                <option value="BPAP-0103">BPAP-0103</option>
+                                <option value="BPAP-0104">BPAP-0104</option>
+                                <option value="OST-2001">OST-2001</option>
+                                <option value="OST-2002">OST-2002</option>
+                                <option value="OST-2003">OST-2003</option>
+                                <option value="OST-2004">OST-2004</option>
+                            </select>
+                        </div>
+                        <div><span class="rotulo">Empresa</span><strong>CardioVida Equipamentos Ltda</strong></div>
+                        <span class="selo-demo">Dados estáticos</span>
+                    </section>
+
+                    <!-- Informações e métricas fixas de cada equipamento. -->
+                    <section class="dados-equipamento" id="dados-ECG12-0001">
+                        <div class="resumo-equipamento">
+                            <div><span class="rotulo">Modelo / Lote</span><strong>ECG-12 · LT-2026-001</strong></div>
+                            <div><span class="rotulo">Hospital</span><strong>Hospital São Lucas</strong></div>
+                            <div><span class="rotulo">Componentes do equipamento</span><strong>5</strong></div>
+                            <div><span class="rotulo">Métricas habilitadas</span><strong>13 de 13</strong></div>
+                        </div>
+                        <div class="valores-estaticos oculto">
+                            <table class="tabela-metricas">
+                                <thead><tr><th>Componente</th><th>Métrica</th><th>Valor atual</th><th>Limites</th></tr></thead>
+                                <tbody>
+                                    <tr><td>CPU</td><td>Uso de CPU</td><td class="limite">91%</td><td>Mín. 5% · Máx. 90%</td></tr>
+                                    <tr><td>CPU</td><td>CPU por núcleo</td><td>87%, 89%, 93%, 95%</td><td>Sem limites</td></tr>
+                                    <tr><td>CPU</td><td>Temperatura da CPU</td><td>58 °C</td><td>Sem limites</td></tr>
+                                    <tr><td>Memória RAM</td><td>Uso de memória</td><td>55%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Memória RAM</td><td>Memória disponível</td><td>3,6 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Disco</td><td>Uso de disco</td><td>42%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Disco</td><td>Espaço livre</td><td>148,48 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados enviados</td><td>1.450.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados recebidos</td><td>3.820.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de entrada</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de saída</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Tempo de atividade</td><td>72 horas</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Processos ativos</td><td>128 processos</td><td>Sem limites</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section class="dados-equipamento oculto" id="dados-ECG12-0002">
+                        <div class="resumo-equipamento">
+                            <div><span class="rotulo">Modelo / Lote</span><strong>ECG-12 · LT-2026-001</strong></div>
+                            <div><span class="rotulo">Hospital</span><strong>Hospital São Lucas</strong></div>
+                            <div><span class="rotulo">Componentes do equipamento</span><strong>5</strong></div>
+                            <div><span class="rotulo">Métricas habilitadas</span><strong>13 de 13</strong></div>
+                        </div>
+                        <div class="valores-estaticos oculto">
+                            <table class="tabela-metricas">
+                                <thead><tr><th>Componente</th><th>Métrica</th><th>Valor atual</th><th>Limites</th></tr></thead>
+                                <tbody>
+                                    <tr><td>CPU</td><td>Uso de CPU</td><td>62%</td><td>Mín. 5% · Máx. 90%</td></tr>
+                                    <tr><td>CPU</td><td>CPU por núcleo</td><td>58%, 60%, 64%, 66%</td><td>Sem limites</td></tr>
+                                    <tr><td>CPU</td><td>Temperatura da CPU</td><td>58 °C</td><td>Sem limites</td></tr>
+                                    <tr><td>Memória RAM</td><td>Uso de memória</td><td>55%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Memória RAM</td><td>Memória disponível</td><td>3,6 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Disco</td><td>Uso de disco</td><td>42%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Disco</td><td>Espaço livre</td><td>148,48 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados enviados</td><td>1.450.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados recebidos</td><td>3.820.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de entrada</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de saída</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Tempo de atividade</td><td>72 horas</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Processos ativos</td><td>128 processos</td><td>Sem limites</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section class="dados-equipamento oculto" id="dados-ECG12-0003">
+                        <div class="resumo-equipamento">
+                            <div><span class="rotulo">Modelo / Lote</span><strong>ECG-12 · LT-2026-001</strong></div>
+                            <div><span class="rotulo">Hospital</span><strong>Hospital Vida</strong></div>
+                            <div><span class="rotulo">Componentes do equipamento</span><strong>5</strong></div>
+                            <div><span class="rotulo">Métricas habilitadas</span><strong>13 de 13</strong></div>
+                        </div>
+                        <div class="valores-estaticos oculto">
+                            <table class="tabela-metricas">
+                                <thead><tr><th>Componente</th><th>Métrica</th><th>Valor atual</th><th>Limites</th></tr></thead>
+                                <tbody>
+                                    <tr><td>CPU</td><td>Uso de CPU</td><td>62%</td><td>Mín. 5% · Máx. 90%</td></tr>
+                                    <tr><td>CPU</td><td>CPU por núcleo</td><td>58%, 60%, 64%, 66%</td><td>Sem limites</td></tr>
+                                    <tr><td>CPU</td><td>Temperatura da CPU</td><td>58 °C</td><td>Sem limites</td></tr>
+                                    <tr><td>Memória RAM</td><td>Uso de memória</td><td>55%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Memória RAM</td><td>Memória disponível</td><td>3,6 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Disco</td><td>Uso de disco</td><td class="limite">93%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Disco</td><td>Espaço livre</td><td>17,92 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados enviados</td><td>1.450.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados recebidos</td><td>3.820.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de entrada</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de saída</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Tempo de atividade</td><td>72 horas</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Processos ativos</td><td>128 processos</td><td>Sem limites</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section class="dados-equipamento oculto" id="dados-ECG12-0004">
+                        <div class="resumo-equipamento">
+                            <div><span class="rotulo">Modelo / Lote</span><strong>ECG-12 · LT-2026-001</strong></div>
+                            <div><span class="rotulo">Hospital</span><strong>Hospital Vida</strong></div>
+                            <div><span class="rotulo">Componentes do equipamento</span><strong>5</strong></div>
+                            <div><span class="rotulo">Métricas habilitadas</span><strong>13 de 13</strong></div>
+                        </div>
+                        <div class="valores-estaticos oculto">
+                            <table class="tabela-metricas">
+                                <thead><tr><th>Componente</th><th>Métrica</th><th>Valor atual</th><th>Limites</th></tr></thead>
+                                <tbody>
+                                    <tr><td>CPU</td><td>Uso de CPU</td><td>62%</td><td>Mín. 5% · Máx. 90%</td></tr>
+                                    <tr><td>CPU</td><td>CPU por núcleo</td><td>58%, 60%, 64%, 66%</td><td>Sem limites</td></tr>
+                                    <tr><td>CPU</td><td>Temperatura da CPU</td><td>58 °C</td><td>Sem limites</td></tr>
+                                    <tr><td>Memória RAM</td><td>Uso de memória</td><td>55%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Memória RAM</td><td>Memória disponível</td><td>3,6 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Disco</td><td>Uso de disco</td><td>42%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Disco</td><td>Espaço livre</td><td>148,48 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados enviados</td><td>1.450.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados recebidos</td><td class="falha">Sem leitura</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de entrada</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de saída</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Tempo de atividade</td><td>72 horas</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Processos ativos</td><td>128 processos</td><td>Sem limites</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section class="dados-equipamento oculto" id="dados-ECG12-0005">
+                        <div class="resumo-equipamento">
+                            <div><span class="rotulo">Modelo / Lote</span><strong>ECG-12 · LT-2026-001</strong></div>
+                            <div><span class="rotulo">Hospital</span><strong>Santa Clara</strong></div>
+                            <div><span class="rotulo">Componentes do equipamento</span><strong>5</strong></div>
+                            <div><span class="rotulo">Métricas habilitadas</span><strong>13 de 13</strong></div>
+                        </div>
+                        <div class="valores-estaticos oculto">
+                            <table class="tabela-metricas">
+                                <thead><tr><th>Componente</th><th>Métrica</th><th>Valor atual</th><th>Limites</th></tr></thead>
+                                <tbody>
+                                    <tr><td>CPU</td><td>Uso de CPU</td><td class="atencao">84%</td><td>Mín. 5% · Máx. 90%</td></tr>
+                                    <tr><td>CPU</td><td>CPU por núcleo</td><td>80%, 82%, 86%, 88%</td><td>Sem limites</td></tr>
+                                    <tr><td>CPU</td><td>Temperatura da CPU</td><td>58 °C</td><td>Sem limites</td></tr>
+                                    <tr><td>Memória RAM</td><td>Uso de memória</td><td>55%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Memória RAM</td><td>Memória disponível</td><td>3,6 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Disco</td><td>Uso de disco</td><td>42%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Disco</td><td>Espaço livre</td><td>148,48 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados enviados</td><td>1.450.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados recebidos</td><td>3.820.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de entrada</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de saída</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Tempo de atividade</td><td>72 horas</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Processos ativos</td><td>128 processos</td><td>Sem limites</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section class="dados-equipamento oculto" id="dados-BPAP-0101">
+                        <div class="resumo-equipamento">
+                            <div><span class="rotulo">Modelo / Lote</span><strong>BPAP · LT-2026-002</strong></div>
+                            <div><span class="rotulo">Hospital</span><strong>Hospital São Lucas</strong></div>
+                            <div><span class="rotulo">Componentes do equipamento</span><strong>5</strong></div>
+                            <div><span class="rotulo">Métricas habilitadas</span><strong>13 de 13</strong></div>
+                        </div>
+                        <div class="valores-estaticos oculto">
+                            <table class="tabela-metricas">
+                                <thead><tr><th>Componente</th><th>Métrica</th><th>Valor atual</th><th>Limites</th></tr></thead>
+                                <tbody>
+                                    <tr><td>CPU</td><td>Uso de CPU</td><td class="atencao">3%</td><td>Mín. 5% · Máx. 90%</td></tr>
+                                    <tr><td>CPU</td><td>CPU por núcleo</td><td>0%, 1%, 5%, 6%</td><td>Sem limites</td></tr>
+                                    <tr><td>CPU</td><td>Temperatura da CPU</td><td>58 °C</td><td>Sem limites</td></tr>
+                                    <tr><td>Memória RAM</td><td>Uso de memória</td><td>55%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Memória RAM</td><td>Memória disponível</td><td>3,6 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Disco</td><td>Uso de disco</td><td>42%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Disco</td><td>Espaço livre</td><td>148,48 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados enviados</td><td>1.450.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados recebidos</td><td>3.820.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de entrada</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de saída</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Tempo de atividade</td><td>72 horas</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Processos ativos</td><td>128 processos</td><td>Sem limites</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section class="dados-equipamento oculto" id="dados-BPAP-0102">
+                        <div class="resumo-equipamento">
+                            <div><span class="rotulo">Modelo / Lote</span><strong>BPAP · LT-2026-002</strong></div>
+                            <div><span class="rotulo">Hospital</span><strong>Hospital Vida</strong></div>
+                            <div><span class="rotulo">Componentes do equipamento</span><strong>5</strong></div>
+                            <div><span class="rotulo">Métricas habilitadas</span><strong>13 de 13</strong></div>
+                        </div>
+                        <div class="valores-estaticos oculto">
+                            <table class="tabela-metricas">
+                                <thead><tr><th>Componente</th><th>Métrica</th><th>Valor atual</th><th>Limites</th></tr></thead>
+                                <tbody>
+                                    <tr><td>CPU</td><td>Uso de CPU</td><td>62%</td><td>Mín. 5% · Máx. 90%</td></tr>
+                                    <tr><td>CPU</td><td>CPU por núcleo</td><td>58%, 60%, 64%, 66%</td><td>Sem limites</td></tr>
+                                    <tr><td>CPU</td><td>Temperatura da CPU</td><td>58 °C</td><td>Sem limites</td></tr>
+                                    <tr><td>Memória RAM</td><td>Uso de memória</td><td>55%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Memória RAM</td><td>Memória disponível</td><td>3,6 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Disco</td><td>Uso de disco</td><td>42%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Disco</td><td>Espaço livre</td><td>148,48 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados enviados</td><td>1.450.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados recebidos</td><td>3.820.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de entrada</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de saída</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Tempo de atividade</td><td>72 horas</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Processos ativos</td><td>128 processos</td><td>Sem limites</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section class="dados-equipamento oculto" id="dados-BPAP-0103">
+                        <div class="resumo-equipamento">
+                            <div><span class="rotulo">Modelo / Lote</span><strong>BPAP · LT-2026-002</strong></div>
+                            <div><span class="rotulo">Hospital</span><strong>Santa Clara</strong></div>
+                            <div><span class="rotulo">Componentes do equipamento</span><strong>5</strong></div>
+                            <div><span class="rotulo">Métricas habilitadas</span><strong>13 de 13</strong></div>
+                        </div>
+                        <div class="valores-estaticos oculto">
+                            <table class="tabela-metricas">
+                                <thead><tr><th>Componente</th><th>Métrica</th><th>Valor atual</th><th>Limites</th></tr></thead>
+                                <tbody>
+                                    <tr><td>CPU</td><td>Uso de CPU</td><td>62%</td><td>Mín. 5% · Máx. 90%</td></tr>
+                                    <tr><td>CPU</td><td>CPU por núcleo</td><td>58%, 60%, 64%, 66%</td><td>Sem limites</td></tr>
+                                    <tr><td>CPU</td><td>Temperatura da CPU</td><td>58 °C</td><td>Sem limites</td></tr>
+                                    <tr><td>Memória RAM</td><td>Uso de memória</td><td>55%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Memória RAM</td><td>Memória disponível</td><td>3,6 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Disco</td><td>Uso de disco</td><td>42%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Disco</td><td>Espaço livre</td><td>148,48 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados enviados</td><td>1.450.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados recebidos</td><td>3.820.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de entrada</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de saída</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Tempo de atividade</td><td>72 horas</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Processos ativos</td><td>128 processos</td><td>Sem limites</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section class="dados-equipamento oculto" id="dados-BPAP-0104">
+                        <div class="resumo-equipamento">
+                            <div><span class="rotulo">Modelo / Lote</span><strong>BPAP · LT-2026-002</strong></div>
+                            <div><span class="rotulo">Hospital</span><strong>Santa Clara</strong></div>
+                            <div><span class="rotulo">Componentes do equipamento</span><strong>5</strong></div>
+                            <div><span class="rotulo">Métricas habilitadas</span><strong>12 de 13</strong></div>
+                        </div>
+                        <div class="valores-estaticos oculto">
+                            <table class="tabela-metricas">
+                                <thead><tr><th>Componente</th><th>Métrica</th><th>Valor atual</th><th>Limites</th></tr></thead>
+                                <tbody>
+                                    <tr><td>CPU</td><td>Uso de CPU</td><td>62%</td><td>Mín. 5% · Máx. 90%</td></tr>
+                                    <tr><td>CPU</td><td>CPU por núcleo</td><td>58%, 60%, 64%, 66%</td><td>Sem limites</td></tr>
+                                    <tr><td>CPU</td><td>Temperatura da CPU</td><td>58 °C</td><td>Sem limites</td></tr>
+                                    <tr><td>Memória RAM</td><td>Uso de memória</td><td>55%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Memória RAM</td><td>Memória disponível</td><td>3,6 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Disco</td><td>Uso de disco</td><td>42%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Disco</td><td>Espaço livre</td><td>148,48 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados enviados</td><td>1.450.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados recebidos</td><td>3.820.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de entrada</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de saída</td><td>Desabilitada</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Tempo de atividade</td><td>72 horas</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Processos ativos</td><td>128 processos</td><td>Sem limites</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section class="dados-equipamento oculto" id="dados-OST-2001">
+                        <div class="resumo-equipamento">
+                            <div><span class="rotulo">Modelo / Lote</span><strong>Osteomax · LT-2026-003</strong></div>
+                            <div><span class="rotulo">Hospital</span><strong>Hospital São Lucas</strong></div>
+                            <div><span class="rotulo">Componentes do equipamento</span><strong>5</strong></div>
+                            <div><span class="rotulo">Métricas habilitadas</span><strong>13 de 13</strong></div>
+                        </div>
+                        <div class="valores-estaticos oculto">
+                            <table class="tabela-metricas">
+                                <thead><tr><th>Componente</th><th>Métrica</th><th>Valor atual</th><th>Limites</th></tr></thead>
+                                <tbody>
+                                    <tr><td>CPU</td><td>Uso de CPU</td><td>62%</td><td>Mín. 5% · Máx. 90%</td></tr>
+                                    <tr><td>CPU</td><td>CPU por núcleo</td><td>58%, 60%, 64%, 66%</td><td>Sem limites</td></tr>
+                                    <tr><td>CPU</td><td>Temperatura da CPU</td><td>58 °C</td><td>Sem limites</td></tr>
+                                    <tr><td>Memória RAM</td><td>Uso de memória</td><td>55%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Memória RAM</td><td>Memória disponível</td><td>3,6 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Disco</td><td>Uso de disco</td><td>42%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Disco</td><td>Espaço livre</td><td>148,48 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados enviados</td><td>1.450.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados recebidos</td><td>3.820.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de entrada</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de saída</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Tempo de atividade</td><td>72 horas</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Processos ativos</td><td>128 processos</td><td>Sem limites</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section class="dados-equipamento oculto" id="dados-OST-2002">
+                        <div class="resumo-equipamento">
+                            <div><span class="rotulo">Modelo / Lote</span><strong>Osteomax · LT-2026-003</strong></div>
+                            <div><span class="rotulo">Hospital</span><strong>Hospital São Lucas</strong></div>
+                            <div><span class="rotulo">Componentes do equipamento</span><strong>5</strong></div>
+                            <div><span class="rotulo">Métricas habilitadas</span><strong>13 de 13</strong></div>
+                        </div>
+                        <div class="valores-estaticos oculto">
+                            <table class="tabela-metricas">
+                                <thead><tr><th>Componente</th><th>Métrica</th><th>Valor atual</th><th>Limites</th></tr></thead>
+                                <tbody>
+                                    <tr><td>CPU</td><td>Uso de CPU</td><td>62%</td><td>Mín. 5% · Máx. 90%</td></tr>
+                                    <tr><td>CPU</td><td>CPU por núcleo</td><td>58%, 60%, 64%, 66%</td><td>Sem limites</td></tr>
+                                    <tr><td>CPU</td><td>Temperatura da CPU</td><td>58 °C</td><td>Sem limites</td></tr>
+                                    <tr><td>Memória RAM</td><td>Uso de memória</td><td>55%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Memória RAM</td><td>Memória disponível</td><td>3,6 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Disco</td><td>Uso de disco</td><td>42%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Disco</td><td>Espaço livre</td><td>148,48 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados enviados</td><td>1.450.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados recebidos</td><td>3.820.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de entrada</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de saída</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Tempo de atividade</td><td>72 horas</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Processos ativos</td><td>128 processos</td><td>Sem limites</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section class="dados-equipamento oculto" id="dados-OST-2003">
+                        <div class="resumo-equipamento">
+                            <div><span class="rotulo">Modelo / Lote</span><strong>Osteomax · LT-2026-003</strong></div>
+                            <div><span class="rotulo">Hospital</span><strong>Sem hospital</strong></div>
+                            <div><span class="rotulo">Componentes do equipamento</span><strong>5</strong></div>
+                            <div><span class="rotulo">Métricas habilitadas</span><strong>13 de 13</strong></div>
+                        </div>
+                        <div class="valores-estaticos oculto">
+                            <table class="tabela-metricas">
+                                <thead><tr><th>Componente</th><th>Métrica</th><th>Valor atual</th><th>Limites</th></tr></thead>
+                                <tbody>
+                                    <tr><td>CPU</td><td>Uso de CPU</td><td>62%</td><td>Mín. 5% · Máx. 90%</td></tr>
+                                    <tr><td>CPU</td><td>CPU por núcleo</td><td>58%, 60%, 64%, 66%</td><td>Sem limites</td></tr>
+                                    <tr><td>CPU</td><td>Temperatura da CPU</td><td>58 °C</td><td>Sem limites</td></tr>
+                                    <tr><td>Memória RAM</td><td>Uso de memória</td><td>55%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Memória RAM</td><td>Memória disponível</td><td>3,6 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Disco</td><td>Uso de disco</td><td>42%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Disco</td><td>Espaço livre</td><td>148,48 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados enviados</td><td>1.450.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados recebidos</td><td>3.820.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de entrada</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de saída</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Tempo de atividade</td><td>72 horas</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Processos ativos</td><td>128 processos</td><td>Sem limites</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section class="dados-equipamento oculto" id="dados-OST-2004">
+                        <div class="resumo-equipamento">
+                            <div><span class="rotulo">Modelo / Lote</span><strong>Osteomax · LT-2026-003</strong></div>
+                            <div><span class="rotulo">Hospital</span><strong>Hospital Vida</strong></div>
+                            <div><span class="rotulo">Componentes do equipamento</span><strong>5</strong></div>
+                            <div><span class="rotulo">Métricas habilitadas</span><strong>13 de 13</strong></div>
+                        </div>
+                        <div class="valores-estaticos oculto">
+                            <table class="tabela-metricas">
+                                <thead><tr><th>Componente</th><th>Métrica</th><th>Valor atual</th><th>Limites</th></tr></thead>
+                                <tbody>
+                                    <tr><td>CPU</td><td>Uso de CPU</td><td>62%</td><td>Mín. 5% · Máx. 90%</td></tr>
+                                    <tr><td>CPU</td><td>CPU por núcleo</td><td>58%, 60%, 64%, 66%</td><td>Sem limites</td></tr>
+                                    <tr><td>CPU</td><td>Temperatura da CPU</td><td>58 °C</td><td>Sem limites</td></tr>
+                                    <tr><td>Memória RAM</td><td>Uso de memória</td><td>55%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Memória RAM</td><td>Memória disponível</td><td>3,6 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Disco</td><td>Uso de disco</td><td>42%</td><td>Mín. 10% · Máx. 90%</td></tr>
+                                    <tr><td>Disco</td><td>Espaço livre</td><td>148,48 GB</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados enviados</td><td>1.450.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Dados recebidos</td><td>3.820.000 bytes</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de entrada</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Rede</td><td>Erros de saída</td><td>0 erros</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Tempo de atividade</td><td>72 horas</td><td>Sem limites</td></tr>
+                                    <tr><td>Sistema Operacional</td><td>Processos ativos</td><td>128 processos</td><td>Sem limites</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section class="selecao-graficos">
+                        <h2>Quais métricas você quer acompanhar?</h2>
+                        <p>Marque uma ou mais opções para comparar os valores e os gráficos.</p>
+                        <div class="opcoes-graficos">
+                            <label class="opcao-grafico selecionada"><input type="checkbox" id="exibir-cpu" checked> Uso de CPU</label>
+                            <label class="opcao-grafico"><input type="checkbox" id="exibir-nucleos"> CPU por núcleo</label>
+                            <label class="opcao-grafico"><input type="checkbox" id="exibir-temperatura"> Temperatura da CPU</label>
+                            <label class="opcao-grafico selecionada"><input type="checkbox" id="exibir-ram" checked> Uso de memória</label>
+                            <label class="opcao-grafico"><input type="checkbox" id="exibir-ram-disponivel"> Memória disponível</label>
+                            <label class="opcao-grafico selecionada"><input type="checkbox" id="exibir-disco" checked> Uso de disco</label>
+                            <label class="opcao-grafico"><input type="checkbox" id="exibir-disco-livre"> Espaço livre</label>
+                            <label class="opcao-grafico selecionada"><input type="checkbox" id="exibir-rede-enviados" checked> Dados enviados</label>
+                            <label class="opcao-grafico selecionada"><input type="checkbox" id="exibir-rede-recebidos" checked> Dados recebidos</label>
+                            <label class="opcao-grafico"><input type="checkbox" id="exibir-erros-entrada"> Erros de entrada</label>
+                            <label class="opcao-grafico"><input type="checkbox" id="exibir-erros-saida"> Erros de saída</label>
+                            <label class="opcao-grafico"><input type="checkbox" id="exibir-uptime"> Tempo de atividade</label>
+                            <label class="opcao-grafico"><input type="checkbox" id="exibir-processos"> Processos ativos</label>
+                        </div>
+                    </section>
+
+                    <div class="titulo-graficos"><h2>KPIs e gráficos</h2><span id="totalGraficos">5 métricas em exibição</span></div>
+                    <p id="nenhumGrafico" class="sem-graficos oculto">Marque uma métrica acima para exibir seu valor e seu gráfico.</p>
+                    <section class="grade-graficos">
+                        <article class="grafico-metrica">
+                            <span class="rotulo">CPU</span>
+                            <h3>Uso de CPU</h3>
+                            <strong class="valor-metrica">91%</strong>
+                            <p class="limite-metrica">Mín. 5% · Máx. 90%</p>
+                            <div class="area-grafico"><canvas id="grafico-cpu"></canvas></div>
+                        </article>
+                        <article class="grafico-metrica oculto">
+                            <span class="rotulo">CPU</span>
+                            <h3>CPU por núcleo</h3>
+                            <strong class="valor-metrica">87%, 89%, 93%, 95%</strong>
+                            <p class="limite-metrica">Sem limites</p>
+                            <div class="area-grafico"><canvas id="grafico-nucleos"></canvas></div>
+                        </article>
+                        <article class="grafico-metrica oculto">
+                            <span class="rotulo">CPU</span>
+                            <h3>Temperatura da CPU</h3>
+                            <strong class="valor-metrica">58 °C</strong>
+                            <p class="limite-metrica">Sem limites</p>
+                            <div class="area-grafico"><canvas id="grafico-temperatura"></canvas></div>
+                        </article>
+                        <article class="grafico-metrica">
+                            <span class="rotulo">Memória RAM</span>
+                            <h3>Uso de memória</h3>
+                            <strong class="valor-metrica">55%</strong>
+                            <p class="limite-metrica">Mín. 10% · Máx. 90%</p>
+                            <div class="area-grafico"><canvas id="grafico-ram"></canvas></div>
+                        </article>
+                        <article class="grafico-metrica oculto">
+                            <span class="rotulo">Memória RAM</span>
+                            <h3>Memória disponível</h3>
+                            <strong class="valor-metrica">3,6 GB</strong>
+                            <p class="limite-metrica">Sem limites</p>
+                            <div class="area-grafico"><canvas id="grafico-ram-disponivel"></canvas></div>
+                        </article>
+                        <article class="grafico-metrica">
+                            <span class="rotulo">Disco</span>
+                            <h3>Uso de disco</h3>
+                            <strong class="valor-metrica">42%</strong>
+                            <p class="limite-metrica">Mín. 10% · Máx. 90%</p>
+                            <div class="area-grafico"><canvas id="grafico-disco"></canvas></div>
+                        </article>
+                        <article class="grafico-metrica oculto">
+                            <span class="rotulo">Disco</span>
+                            <h3>Espaço livre</h3>
+                            <strong class="valor-metrica">148,48 GB</strong>
+                            <p class="limite-metrica">Sem limites</p>
+                            <div class="area-grafico"><canvas id="grafico-disco-livre"></canvas></div>
+                        </article>
+                        <article class="grafico-metrica">
+                            <span class="rotulo">Rede</span>
+                            <h3>Dados enviados</h3>
+                            <strong class="valor-metrica">1.450.000 bytes</strong>
+                            <p class="limite-metrica">Sem limites</p>
+                            <div class="area-grafico"><canvas id="grafico-rede-enviados"></canvas></div>
+                        </article>
+                        <article class="grafico-metrica">
+                            <span class="rotulo">Rede</span>
+                            <h3>Dados recebidos</h3>
+                            <strong class="valor-metrica">3.820.000 bytes</strong>
+                            <p class="limite-metrica">Sem limites</p>
+                            <div class="area-grafico"><canvas id="grafico-rede-recebidos"></canvas></div>
+                        </article>
+                        <article class="grafico-metrica oculto">
+                            <span class="rotulo">Rede</span>
+                            <h3>Erros de entrada</h3>
+                            <strong class="valor-metrica">0 erros</strong>
+                            <p class="limite-metrica">Sem limites</p>
+                            <div class="area-grafico"><canvas id="grafico-erros-entrada"></canvas></div>
+                        </article>
+                        <article class="grafico-metrica oculto">
+                            <span class="rotulo">Rede</span>
+                            <h3>Erros de saída</h3>
+                            <strong class="valor-metrica">0 erros</strong>
+                            <p class="limite-metrica">Sem limites</p>
+                            <div class="area-grafico"><canvas id="grafico-erros-saida"></canvas></div>
+                        </article>
+                        <article class="grafico-metrica oculto">
+                            <span class="rotulo">Sistema Operacional</span>
+                            <h3>Tempo de atividade</h3>
+                            <strong class="valor-metrica">72 horas</strong>
+                            <p class="limite-metrica">Sem limites</p>
+                            <div class="area-grafico"><canvas id="grafico-uptime"></canvas></div>
+                        </article>
+                        <article class="grafico-metrica oculto">
+                            <span class="rotulo">Sistema Operacional</span>
+                            <h3>Processos ativos</h3>
+                            <strong class="valor-metrica">128 processos</strong>
+                            <p class="limite-metrica">Sem limites</p>
+                            <div class="area-grafico"><canvas id="grafico-processos"></canvas></div>
+                        </article>
+                    </section>
+                    <footer class="rodape-equipamento">BioTrace Hardware Intelligence © 2026 · Dados simulados para demonstração · Horários: 10:00 a 10:25</footer>
+                </div>
+            </main>
+        </div>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <script src="./js/dashboard.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="./js/dashboard_equipamento.js"></script>
+    </body>
+</html>

@@ -59,6 +59,7 @@ button:focus-visible {
 }
 
 .sidebar-header {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -90,6 +91,8 @@ button:focus-visible {
     display: flex;
     flex-direction: column;
     flex: 1;
+    min-height: 0;
+    overflow-y: auto;
 }
 
 .nav-title {
@@ -101,7 +104,8 @@ button:focus-visible {
     letter-spacing: 1px;
 }
 
-.nav-title-spacing {
+.nav-title-spacing,
+.nav-title-dashboards {
     margin-top: 28px;
 }
 
@@ -130,11 +134,13 @@ button:focus-visible {
 
 .nav-icon {
     width: 20px;
+    flex-shrink: 0;
     text-align: center;
     font-size: 19px;
 }
 
 .sidebar-footer {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     gap: 10px;
