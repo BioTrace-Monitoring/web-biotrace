@@ -1,0 +1,124 @@
+/* Usa as mesmas cores e fontes do painel_cliente/css/style.css. */
+.dashboard-engenheiro { display: flex; flex-direction: column; gap: 20px; }
+.dashboard-engenheiro .oculto { display: none; }
+
+.seletor-lote, .card-indicador, .filtros-dashboard, .painel-lote {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+}
+
+.seletor-lote {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 22px;
+}
+
+.seletor-lote > div { min-width: 0; }
+.seletor-lote label, .rotulo {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+.seletor-lote label { font-weight: 600; letter-spacing: .5px; }
+.seletor-lote strong { font-size: 14px; }
+.seletor-lote select, #buscaEquipamento {
+    max-width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--background);
+    color: var(--text);
+    font-size: 13px;
+}
+.seletor-lote select { width: 285px; font-weight: 600; }
+.selo-demo { display: inline-block; padding: 5px 10px; border-radius: 20px; background: var(--primary-light); color: var(--primary); font-size: 12px; }
+
+/* Cards clicáveis, com destaque para o filtro selecionado. */
+.indicadores { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+.card-indicador {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 110px;
+    padding: 18px 16px;
+    text-align: left;
+    color: var(--text);
+    cursor: pointer;
+    transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.card-indicador span { color: var(--text-secondary); font-size: 12px; line-height: 1.5; }
+.card-indicador strong { font-size: 26px; }
+.card-indicador:hover { transform: translateY(-2px); box-shadow: 0 5px 16px #28242d0a; }
+.card-indicador.ativo { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light); }
+
+.filtros-dashboard { padding: 18px 20px; }
+.linha-filtros, .componentes-filtro { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.linha-filtros { gap: 16px; }
+.linha-filtros + .linha-filtros { margin-top: 16px; }
+.filtro-alertas { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
+.filtro-alertas input {
+    appearance: none;
+    width: 38px;
+    height: 22px;
+    border-radius: 20px;
+    background: #cbd5e1;
+    cursor: pointer;
+    transition: background .2s;
+}
+.filtro-alertas input::before { content: ""; display: block; width: 16px; height: 16px; margin: 3px; border-radius: 50%; background: white; transition: transform .2s; }
+.filtro-alertas input:checked { background: var(--primary); }
+.filtro-alertas input:checked::before { transform: translateX(16px); }
+.filtro-componente { padding: 7px 12px; background: var(--background); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 12px; cursor: pointer; transition: background .2s; }
+.filtro-componente.ativo { background: var(--primary); border-color: var(--primary); color: white; }
+#buscaEquipamento { width: 245px; }
+.botao-exportar { padding: 10px 14px; border: 1px solid var(--primary); border-radius: 10px; background: var(--white); color: var(--primary); font-size: 12px; font-weight: 600; cursor: pointer; }
+.botao-exportar:hover, .botao-detalhes:hover { background: var(--primary-light); }
+.resultado-filtros { color: var(--text-secondary); font-size: 12px; line-height: 1.6; }
+
+.painel-lote { overflow: hidden; }
+.cabecalho-tabela { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 18px 20px; border-bottom: 1px solid var(--border); }
+.cabecalho-tabela h2 { font-size: 15px; }
+.cabecalho-tabela span { font-size: 12px; color: var(--text-secondary); }
+.rolagem-tabela { overflow-x: auto; }
+.tabela-equipamentos { width: 100%; border-collapse: collapse; text-align: left; }
+.tabela-equipamentos { min-width: 850px; }
+.tabela-equipamentos th { padding: 14px 16px; background: #faf9fc; color: var(--text-secondary); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+.tabela-equipamentos td { padding: 20px 16px; border-top: 1px solid var(--border); font-size: 13px; }
+.tabela-equipamentos td:first-child { font-family: monospace; }
+.linha-equipamento.limite { background: #fff9f9; }
+.tabela-equipamentos .linha-equipamento { color: var(--text); }
+.linha-equipamento.limite td:first-child { border-left: 3px solid #ef4444; }
+.linha-equipamento.falha td:first-child { border-left: 3px solid #991b1b; }
+.linha-equipamento.falha { background: #fcf6f6; }
+.linha-equipamento:hover { background: #f8f5fc; }
+.botao-detalhes { display: inline-block; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--primary-light); color: var(--primary); font-size: 12px; cursor: pointer; white-space: nowrap; }
+.status { display: inline-block; padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.normal { color: #07835d; }
+.atencao { color: #a66a00; }
+.limite { color: #d92d20; }
+.falha { color: #991b1b; }
+.ocioso { color: #2563eb; }
+.status.normal { background: #ecfdf5; }
+.status.atencao { background: #fffbeb; }
+.status.limite, .status.falha { background: #fef2f2; }
+.status.ocioso { background: #eff6ff; }
+.tabela-vazia { padding: 30px; background: var(--white); border: 1px solid var(--border); border-radius: 12px; text-align: center; color: var(--text-secondary); font-size: 13px; }
+.dashboard-engenheiro footer { padding: 20px; text-align: center; color: var(--text-secondary); font-size: 12px; }
+
+.somente-leitor { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+
+@media (max-width: 1200px) { .indicadores { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 768px) {
+    .seletor-lote { align-items: flex-start; }
+    .seletor-lote > div:first-child, .seletor-lote select { width: 100%; }
+    .indicadores { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .filtros-dashboard { padding: 16px; }
+    #buscaEquipamento, .botao-exportar { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .dashboard-engenheiro * { transition: none; } }
