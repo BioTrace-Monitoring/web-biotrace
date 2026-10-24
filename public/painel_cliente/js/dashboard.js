@@ -78,13 +78,13 @@ function configurarSidebar() {
     const fechar = () => {
         sidebar.classList.remove('open');
         overlay.classList.remove('active');
-        menuButton.setAttribute('aria-expanded', 'false');
+        if (menuButton.hasAttribute('aria-expanded')) menuButton.setAttribute('aria-expanded', 'false');
     }
 
     menuButton.addEventListener('click', () => {
         sidebar.classList.add('open');
         overlay.classList.add('active');
-        menuButton.setAttribute('aria-expanded', 'true');
+        if (menuButton.hasAttribute('aria-expanded')) menuButton.setAttribute('aria-expanded', 'true');
     });
     
     document.getElementById('sidebarClose').addEventListener('click', fechar);
