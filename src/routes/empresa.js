@@ -6,8 +6,6 @@ var express = require("express");
 var router = express.Router();
 // Importando o arquivo empresaController
 var empresaController = require("../controllers/empresaController");
-// Importando o middleware
-const middleware = require("../middlewares/authMiddleware");
 
 router.post("/", function (req, res) {
     empresaController.cadastrarEmpresa(req, res);
@@ -25,6 +23,15 @@ router.post("/:idEmpresa/equipamento", function (req, res) {
     empresaController.cadastrarEquipamento(req, res);
 })
 
+
+// Rotas para consultar, alterar e excluir os cadastros.
+router.get("/:idEmpresa", function (req, res) {
+    empresaController.buscarEmpresa(req, res);
+});
+
+router.put("/:idEmpresa", function (req, res) {
+    empresaController.alterarEmpresa(req, res);
+});
 
 // Exportando o router
 // Outros arquivos podem usar essas funções

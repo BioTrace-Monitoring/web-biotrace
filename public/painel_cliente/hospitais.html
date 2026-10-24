@@ -307,7 +307,7 @@
                     <input type="search" id="buscar-recursos" placeholder="Digite o nome ou CNPJ" autocomplete="off" disabled>
                     <div id="rolagem-tabela" role="region" aria-label="Hospitais cadastrados" tabindex="0" hidden>
                         <table aria-labelledby="titulo-lista">
-                            <thead><tr><th scope="col">Hospital</th><th scope="col">CNPJ</th><th scope="col">CEP</th><th scope="col">Número</th></tr></thead>
+                            <thead><tr><th scope="col">Hospital</th><th scope="col">CNPJ</th><th scope="col">CEP</th><th scope="col">Número</th><th scope="col">Ações</th></tr></thead>
                             <tbody id="tabela-hospitais"></tbody>
                         </table>
                     </div>
@@ -564,8 +564,44 @@
                     linha.appendChild(celula);
                 });
 
+                const celulaAcoes = document.createElement('td');
+                const acoes = document.createElement('div');
+                acoes.className = 'acoes-cadastro';
+                const linkEditar = document.createElement('a');
+                linkEditar.className = 'button-secondary';
+                linkEditar.textContent = 'Editar';
+                linkEditar.href = 'editar-hospital.html?id=' + hospital.id_hospital;
+                const botaoExcluir = document.createElement('button');
+                botaoExcluir.type = 'button';
+                botaoExcluir.className = 'button-danger';
+                botaoExcluir.textContent = 'Excluir';
+                botaoExcluir.addEventListener('click', function () { excluirHospital(hospital, botaoExcluir); });
+                acoes.appendChild(linkEditar);
+                acoes.appendChild(botaoExcluir);
+                celulaAcoes.appendChild(acoes);
+                linha.appendChild(celulaAcoes);
                 tabelaHospitais.appendChild(linha);
             });
+        }
+
+        async function excluirHospital(hospital, botao) {
+            if (botao.disabled) return;
+            if (!window.confirm('Deseja excluir o hospital ' + hospital.nome_hospital + '?')) return;
+            botao.disabled = true;
+            try {
+                const idEmpresa = Number(localStorage.getItem('FK_EMPRESA'));
+                const resposta = await fetch(`/hospital/${idEmpresa}/${hospital.id_hospital}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                const dados = await resposta.json();
+                if (!resposta.ok) throw new Error(dados.mensagem || dados.erro || 'Não foi possível excluir o hospital.');
+                await listarHospitais();
+                mostrarMensagemHospital(dados.mensagem, 'sucesso');
+            } catch (erro) {
+                mostrarMensagemHospital(erro.message, 'erro');
+                botao.disabled = false;
+            }
         }
 
         async function listarHospitais() {
@@ -607,6 +643,11 @@
         botaoTentarNovamente.addEventListener('click', listarHospitais);
         document.getElementById('atualizar-lista').addEventListener('click', listarHospitais);
         listarHospitais();
+        var confirmacaoAlteracao = sessionStorage.getItem("cadastro-alterado");
+        if (confirmacaoAlteracao) {
+            mostrarMensagemHospital(confirmacaoAlteracao, 'sucesso');
+            sessionStorage.removeItem("cadastro-alterado");
+        }
 
     </script>
 </body>

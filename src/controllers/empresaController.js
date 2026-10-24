@@ -111,7 +111,50 @@ function excluirEmpresa(req, res) {
 
 // Exportando as funções do controller
 // Outros arquivos podem usar essas funções
+function buscarEmpresa(req, res) {
+    empresaModel.buscarEmpresa(Number(req.params.idEmpresa))
+        .then(function (empresas) {
+            if (empresas.length === 0) {
+                return res.status(404).json({ sucesso: false, mensagem: "Empresa não encontrada." });
+            }
+            res.json({ sucesso: true, empresa: empresas[0] });
+        }).catch(function (erro) {
+            console.error("Erro ao buscar empresa:", erro);
+            res.status(500).json({ sucesso: false, mensagem: "Não foi possível carregar a empresa." });
+        });
+}
+
+function alterarEmpresa(req, res) {
+    var nome = req.body.razaoSocialServer;
+    var cnpj = req.body.cnpjServer;
+    var telefone = req.body.telefoneComercialServer;
+    var cep = req.body.cepServer;
+    var numero = req.body.numeroServer;
+
+    if (typeof nome !== "string" || !nome.trim() || nome.length > 100 ||
+        !/^\d{14}$/.test(cnpj) || !/^\d{10,11}$/.test(telefone) || !/^\d{8}$/.test(cep) ||
+        typeof numero !== "string" || !numero.trim() || numero.length > 10) {
+        return res.status(400).json({ sucesso: false, mensagem: "Preencha corretamente os dados da empresa." });
+    }
+
+    empresaModel.alterarEmpresa(Number(req.params.idEmpresa), nome.trim(), cnpj, telefone, cep, numero.trim())
+        .then(function (resultado) {
+            if (!resultado.affectedRows) {
+                return res.status(404).json({ sucesso: false, mensagem: "Empresa não encontrada." });
+            }
+            res.json({ sucesso: true, mensagem: "Empresa alterada com sucesso." });
+        }).catch(function (erro) {
+            console.error("Erro ao alterar empresa:", erro);
+            res.status(erro.code === "ER_DUP_ENTRY" ? 409 : 500).json({
+                sucesso: false,
+                mensagem: erro.code === "ER_DUP_ENTRY" ? "Já existe uma empresa com esse CNPJ." : "Não foi possível alterar a empresa."
+            });
+        });
+}
+
 module.exports = {
+    buscarEmpresa,
+    alterarEmpresa,
     cadastrarEmpresa,
     listarEmpresas,
     excluirEmpresa

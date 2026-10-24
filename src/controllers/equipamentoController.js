@@ -24,6 +24,13 @@ function tratarErro(res, erro, mensagemDuplicado) {
             .json({ sucesso: false, mensagem: mensagemDuplicado || "Este registro já está cadastrado." });
     }
 
+    if (erro.code === "ER_ROW_IS_REFERENCED_2") {
+        return res.status(409).json({
+            sucesso: false,
+            mensagem: "Este cadastro possui registros vinculados. Remova os lotes do modelo ou os equipamentos do lote antes de excluir."
+        });
+    }
+
     if (erro.code === "ER_NO_REFERENCED_ROW_2") {
         return res.status(400).json({
             sucesso: false,
@@ -326,7 +333,117 @@ async function cadastrarIntervalo(req, res) {
     }
 }
 
+async function buscarModelo(req, res) {
+    if (!idValido(req.params.idModelo)) {
+        return res.status(400).json({ sucesso: false, mensagem: "Registro inválido." });
+    }
+    try {
+        var registros = await equipamentoModel.buscarModelo(Number(req.params.idEmpresa), Number(req.params.idModelo));
+        if (!registros.length) return res.status(404).json({ sucesso: false, mensagem: "Registro não encontrado para esta empresa." });
+        res.json({ sucesso: true, modelo: registros[0] });
+    } catch (erro) { return tratarErro(res, erro); }
+}
+
+async function alterarModelo(req, res) {
+    if (!idValido(req.params.idModelo) || !textoValido(req.body.nomeServer)) {
+        return res.status(400).json({ sucesso: false, mensagem: "Confira os campos e os vínculos do cadastro." });
+    }
+    try {
+        var resultado = await equipamentoModel.alterarModelo(Number(req.params.idEmpresa), Number(req.params.idModelo), req.body.nomeServer.trim());
+        if (!resultado.affectedRows) return res.status(404).json({ sucesso: false, mensagem: "Registro ou vínculo não encontrado para esta empresa." });
+        res.json({ sucesso: true, mensagem: "Alterações salvas com sucesso." });
+    } catch (erro) { return tratarErro(res, erro); }
+}
+
+async function excluirModelo(req, res) {
+    if (!idValido(req.params.idModelo)) {
+        return res.status(400).json({ sucesso: false, mensagem: "Registro inválido." });
+    }
+    try {
+        var resultado = await equipamentoModel.excluirModelo(Number(req.params.idEmpresa), Number(req.params.idModelo));
+        if (!resultado.affectedRows) return res.status(404).json({ sucesso: false, mensagem: "Registro não encontrado para esta empresa." });
+        res.json({ sucesso: true, mensagem: "Cadastro excluído com sucesso." });
+    } catch (erro) { return tratarErro(res, erro); }
+}
+
+async function buscarLote(req, res) {
+    if (!idValido(req.params.idLote)) {
+        return res.status(400).json({ sucesso: false, mensagem: "Registro inválido." });
+    }
+    try {
+        var registros = await equipamentoModel.buscarLote(Number(req.params.idEmpresa), Number(req.params.idLote));
+        if (!registros.length) return res.status(404).json({ sucesso: false, mensagem: "Registro não encontrado para esta empresa." });
+        res.json({ sucesso: true, lote: registros[0] });
+    } catch (erro) { return tratarErro(res, erro); }
+}
+
+async function alterarLote(req, res) {
+    if (!idValido(req.params.idLote) || !textoValido(req.body.numeroServer) || !idValido(req.body.idModeloServer)) {
+        return res.status(400).json({ sucesso: false, mensagem: "Confira os campos e os vínculos do cadastro." });
+    }
+    try {
+        var resultado = await equipamentoModel.alterarLote(Number(req.params.idEmpresa), Number(req.params.idLote), req.body.numeroServer.trim(), Number(req.body.idModeloServer));
+        if (!resultado.affectedRows) return res.status(404).json({ sucesso: false, mensagem: "Registro ou vínculo não encontrado para esta empresa." });
+        res.json({ sucesso: true, mensagem: "Alterações salvas com sucesso." });
+    } catch (erro) { return tratarErro(res, erro); }
+}
+
+async function excluirLote(req, res) {
+    if (!idValido(req.params.idLote)) {
+        return res.status(400).json({ sucesso: false, mensagem: "Registro inválido." });
+    }
+    try {
+        var resultado = await equipamentoModel.excluirLote(Number(req.params.idEmpresa), Number(req.params.idLote));
+        if (!resultado.affectedRows) return res.status(404).json({ sucesso: false, mensagem: "Registro não encontrado para esta empresa." });
+        res.json({ sucesso: true, mensagem: "Cadastro excluído com sucesso." });
+    } catch (erro) { return tratarErro(res, erro); }
+}
+
+async function buscarEquipamento(req, res) {
+    if (!idValido(req.params.idEquipamento)) {
+        return res.status(400).json({ sucesso: false, mensagem: "Registro inválido." });
+    }
+    try {
+        var registros = await equipamentoModel.buscarEquipamento(Number(req.params.idEmpresa), Number(req.params.idEquipamento));
+        if (!registros.length) return res.status(404).json({ sucesso: false, mensagem: "Registro não encontrado para esta empresa." });
+        res.json({ sucesso: true, equipamento: registros[0] });
+    } catch (erro) { return tratarErro(res, erro); }
+}
+
+async function alterarEquipamento(req, res) {
+    if (!idValido(req.params.idEquipamento) || !textoValido(req.body.numeroSerieServer) || !idValido(req.body.idLoteServer) ||
+        req.body.idHospitalServer === undefined || !hospitalValido(req.body.idHospitalServer)) {
+        return res.status(400).json({ sucesso: false, mensagem: "Confira os campos e os vínculos do cadastro." });
+    }
+    try {
+        var resultado = await equipamentoModel.alterarEquipamento(Number(req.params.idEmpresa), Number(req.params.idEquipamento), req.body.numeroSerieServer.trim(), Number(req.body.idLoteServer), obterIdHospital(req.body.idHospitalServer));
+        if (!resultado.affectedRows) return res.status(404).json({ sucesso: false, mensagem: "Registro ou vínculo não encontrado para esta empresa." });
+        res.json({ sucesso: true, mensagem: "Alterações salvas com sucesso." });
+    } catch (erro) { return tratarErro(res, erro); }
+}
+
+async function excluirEquipamento(req, res) {
+    if (!idValido(req.params.idEquipamento)) {
+        return res.status(400).json({ sucesso: false, mensagem: "Registro inválido." });
+    }
+    try {
+        var resultado = await equipamentoModel.excluirEquipamento(Number(req.params.idEmpresa), Number(req.params.idEquipamento));
+        if (!resultado.affectedRows) return res.status(404).json({ sucesso: false, mensagem: "Registro não encontrado para esta empresa." });
+        res.json({ sucesso: true, mensagem: "Cadastro excluído com sucesso." });
+    } catch (erro) { return tratarErro(res, erro); }
+}
+
+
 module.exports = {
+    buscarModelo,
+    alterarModelo,
+    excluirModelo,
+    buscarLote,
+    alterarLote,
+    excluirLote,
+    buscarEquipamento,
+    alterarEquipamento,
+    excluirEquipamento,
     listarModelos,
     cadastrarModelo,
     listarLotes,

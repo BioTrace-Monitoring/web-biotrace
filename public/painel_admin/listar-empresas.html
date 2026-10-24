@@ -39,6 +39,8 @@
                 <p>Gerencie as empresas cadastradas no sistema BioTrace.</p>
             </div>
 
+            <p id="mensagem-alteracao" class="mensagem-lista" role="status" hidden></p>
+
             <div class="empresas-container">
 
                 <div class="empresas-cabecalho">
@@ -94,6 +96,12 @@
     <script src="./js/utils.js"></script>
     <script>
         var todasEmpresas = [];
+        var confirmacao = sessionStorage.getItem("cadastro-alterado");
+        if (confirmacao) {
+            document.getElementById("mensagem-alteracao").textContent = confirmacao;
+            document.getElementById("mensagem-alteracao").hidden = false;
+            sessionStorage.removeItem("cadastro-alterado");
+        }
 
         function normalizar(texto) {
             return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -184,6 +192,20 @@
                     btnGestor.href = "./cadastrar-gestor.html?id_empresa=" + empresa.id_empresa;
                     divAcoes.appendChild(btnGestor);
                 }
+
+                if (empresa.nome_administrador) {
+                    var btnGerenciar = document.createElement("a");
+                    btnGerenciar.className = "btn-cadastrar-gestor";
+                    btnGerenciar.textContent = "Gerenciar gestores";
+                    btnGerenciar.href = "listar-gestores.html?id_empresa=" + empresa.id_empresa;
+                    divAcoes.appendChild(btnGerenciar);
+                }
+
+                var btnEditar = document.createElement("a");
+                btnEditar.className = "btn-cadastrar-gestor";
+                btnEditar.textContent = "Editar empresa";
+                btnEditar.href = "editar-empresa.html?id_empresa=" + empresa.id_empresa;
+                divAcoes.appendChild(btnEditar);
 
                 var btnExcluir = document.createElement("button");
                 btnExcluir.className = "btn-excluir";

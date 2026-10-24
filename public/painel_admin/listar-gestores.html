@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioTrace | Gestores cadastrados</title>
+    <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+
+<body>
+    <header class="cabecalho">
+        <div class="cabecalho-marca">
+            <img src="../assets/icons/BioTrace (4).png" alt="Logo BioTrace" class="logo-biotrace">
+
+            <div class="cabecalho-logo-texto">
+                <h1>Painel Interno</h1>
+            </div>
+        </div>
+
+        <div class="cabecalho-usuario">
+            <div class="cabecalho-usuario-info">
+                <p id="b_usuario">Olá, nomeUser</p>
+            </div>
+
+            <a href="index.html" class="btn-voltar-painel">
+                Voltar ao painel
+            </a>
+
+            <button class="btn-sair" onclick="limparSessao()">Sair</button>
+        </div>
+    </header>
+
+    <main class="conteudo">
+        <div class="conteudo-principal">
+            <div class="boas-vindas">
+                <h2>Gestores cadastrados</h2>
+                <p>Consulte os cadastros. Clique em Editar para abrir a tela de alteração ou em Excluir para remover.</p>
+            </div>
+                <section class="empresas-container">
+                    <div class="empresas-cabecalho">
+                        <h3>Gestores cadastrados</h3>
+                        <a id="novo-cadastro" class="btn-cadastrar-gestor">Novo cadastro</a>
+                    </div>
+                    <div class="filtros">
+                        <label for="buscar-cadastro">Buscar</label>
+                        <input type="text" id="buscar-cadastro" placeholder="Digite para buscar" autocomplete="off">
+                        <button type="button" id="atualizar-lista" class="btn-cancelar">Atualizar</button>
+                    </div>
+                    <p id="mensagem-lista" class="mensagem-lista" role="status" aria-live="polite">Carregando...</p>
+                    <div class="tabela-container">
+                        <table class="tabela-empresas">
+                            <thead><tr><th scope="col">Nome</th><th scope="col">E-mail</th><th scope="col">Cargo</th><th scope="col">Ações</th></tr></thead>
+                            <tbody id="tabela-cadastros"></tbody>
+                        </table>
+                    </div>
+                </section>
+        </div>
+    </main>
+    <script src="./js/utils.js"></script>
+    <script>
+        var parametros = new URLSearchParams(window.location.search);
+        var idEmpresa = Number(parametros.get("id_empresa"));
+        var usuarios = [];
+        var mensagem = document.getElementById("mensagem-lista");
+        var tabela = document.getElementById("tabela-cadastros");
+        document.getElementById("novo-cadastro").href = `cadastrar-gestor.html?id_empresa=${idEmpresa}`;
+
+        function montarTabela() {
+            tabela.replaceChildren();
+            var busca = document.getElementById("buscar-cadastro").value.trim().toLowerCase();
+            var filtrados = usuarios.filter(function (registro) {
+                return [registro.nome_usuario, registro.email_usuario, registro.cargo].join(" ").toLowerCase().includes(busca);
+            });
+            if (!filtrados.length) {
+                var linhaVazia = document.createElement("tr");
+                var celulaVazia = document.createElement("td");
+                celulaVazia.colSpan = 4;
+                celulaVazia.textContent = "Nenhum cadastro encontrado.";
+                linhaVazia.appendChild(celulaVazia);
+                tabela.appendChild(linhaVazia);
+            }
+            filtrados.forEach(function (registro) {
+                var linha = document.createElement("tr");
+                var valores = [registro.nome_usuario, registro.email_usuario, registro.cargo];
+                valores.forEach(function (valor) {
+                    var celula = document.createElement("td");
+                    celula.textContent = valor == null ? "Não informado" : valor;
+                    linha.appendChild(celula);
+                });
+                var celulaAcoes = document.createElement("td");
+                var acoes = document.createElement("div");
+                acoes.className = "acoes";
+                var linkEditar = document.createElement("a");
+                linkEditar.className = "btn-cadastrar-gestor";
+                linkEditar.textContent = "Editar";
+                linkEditar.href = `editar-gestor.html?id_empresa=${idEmpresa}&id=` + registro.id_usuario;
+                var botaoExcluir = document.createElement("button");
+                botaoExcluir.type = "button";
+                botaoExcluir.className = "btn-excluir";
+                botaoExcluir.textContent = "Excluir";
+                botaoExcluir.addEventListener("click", function () { excluirUsuario(registro, botaoExcluir); });
+                acoes.appendChild(linkEditar);
+                acoes.appendChild(botaoExcluir);
+                celulaAcoes.appendChild(acoes);
+                linha.appendChild(celulaAcoes);
+                tabela.appendChild(linha);
+            });
+        }
+
+        async function carregarUsuarios() {
+            mensagem.textContent = "Carregando...";
+            tabela.replaceChildren();
+            try {
+                if (!Number.isSafeInteger(idEmpresa) || idEmpresa <= 0) throw new Error("Empresa inválida. Entre novamente no sistema.");
+                var resposta = await fetch(`/usuario/${idEmpresa}`, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } });
+                var dados = await resposta.json();
+                if (!resposta.ok) throw new Error(dados.mensagem || dados.erro || "Não foi possível carregar a lista.");
+                usuarios = dados.usuarios;
+                var confirmacao = sessionStorage.getItem("cadastro-alterado");
+                mensagem.textContent = confirmacao || dados.usuarios.length + " cadastro(s) encontrado(s).";
+                sessionStorage.removeItem("cadastro-alterado");
+                montarTabela();
+            } catch (erro) {
+                usuarios = [];
+                mensagem.textContent = erro.message;
+            }
+        }
+
+        async function excluirUsuario(registro, botao) {
+            if (botao.disabled) return;
+            if (!window.confirm("Deseja excluir gestor: " + registro.nome_usuario + "?")) return;
+            botao.disabled = true;
+            try {
+                var resposta = await fetch(`/usuario/${idEmpresa}/${registro.id_usuario}`, {
+                    method: "DELETE",
+                    headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+                });
+                var dados = await resposta.json();
+                if (!resposta.ok) throw new Error(dados.mensagem || dados.erro || "Não foi possível excluir o cadastro.");
+                await carregarUsuarios();
+                mensagem.textContent = dados.mensagem;
+            } catch (erro) {
+                mensagem.textContent = erro.message;
+                botao.disabled = false;
+            }
+        }
+
+        document.getElementById("buscar-cadastro").addEventListener("input", montarTabela);
+        document.getElementById("atualizar-lista").addEventListener("click", carregarUsuarios);
+        carregarUsuarios();
+    </script>
+</body>
+</html>
