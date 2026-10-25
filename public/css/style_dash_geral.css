@@ -42,6 +42,8 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .brand {
@@ -105,7 +107,8 @@ header {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-width: 300px;
+  width: 100%;
+  max-width: 350px;
 }
 
 .batch-select-wrapper label {
@@ -127,6 +130,7 @@ header {
   color: var(--text);
   outline: none;
   cursor: pointer;
+  width: 100%;
 }
 
 .batch-select:focus {
@@ -135,19 +139,18 @@ header {
 
 .filter-meta {
   display: flex;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 20px; 
   font-size: 13px;
   color: var(--text-muted);
 }
 
-/* Grelha responsiva automática */
 .dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 24px;
+   display: grid; 
+   grid-template-columns: repeat(2, minmax(0, 1fr)); 
+   gap: 24px; 
 }
 
-/* O terceiro card (Correlação) ocupa a largura total no desktop */
 .dashboard-grid .dashboard-card:nth-child(3) {
   grid-column: 1 / -1;
 }
@@ -161,6 +164,7 @@ header {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  width: 100%;
 }
 
 .card-header h3 {
@@ -187,6 +191,8 @@ header {
 .batch-summary-footer, .forecasting-footer {
   display: flex;
   justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 12px;
   background: var(--bg);
   padding: 12px;
   border-radius: 12px;
@@ -198,6 +204,7 @@ header {
   flex-direction: column;
   align-items: center;
   gap: 2px;
+  text-align: center;
 }
 
 .summary-label {
@@ -211,20 +218,21 @@ header {
   font-weight: 700;
 }
 
-@media (max-width: 768px) {
+/* Ajustes para tablets e tv */
+@media (max-width: 992px) {
   .dashboard-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   
   .dashboard-grid .dashboard-card:nth-child(3) {
-    grid-column: span 1;
+    grid-column: 1 / -1;
   }
 
   .chart-container-wrapper {
-    height: 240px;
+    height: 250px;
   }
 
   body {
-    padding: 12px;
+    padding: 16px;
   }
 }
