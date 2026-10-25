@@ -54,88 +54,42 @@ function listarEquipamentos(idEmpresa) {
     `, [idEmpresa]);
 }
 
-function cadastrarEquipamento(numeroSerie, idLote, idHospital, idEmpresa) {
-    return cadastrarEquipamentos([numeroSerie], idLote, idHospital, idEmpresa);
-}
-
-async function cadastrarEquipamentos(numerosSerie, idLote, idHospital, idEmpresa) {
-    var conexao = database.conectar();
-
-    try {
-        // Equipamentos, componentes e métricas são salvos juntos.
-        await conexao.beginTransaction();
-        var resultado = await inserirEquipamentos(numerosSerie, idLote, idHospital, idEmpresa, conexao);
-
-        if (resultado.affectedRows > 0) {
-            var componentes = await cadastrarComponentes(numerosSerie, idLote, conexao);
-            var metricas = await vincularMetricas(numerosSerie, idLote, conexao);
-            validarVinculos(componentes, metricas, numerosSerie.length);
-            await cadastrarParametros(numerosSerie, idLote, conexao);
-        }
-
-        await conexao.commit();
-        return resultado;
-    } catch (erro) {
-        await conexao.rollback();
-        throw erro;
-    } finally {
-        await conexao.end();
-    }
-}
-
-function inserirEquipamentos(numerosSerie, idLote, idHospital, idEmpresa, conexao) {
-    var consultasSeries = [];
-
-    for (var numeroSerie of numerosSerie) {
-        consultasSeries.push("SELECT ? AS numero_serie");
-    }
-
-    var seriesSql = consultasSeries.join(" UNION ALL ");
-    var parametros = [idHospital].concat(numerosSerie, [idLote, idEmpresa, idHospital, idHospital]);
-
-    return database.executar(`
+async function cadastrarEquipamento(numeroSerie, idLote, idHospital, idEmpresa) {
+    var resultado = await database.executar(`
         INSERT INTO equipamento (numero_serie, fk_hospital, fk_lote)
-        SELECT series.numero_serie, ?, l.id_lote_equipamento
-        FROM (${seriesSql}) series
-        JOIN lote_equipamento l ON l.id_lote_equipamento = ?
+        SELECT ?, ?, l.id_lote_equipamento
+        FROM lote_equipamento l
         JOIN empresa emp ON emp.id_empresa = l.fk_empresa AND emp.ativo = TRUE
         JOIN modelo_equipamento m ON m.id_modelo_equipamento = l.fk_modelo_equipamento
             AND m.fk_empresa = l.fk_empresa
-        WHERE l.fk_empresa = ?
+        WHERE l.id_lote_equipamento = ? AND l.fk_empresa = ?
           AND (? IS NULL OR EXISTS (
               SELECT 1 FROM hospital h WHERE h.id_hospital = ? AND h.fk_empresa = l.fk_empresa
           ));
-    `, parametros, conexao);
-}
+    `, [numeroSerie, idHospital, idLote, idEmpresa, idHospital, idHospital]);
 
-function gerarMarcadores(numerosSerie) {
-    var marcadores = [];
-
-    for (var numeroSerie of numerosSerie) {
-        marcadores.push("?");
+    if (resultado.affectedRows > 0) {
+        var componentes = await cadastrarComponentes(resultado.insertId);
+        var metricas = await vincularMetricas(resultado.insertId);
+        validarVinculos(componentes, metricas);
+        await cadastrarParametros(resultado.insertId);
     }
 
-    return marcadores.join(",");
+    return resultado;
 }
 
-function cadastrarComponentes(numerosSerie, idLote, conexao) {
-    var marcadores = gerarMarcadores(numerosSerie);
-    var parametros = [idLote].concat(numerosSerie);
-
+function cadastrarComponentes(idEquipamento) {
     return database.executar(`
         INSERT INTO componente (fk_equipamento, fk_tipo_componente)
         SELECT e.id_equipamento, tc.id_tipo_componente
         FROM equipamento e
         CROSS JOIN tipo_componente tc
-        WHERE e.fk_lote = ? AND e.numero_serie IN (${marcadores})
+        WHERE e.id_equipamento = ?
           AND tc.nome_componente IN ('CPU', 'Memória RAM', 'Disco', 'Rede', 'Sistema Operacional');
-    `, parametros, conexao);
+    `, [idEquipamento]);
 }
 
-function vincularMetricas(numerosSerie, idLote, conexao) {
-    var marcadores = gerarMarcadores(numerosSerie);
-    var parametros = [idLote].concat(numerosSerie);
-
+function vincularMetricas(idEquipamento) {
     return database.executar(`
         INSERT INTO metrica (fk_tipo_metrica, fk_componente)
         SELECT tm.id_tipo_metrica, c.id_componente
@@ -154,25 +108,19 @@ function vincularMetricas(numerosSerie, idLote, conexao) {
             OR (tc.nome_componente = 'Sistema Operacional'
                 AND tm.tipo_metrica IN ('uptime_horas', 'processos_ativos'))
         )
-        WHERE e.fk_lote = ? AND e.numero_serie IN (${marcadores});
-    `, parametros, conexao);
+        WHERE e.id_equipamento = ?;
+    `, [idEquipamento]);
 }
 
-function validarVinculos(componentes, metricas, quantidadeEquipamentos) {
-    var totalComponentes = quantidadeEquipamentos * 5;
-    var totalMetricas = quantidadeEquipamentos * 13;
-
-    if (componentes.affectedRows !== totalComponentes || metricas.affectedRows !== totalMetricas) {
+function validarVinculos(componentes, metricas) {
+    if (componentes.affectedRows !== 5 || metricas.affectedRows !== 13) {
         var erro = new Error("Confira os INSERTs de tipo_componente e tipo_metrica do init.sql. Cada equipamento precisa dos 5 componentes e das 13 métricas padrão.");
         erro.status = 400;
         throw erro;
     }
 }
 
-function cadastrarParametros(numerosSerie, idLote, conexao) {
-    var marcadores = gerarMarcadores(numerosSerie);
-    var parametros = [idLote].concat(numerosSerie);
-
+function cadastrarParametros(idEquipamento) {
     return database.executar(`
         INSERT INTO parametro_metrica (limite_uso, limite_ociosidade, habilitado, fk_metrica)
         SELECT
@@ -194,8 +142,8 @@ function cadastrarParametros(numerosSerie, idLote, conexao) {
         JOIN tipo_metrica tm ON tm.id_tipo_metrica = m.fk_tipo_metrica
         JOIN componente c ON c.id_componente = m.fk_componente
         JOIN equipamento e ON e.id_equipamento = c.fk_equipamento
-        WHERE e.fk_lote = ? AND e.numero_serie IN (${marcadores});
-    `, parametros, conexao);
+        WHERE e.id_equipamento = ?;
+    `, [idEquipamento]);
 }
 
 function atualizarHospital(idEquipamento, idHospital, idEmpresa) {
@@ -320,5 +268,5 @@ module.exports = {
     alterarEquipamento,
     excluirEquipamento,
     listarModelos, cadastrarModelo, listarLotes, cadastrarLote,
-    listarEquipamentos, cadastrarEquipamento, cadastrarEquipamentos, atualizarHospital
+    listarEquipamentos, cadastrarEquipamento, atualizarHospital
 };

@@ -267,17 +267,6 @@ function validarIntervalo(prefixo, inicio, fim) {
     return "";
 }
 
-function gerarNumerosSerie(prefixo, inicio, fim) {
-    var largura = Math.max(inicio.length, fim.length);
-    var numerosSerie = [];
-
-    for (var numero = Number(inicio); numero <= Number(fim); numero++) {
-        numerosSerie.push(prefixo.trim() + String(numero).padStart(largura, "0"));
-    }
-
-    return numerosSerie;
-}
-
 async function cadastrarIntervalo(req, res) {
     var prefixo = req.body.prefixoServer;
     var inicio = req.body.inicioServer;
@@ -303,32 +292,38 @@ async function cadastrarIntervalo(req, res) {
         return res.status(400).json({ sucesso: false, mensagem: "Hospital inválido." });
     }
 
-    var numerosSerie = gerarNumerosSerie(prefixo, inicio, fim);
+    var largura = Math.max(inicio.length, fim.length);
+    var quantidade = 0;
 
     try {
-        var resultado = await equipamentoModel.cadastrarEquipamentos(
-            numerosSerie,
-            Number(idLote),
-            obterIdHospital(idHospital),
-            Number(req.params.idEmpresa)
-        );
+        for (var numero = Number(inicio); numero <= Number(fim); numero++) {
+            var numeroSerie = prefixo.trim() + String(numero).padStart(largura, "0");
+            var resultado = await equipamentoModel.cadastrarEquipamento(
+                numeroSerie,
+                Number(idLote),
+                obterIdHospital(idHospital),
+                Number(req.params.idEmpresa)
+            );
 
-        if (!resultado.affectedRows) {
-            return res
-                .status(404)
-                .json({ sucesso: false, mensagem: "Lote ou hospital não encontrado para esta empresa." });
+            if (!resultado.affectedRows) {
+                return res
+                    .status(404)
+                    .json({ sucesso: false, mensagem: "Lote ou hospital não encontrado para esta empresa." });
+            }
+
+            quantidade++;
         }
 
         return res.status(201).json({
             sucesso: true,
-            quantidade: resultado.affectedRows,
-            mensagem: resultado.affectedRows + " equipamentos cadastrados com sucesso!"
+            quantidade: quantidade,
+            mensagem: quantidade + " equipamentos cadastrados com sucesso!"
         });
     } catch (erro) {
         return tratarErro(
             res,
             erro,
-            "Uma das séries do intervalo já está cadastrada. Nenhum equipamento deste envio foi adicionado."
+            "Uma das séries do intervalo já está cadastrada. O cadastro foi interrompido e os registros já inseridos foram mantidos."
         );
     }
 }
