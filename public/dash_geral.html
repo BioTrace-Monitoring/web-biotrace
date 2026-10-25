@@ -58,6 +58,22 @@
         </div>
         <div class="forecasting-footer" id="forecastingFooter"></div>
       </div>
+
+      <!-- Card 3: Gráfico de Dispersão / Correlação Uptime vs Temperatura -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h3>Correlação: Uptime vs. Temperatura</h3>
+          <p>Avaliação de estresse térmico acumulado por lote</p>
+        </div>
+        <div class="chart-container-wrapper">
+          <canvas id="correlationCanvas"></canvas>
+        </div>
+        <div class="forecasting-footer" id="correlationFooter">
+          <div class="summary-item"><span class="summary-label">Métrica Analisada</span><span class="summary-value" style="color:var(--primary);">Pearson (r)</span></div>
+          <div class="summary-item"><span class="summary-label">Correlação Geral</span><span class="summary-value" style="color:var(--status-normal);">Forte (+0.95)</span></div>
+          <div class="summary-item"><span class="summary-label">Status Térmico</span><span class="summary-value" style="color:var(--status-excedeu);">Lote 1 em Alerta</span></div>
+        </div>
+      </div>
     </div>
   </div>
 
