@@ -11,56 +11,42 @@ var usuarioController = require("../controllers/usuarioController");
 
 
 
+router.get("/cargos", function (req, res) {
+    usuarioController.listarCargos(req, res);
+});
 
-// Rota POST para cadastrar um usuário
-// POST para enviar dados ao servidor
-router.post("/cadastrar-usuario", function (req, res)
-{
-    // Chamando a função cadastrarUsuario do usuarioController.js
-
-    // req -> requisição: Possui todas as informações da requisição
-    // res -> resposta: Retornar uma resposta pro usuario
-
-    // Direcionando a requisição pro controller responsavel
-    usuarioController.cadastrarUsuario(req, res);
-})
-
-
-
-
-// Rota POST para autenticar um usuário
-// POST para enviar dados ao servidor
-router.post("/autenticar-usuario", function (req, res)
-{
-    // Chamando a função autenticarUsuario do usuarioController.js
-
-    // req -> requisição: Possui todas as informações da requisição
-    // res -> resposta: Retornar uma resposta pro usuario
-
-    // Direcionando a requisição pro controller responsavel
+router.post("/autenticar", function (req, res) {
     usuarioController.autenticarUsuario(req, res);
 });
 
+router.post("/enviarEmail", function (req, res) {
+    usuarioController.esqueciSenha(req, res);
+});
 
+router.post("/recSenha", function (req, res) {
+    usuarioController.resetarSenha(req, res);
+});
 
+router.post("/:idEmpresa", function (req, res) {
+    usuarioController.cadastrarUsuario(req, res);
+});
 
-// ROTA GET para visualizar os dados um usuário
-// GET para buscar dados do servidor
-router.get("/visualizar-usuario/:fkUsuario", function (req, res)
-{
-    // Chamando a função visualizarUsuario do usuarioController.js
+// Rotas para consultar, alterar e excluir os cadastros.
+router.get("/:idEmpresa", function (req, res) {
+    usuarioController.listarUsuarios(req, res);
+});
 
-    // :fkUsuario -> parâmetro de rota, o valor será dinâmico dependendo do usuario logado
+router.get("/:idEmpresa/:idUsuario", function (req, res) {
+    usuarioController.buscarUsuario(req, res);
+});
 
-    // req -> requisição: Possui todas as informações da requisição
-    // res -> resposta: Retornar uma resposta pro usuario
+router.put("/:idEmpresa/:idUsuario", function (req, res) {
+    usuarioController.alterarUsuario(req, res);
+});
 
-    // Direcionando a requisição pro controller responsavel
-    usuarioController.visualizarUsuario(req, res);
-})
-
-
-
+router.delete("/:idEmpresa/:idUsuario", function (req, res) {
+    usuarioController.excluirUsuario(req, res);
+});
 
 // Exportando o router
 // Outros arquivos podem usar essas funções

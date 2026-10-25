@@ -1,64 +1,37 @@
 // Importando framework express
 // Utilizado para criar o servidor e gerenciar rotas HTTP do projeto
 var express = require("express");
-
 // Criando um objeto Router do express
 // Utilizado para separar e organizar as rotas do projeto
 var router = express.Router();
-
 // Importando o arquivo empresaController
 var empresaController = require("../controllers/empresaController");
 
-
-
-
-// Rota POST para cadastrar um empresa
-// POST para enviar dados ao servidor
-router.post("/cadastrar-empresa", function (req, res)
-{
-    // Chamando a função cadastrarempresa do empresaController.js
-
-    // req -> requisição: Possui todas as informações da requisição
-    // res -> resposta: Retornar uma resposta pro empresa
-
-    // Direcionando a requisição pro controller responsavel
+router.post("/", function (req, res) {
     empresaController.cadastrarEmpresa(req, res);
 })
 
+router.get("/", function (req, res) {
+    empresaController.listarEmpresas(req, res);
+})
 
+router.delete("/:idEmpresa", function (req, res) {
+    empresaController.excluirEmpresa(req, res);
+})
 
-
-// Rota POST para autenticar um empresa
-// POST para enviar dados ao servidor
-router.post("/autenticar-empresa", function (req, res)
-{
-    // Chamando a função autenticarempresa do empresaController.js
-
-    // req -> requisição: Possui todas as informações da requisição
-    // res -> resposta: Retornar uma resposta pro empresa
-
-    // Direcionando a requisição pro controller responsavel
-    empresaController.autenticarEmpresa(req, res);
-});
-
-
-
-
-// ROTA GET para visualizar os dados um empresa
-// GET para buscar dados do servidor
-router.get("/visualizar-empresa", function (req, res)
-{
-    // Chamando a função visualizarempresa do empresaController.js
-
-    // req -> requisição: Possui todas as informações da requisição
-    // res -> resposta: Retornar uma resposta pro empresa
-
-    // Direcionando a requisição pro controller responsavel
-    empresaController.visualizarEmpresa(req, res);
+router.post("/:idEmpresa/equipamento", function (req, res) {
+    empresaController.cadastrarEquipamento(req, res);
 })
 
 
+// Rotas para consultar, alterar e excluir os cadastros.
+router.get("/:idEmpresa", function (req, res) {
+    empresaController.buscarEmpresa(req, res);
+});
 
+router.put("/:idEmpresa", function (req, res) {
+    empresaController.alterarEmpresa(req, res);
+});
 
 // Exportando o router
 // Outros arquivos podem usar essas funções

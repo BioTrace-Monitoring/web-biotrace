@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lotes cadastrados | BioTrace</title>
+    <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="../css/style_cadastro_usuario.css">
+</head>
+
+<body>
+    <div class="app">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="logo">
+                    <img src="../assets/icons/BioTrace (4).png" alt="BioTrace Logo">
+                </a>
+                <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Fechar menu">&times;</button>
+            </div>
+
+            <nav class="sidebar-nav" aria-label="Menu principal">
+                <span class="nav-title">Principal</span>
+                <a href="index.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">📊</span>
+                    <span>Visão Geral</span>
+                </a>
+                <a href="equipamentos.html" class="nav-item active" aria-current="page">
+                    <span class="nav-icon" aria-hidden="true">📟</span>
+                    <span>Equipamentos</span>
+                </a>
+                <span class="nav-title nav-title-dashboards">Dashboards</span>
+                <a href="dash_geral.html" class="nav-item">
+                    <span class="nav-icon">📉</span>
+                    <span>Análise de lotes</span>
+                </a>
+
+                <span class="nav-title nav-title-spacing">Cadastros</span>
+                <a href="hospitais.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">🏥</span>
+                    <span>Cadastrar hospital</span>
+                </a>
+                <a href="cadastrar-usuario.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">👤</span>
+                    <span>Cadastrar usuário</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div id="usuario_avatar" class="usuario-avatar">BT</div>
+                    <div class="user-info">
+                        <strong id="nome_cliente">Usuário BioTrace</strong>
+                        <span id="email_cliente">perfil@biotrace.com</span>
+                    </div>
+                </div>
+                <button class="sidebar-logout" id="btnSair" type="button" aria-label="Sair da conta" title="Sair da conta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M9 5H5v14h4M10 12h10m-4-4 4 4-4 4" />
+                    </svg>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="mobile-header">
+                <button class="menu-button" id="menuButton" type="button" aria-label="Abrir menu"
+                    aria-controls="sidebar" aria-expanded="false">☰</button>
+                <img src="../assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo">
+            </header>
+
+            <div class="page-content">
+                <div class="page-heading">
+                    <div class="eyebrow"><span class="eyebrow-dot"></span>PAINEL DE OBSERVABILIDADE</div>
+                    <h1>Lotes cadastrados</h1>
+                    <p>Consulte os cadastros. Clique em Editar para abrir a tela de alteração ou em Excluir para remover.</p>
+                </div>
+                <section class="lista-cadastros">
+                    <div class="cabecalho-lista">
+                        <h2>Lotes cadastrados</h2>
+                                            <nav class="acoes-cadastro" aria-label="Cadastros de equipamentos">
+                        <a class="button-secondary" href="listar-equipamentos.html">Equipamentos</a>
+                        <a class="button-secondary" href="listar-modelos.html">Modelos</a>
+                        <a class="button-secondary" href="listar-lotes.html">Lotes</a>
+                        <a class="button-primary" href="equipamentos.html">Novo cadastro</a>
+                    </nav>
+                    </div>
+                    <div class="filtros-cadastro">
+                        <label for="buscar-cadastro">Buscar</label>
+                        <input type="text" id="buscar-cadastro" placeholder="Digite para buscar" autocomplete="off">
+                        <button type="button" id="atualizar-lista" class="button-secondary">Atualizar</button>
+                    </div>
+                    <p id="mensagem-lista" class="form-message" role="status" aria-live="polite">Carregando...</p>
+                    <div class="tabela-container-cadastro">
+                        <table class="tabela-cadastros">
+                            <thead><tr><th scope="col">Lote</th><th scope="col">Modelo</th><th scope="col">Equipamentos</th><th scope="col">Ações</th></tr></thead>
+                            <tbody id="tabela-cadastros"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <script src="./js/dashboard.js"></script>
+    <script>
+        var parametros = new URLSearchParams(window.location.search);
+        var idEmpresa = Number(localStorage.getItem("FK_EMPRESA"));
+        var lotes = [];
+        var mensagem = document.getElementById("mensagem-lista");
+        var tabela = document.getElementById("tabela-cadastros");
+
+        function montarTabela() {
+            tabela.replaceChildren();
+            var busca = document.getElementById("buscar-cadastro").value.trim().toLowerCase();
+            var filtrados = lotes.filter(function (registro) {
+                return [registro.numero_lote, registro.nome_modelo, registro.total_equipamentos].join(" ").toLowerCase().includes(busca);
+            });
+            if (!filtrados.length) {
+                var linhaVazia = document.createElement("tr");
+                var celulaVazia = document.createElement("td");
+                celulaVazia.colSpan = 4;
+                celulaVazia.textContent = "Nenhum cadastro encontrado.";
+                linhaVazia.appendChild(celulaVazia);
+                tabela.appendChild(linhaVazia);
+            }
+            filtrados.forEach(function (registro) {
+                var linha = document.createElement("tr");
+                var valores = [registro.numero_lote, registro.nome_modelo, registro.total_equipamentos];
+                valores.forEach(function (valor) {
+                    var celula = document.createElement("td");
+                    celula.textContent = valor == null ? "Não informado" : valor;
+                    linha.appendChild(celula);
+                });
+                var celulaAcoes = document.createElement("td");
+                var acoes = document.createElement("div");
+                acoes.className = "acoes-cadastro";
+                var linkEditar = document.createElement("a");
+                linkEditar.className = "button-secondary";
+                linkEditar.textContent = "Editar";
+                linkEditar.href = `editar-lote.html?id=` + registro.id_lote_equipamento;
+                var botaoExcluir = document.createElement("button");
+                botaoExcluir.type = "button";
+                botaoExcluir.className = "button-danger";
+                botaoExcluir.textContent = "Excluir";
+                botaoExcluir.addEventListener("click", function () { excluirLote(registro, botaoExcluir); });
+                acoes.appendChild(linkEditar);
+                acoes.appendChild(botaoExcluir);
+                celulaAcoes.appendChild(acoes);
+                linha.appendChild(celulaAcoes);
+                tabela.appendChild(linha);
+            });
+        }
+
+        async function carregarLotes() {
+            mensagem.textContent = "Carregando...";
+            tabela.replaceChildren();
+            try {
+                if (!Number.isSafeInteger(idEmpresa) || idEmpresa <= 0) throw new Error("Empresa inválida. Entre novamente no sistema.");
+                var resposta = await fetch(`/equipamento/lote/${idEmpresa}`, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } });
+                var dados = await resposta.json();
+                if (!resposta.ok) throw new Error(dados.mensagem || dados.erro || "Não foi possível carregar a lista.");
+                lotes = dados.lotes;
+                var confirmacao = sessionStorage.getItem("cadastro-alterado");
+                mensagem.textContent = confirmacao || dados.lotes.length + " cadastro(s) encontrado(s).";
+                sessionStorage.removeItem("cadastro-alterado");
+                montarTabela();
+            } catch (erro) {
+                lotes = [];
+                mensagem.textContent = erro.message;
+            }
+        }
+
+        async function excluirLote(registro, botao) {
+            if (botao.disabled) return;
+            if (!window.confirm("Deseja excluir lote: " + registro.numero_lote + "?")) return;
+            botao.disabled = true;
+            try {
+                var resposta = await fetch(`/equipamento/lote/${idEmpresa}/${registro.id_lote_equipamento}`, {
+                    method: "DELETE",
+                    headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+                });
+                var dados = await resposta.json();
+                if (!resposta.ok) throw new Error(dados.mensagem || dados.erro || "Não foi possível excluir o cadastro.");
+                await carregarLotes();
+                mensagem.textContent = dados.mensagem;
+            } catch (erro) {
+                mensagem.textContent = erro.message;
+                botao.disabled = false;
+            }
+        }
+
+        document.getElementById("buscar-cadastro").addEventListener("input", montarTabela);
+        document.getElementById("atualizar-lista").addEventListener("click", carregarLotes);
+        carregarLotes();
+    </script>
+</body>
+</html>

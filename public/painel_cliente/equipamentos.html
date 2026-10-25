@@ -1,0 +1,1448 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Equipamentos e parâmetros | BioTrace</title>
+        <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png" />
+        <link rel="stylesheet" href="./css/style.css" />
+        <link rel="stylesheet" href="./css/equipamentos.css" />
+    </head>
+
+    <body>
+        <div class="app">
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <a href="index.html" class="logo">
+                        <img src="../assets/icons/BioTrace (4).png" alt="BioTrace Logo" />
+                    </a>
+                    <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Fechar menu">
+                        &times;
+                    </button>
+                </div>
+
+                <nav class="sidebar-nav">
+                    <span class="nav-title">Principal</span>
+                    <a href="index.html" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span>Visão Geral</span>
+                    </a>
+                    <a href="equipamentos.html" class="nav-item active">
+                        <span class="nav-icon">📟</span>
+                        <span>Equipamentos</span>
+                    </a>
+
+                    <span class="nav-title nav-title-dashboards">Dashboards</span>
+                    <a href="dash_engenheiro.html" class="nav-item">
+                        <span class="nav-icon">📈</span>
+                        <span>Equipamentos por lote</span>
+                    </a>
+
+                    <a href="dash_geral.html" class="nav-item">
+                        <span class="nav-icon">📉</span>
+                        <span>Análise de lotes</span>
+                    </a>
+
+                    <span class="nav-title nav-title-spacing">Cadastros</span>
+                    <a href="hospitais.html" class="nav-item">
+                        <span class="nav-icon">🏥</span>
+                        <span>Cadastrar hospital</span>
+                    </a>
+                    <a href="cadastrar-usuario.html" class="nav-item">
+                        <span class="nav-icon">👤</span>
+                        <span>Cadastrar usuário</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-footer">
+                    <div class="sidebar-user">
+                        <div id="usuario_avatar" class="usuario-avatar">BT</div>
+                        <div class="user-info">
+                            <strong id="nome_cliente">Usuário BioTrace</strong>
+                            <span id="email_cliente">perfil@biotrace.com</span>
+                        </div>
+                    </div>
+                    <button
+                        class="sidebar-logout"
+                        id="btnSair"
+                        type="button"
+                        aria-label="Sair da conta"
+                        title="Sair da conta"
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                            focusable="false"
+                        >
+                            <path d="M9 5H5v14h4M10 12h10m-4-4 4 4-4 4" />
+                        </svg>
+                    </button>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <header class="mobile-header">
+                    <button
+                        class="menu-button"
+                        id="menuButton"
+                        type="button"
+                        aria-label="Abrir menu"
+                        aria-controls="sidebar"
+                        aria-expanded="false"
+                    >
+                        ☰
+                    </button>
+                    <img src="../assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo" />
+                </header>
+
+                <div class="page-content" id="infraestrutura">
+                    <header id="cabecalho">
+                        <div>
+                            <h1>Equipamentos e parâmetros</h1>
+                            <p>
+                                Veja quais lotes estão em cada hospital e controle os limites de uso e
+                                ociosidade de cada componente.
+                            </p>
+                        </div>
+                        <button type="button" id="novoCadastro">+ Novo cadastro</button>
+                        <a href="listar-equipamentos.html" class="button-secondary">Editar ou excluir cadastros</a>
+                    </header>
+                    <div id="feedback" role="status" aria-live="polite" hidden></div>
+                    <div id="estadoCarga" role="status">Carregando equipamentos…</div>
+                    <button type="button" id="tentarNovamente" hidden>Tentar novamente</button>
+                    <div id="conteudo" hidden>
+                        <div id="abas" role="tablist" aria-label="Equipamentos e parâmetros">
+                            <button
+                                id="abaLotes"
+                                type="button"
+                                role="tab"
+                                aria-selected="true"
+                                aria-controls="painelLotes"
+                            >
+                                Lotes e clientes
+                            </button>
+                            <button
+                                id="abaParametros"
+                                type="button"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="painelParametros"
+                                tabindex="-1"
+                            >
+                                Limites e parâmetros
+                            </button>
+                        </div>
+                        <section id="painelLotes" role="tabpanel" aria-labelledby="abaLotes">
+                            <div id="resumo">
+                                <article>
+                                    <h2>Lotes</h2>
+                                    <strong id="totalLotes">0</strong>
+                                    <p>cadastrados na empresa</p>
+                                </article>
+                                <article>
+                                    <h2>Equipamentos</h2>
+                                    <strong id="totalEquipamentos">0</strong>
+                                    <p>vinculados a lotes</p>
+                                </article>
+                                <article>
+                                    <h2>Hospitais</h2>
+                                    <strong id="totalHospitais">0</strong>
+                                    <p>com equipamentos instalados</p>
+                                </article>
+                                <article>
+                                    <h2>Métricas habilitadas</h2>
+                                    <strong id="totalHabilitadas">0</strong>
+                                    <p id="totalMetricas">de 0 parâmetros</p>
+                                </article>
+                            </div>
+                            <div id="visaoLotes">
+                                <section data-cartao>
+                                    <div data-filtros>
+                                        <label for="buscaLotes" data-somente-leitor>Buscar lotes</label>
+                                        <input
+                                            id="buscaLotes"
+                                            type="search"
+                                            placeholder="Buscar por lote, modelo ou hospital"
+                                        />
+                                    </div>
+                                    <div data-rolagem>
+                                        <table aria-label="Lotes cadastrados">
+                                            <thead>
+                                                <tr>
+                                                    <th>Lote</th>
+                                                    <th>Modelo</th>
+                                                    <th>Hospitais</th>
+                                                    <th>Equip.</th>
+                                                    <th>Componentes</th>
+                                                    <th>Métricas habilitadas</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="listaLotes"></tbody>
+                                        </table>
+                                    </div>
+                                </section>
+                                <aside id="detalhesLote" data-cartao aria-label="Detalhes do lote">
+                                    <p data-vazio>
+                                        Selecione um lote na tabela para ver os equipamentos e hospitais.
+                                    </p>
+                                </aside>
+                            </div>
+                        </section>
+                        <section id="painelParametros" role="tabpanel" aria-labelledby="abaParametros" hidden>
+                            <div id="visaoParametros">
+                                <section data-cartao>
+                                    <div data-filtros>
+                                        <label for="filtroLote" data-somente-leitor>Lote</label>
+                                        <select id="filtroLote">
+                                            <option value="">Todos os lotes</option>
+                                        </select>
+                                        <label for="filtroComponente" data-somente-leitor>Componente</label>
+                                        <select id="filtroComponente">
+                                            <option value="">Todos os componentes</option>
+                                        </select>
+                                        <label for="filtroEquipamento" data-somente-leitor>Equipamento</label>
+                                        <select id="filtroEquipamento">
+                                            <option value="">Todos os equipamentos</option>
+                                        </select>
+                                    </div>
+                                    <div data-rolagem>
+                                        <table aria-label="Limites e parâmetros">
+                                            <thead>
+                                                <tr>
+                                                    <th>Lote</th>
+                                                    <th>Componente</th>
+                                                    <th>Limite de uso</th>
+                                                    <th>Ociosidade</th>
+                                                    <th>Habilitada</th>
+                                                    <th>Padronização</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="listaParametros"></tbody>
+                                        </table>
+                                    </div>
+                                </section>
+                                <aside id="editor" data-cartao aria-label="Configuração de parâmetros">
+                                    <p id="editorVazio" data-vazio>
+                                        Selecione uma linha da tabela para ajustar os limites.
+                                    </p>
+                                    <form id="formParametros" hidden>
+                                        <small data-sobretitulo>Configuração de parâmetros</small>
+                                        <h2 id="tituloParametro"></h2>
+                                        <p id="subtituloParametro"></p>
+                                        <div id="avisoDivergencia" hidden>
+                                            Os valores deste grupo são diferentes. Os campos mostram a métrica
+                                            de referência; aplicar substituirá os valores no destino
+                                            escolhido.
+                                        </div>
+                                        <div data-limite>
+                                            <label for="limiteUso">Limite de uso (máximo)</label>
+                                            <div>
+                                                <input
+                                                    id="limiteUso"
+                                                    type="number"
+                                                    min="0"
+                                                    max="100"
+                                                    step="0.01"
+                                                />
+                                                <span id="unidadeUso"></span>
+                                            </div>
+                                            <input
+                                                id="sliderUso"
+                                                type="range"
+                                                min="0"
+                                                max="100"
+                                                step="0.01"
+                                                aria-label="Ajustar limite de uso"
+                                            />
+                                        </div>
+                                        <div data-limite>
+                                            <label for="limiteOciosidade">
+                                                Limite de ociosidade (mínimo)
+                                            </label>
+                                            <div>
+                                                <input
+                                                    id="limiteOciosidade"
+                                                    type="number"
+                                                    min="0"
+                                                    max="100"
+                                                    step="0.01"
+                                                />
+                                                <span id="unidadeOciosidade"></span>
+                                            </div>
+                                            <input
+                                                id="sliderOciosidade"
+                                                type="range"
+                                                min="0"
+                                                max="100"
+                                                step="0.01"
+                                                aria-label="Ajustar limite de ociosidade"
+                                            />
+                                        </div>
+                                        <p data-ajuda>Deixe um campo vazio para não definir esse limite.</p>
+                                        <label id="habilitar">
+                                            <span>Métrica habilitada</span>
+                                            <input id="metricaHabilitada" type="checkbox" />
+                                        </label>
+                                        <label for="escopo">Aplicar a</label>
+                                        <select id="escopo">
+                                            <option value="equipamento">Somente este equipamento</option>
+                                            <option value="lote">Somente este lote</option>
+                                            <option value="modelo">Todos os lotes deste modelo</option>
+                                            <option value="empresa">Todos os lotes da empresa</option>
+                                        </select>
+                                        <p id="avisoEscopo" data-ajuda>
+                                            Apenas métricas do mesmo tipo e componente serão alteradas.
+                                            Nenhuma métrica será criada em outros equipamentos.
+                                        </p>
+                                        <p id="impacto" role="status"></p>
+                                        <p id="erroParametros" role="alert" hidden></p>
+                                        <button type="submit" id="aplicarParametros" disabled>
+                                            Aplicar parâmetros
+                                        </button>
+                                    </form>
+                                </aside>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <dialog id="dialogCadastro" aria-labelledby="tituloCadastro">
+            <form id="formCadastro">
+                <header data-topo-dialog>
+                    <h2 id="tituloCadastro">Novo cadastro</h2>
+                    <button type="button" data-fechar aria-label="Fechar">×</button>
+                </header>
+                <label for="tipoCadastro">O que deseja cadastrar?</label>
+                <select id="tipoCadastro">
+                    <option value="modelo">Modelo de equipamento</option>
+                    <option value="lote">Lote</option>
+                    <option value="equipamento">Equipamento</option>
+                </select>
+                <div id="camposModelo">
+                    <label for="nomeModelo">Nome do modelo</label>
+                    <input id="nomeModelo" maxlength="60" placeholder="Ex.: ECG-12" required />
+                </div>
+                <div id="camposLote" hidden>
+                    <label for="modeloLote">Modelo</label>
+                    <select id="modeloLote"></select>
+                    <label for="numeroLote">Número do lote</label>
+                    <input id="numeroLote" maxlength="60" placeholder="Ex.: LT-001" />
+                </div>
+                <div id="camposEquipamento" hidden>
+                    <p data-ajuda>
+                        Os 5 componentes e as 13 métricas padrão serão vinculados automaticamente.
+                    </p>
+                    <label for="loteEquipamento">Lote</label>
+                    <select id="loteEquipamento"></select>
+                    <label for="hospitalEquipamento">Hospital (opcional)</label>
+                    <select id="hospitalEquipamento"></select>
+                    <label for="modoEquipamento">Forma de cadastro</label>
+                    <select id="modoEquipamento">
+                        <option value="unico">Um equipamento</option>
+                        <option value="intervalo">Vários equipamentos em sequência</option>
+                    </select>
+                    <div id="campoSerie">
+                        <label for="numeroSerie">Número de série</label>
+                        <input id="numeroSerie" maxlength="60" placeholder="Ex.: SLA-001" />
+                    </div>
+                    <div id="camposIntervalo" hidden>
+                        <label for="prefixo">Prefixo</label>
+                        <input id="prefixo" maxlength="50" placeholder="Ex.: SLA-" />
+                        <div data-dupla>
+                            <div>
+                                <label for="inicio">Início</label>
+                                <input
+                                    id="inicio"
+                                    inputmode="numeric"
+                                    pattern="[0-9]{1,9}"
+                                    maxlength="9"
+                                    placeholder="001"
+                                />
+                            </div>
+                            <div>
+                                <label for="fim">Fim</label>
+                                <input
+                                    id="fim"
+                                    inputmode="numeric"
+                                    pattern="[0-9]{1,9}"
+                                    maxlength="9"
+                                    placeholder="040"
+                                />
+                            </div>
+                        </div>
+                        <p id="previaIntervalo" data-ajuda>
+                            Cadastre até 500 equipamentos por envio, preservando os zeros da série.
+                        </p>
+                    </div>
+                </div>
+                <p id="erroCadastro" role="alert" hidden></p>
+                <footer>
+                    <button type="button" data-fechar data-secundario>Cancelar</button>
+                    <button id="salvarCadastro" type="submit">Cadastrar</button>
+                </footer>
+            </form>
+        </dialog>
+        <dialog id="dialogHospital" aria-labelledby="tituloHospital">
+            <form id="formHospital">
+                <header data-topo-dialog>
+                    <h2 id="tituloHospital">Alocar equipamento</h2>
+                    <button type="button" data-fechar aria-label="Fechar">×</button>
+                </header>
+                <p id="serieHospital"></p>
+                <label for="hospitalAlocacao">Hospital</label>
+                <select id="hospitalAlocacao"></select>
+                <p data-ajuda>Selecione “Sem hospital” para deixar o equipamento disponível.</p>
+                <p id="erroHospital" role="alert" hidden></p>
+                <footer>
+                    <button type="button" data-fechar data-secundario>Cancelar</button>
+                    <button id="salvarHospital" type="submit">Salvar alocação</button>
+                </footer>
+            </form>
+        </dialog>
+
+        <script src="./js/dashboard.js"></script>
+        <script>
+            var idEmpresa = Number(localStorage.getItem("FK_EMPRESA"));
+            var dadosPainel = null;
+            var hospitaisCadastrados = [];
+            var lotesExibidos = [];
+            var gruposExibidos = [];
+            var loteSelecionado = null;
+            var grupoSelecionado = null;
+            var equipamentoAlocacao = null;
+            var versaoPrevia = 0;
+            var salvandoParametros = false;
+
+            async function consultarApi(caminho, metodo, dados) {
+                var opcoes = { method: metodo || "GET" };
+
+                if (dados) {
+                    opcoes.headers = { "Content-Type": "application/json" };
+                    opcoes.body = JSON.stringify(dados);
+                }
+
+                var resposta = await fetch(caminho, opcoes);
+                var resultado = await resposta.json();
+
+                if (!resposta.ok) {
+                    throw new Error(
+                        resultado.mensagem || resultado.erro || "Não foi possível concluir a operação."
+                    );
+                }
+
+                return resultado;
+            }
+
+            function mostrarMensagem(texto, tipo) {
+                var mensagem = document.getElementById("feedback");
+                mensagem.textContent = texto;
+                mensagem.dataset.tipo = tipo;
+                mensagem.setAttribute("role", tipo === "erro" ? "alert" : "status");
+                mensagem.hidden = false;
+                mensagem.scrollIntoView({ block: "nearest" });
+            }
+
+            function mostrarErroFormulario(id, texto) {
+                var mensagem = document.getElementById(id);
+                mensagem.textContent = texto;
+                mensagem.hidden = !texto;
+            }
+
+            function obterNomeMetrica(tipo) {
+                var nomes = {
+                    cpu_percent: "Uso",
+                    cpu_por_nucleo: "Uso por núcleo",
+                    temperatura_cpu: "Temperatura",
+                    memoria_percent: "Uso",
+                    memoria_disponivel_gb: "Memória disponível",
+                    disco_percent: "Uso",
+                    disco_livre_gb: "Espaço livre",
+                    rede_bytes_enviados: "Dados enviados",
+                    rede_bytes_recebidos: "Dados recebidos",
+                    rede_erros_entrada: "Erros de entrada",
+                    rede_erros_saida: "Erros de saída",
+                    uptime_horas: "Tempo de atividade",
+                    processos_ativos: "Processos ativos"
+                };
+
+                return nomes[tipo] || tipo;
+            }
+
+            function normalizarBusca(texto) {
+                return String(texto || "")
+                    .toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "");
+            }
+
+            function criarCelula(linha, texto, detalhe) {
+                var celula = document.createElement("td");
+                celula.textContent = texto;
+
+                if (detalhe) {
+                    var descricao = document.createElement("small");
+                    descricao.textContent = detalhe;
+                    celula.appendChild(descricao);
+                }
+
+                linha.appendChild(celula);
+                return celula;
+            }
+
+            function criarSelo(texto, tipo) {
+                var selo = document.createElement("span");
+                selo.dataset.selo = tipo || "sucesso";
+                selo.textContent = texto;
+                return selo;
+            }
+
+            function mostrarTabelaVazia(tabela, texto) {
+                var linha = document.createElement("tr");
+                var celula = criarCelula(linha, texto);
+                celula.colSpan = 6;
+                celula.dataset.vazio = "";
+                tabela.appendChild(linha);
+            }
+
+            function preencherSelect(id, registros, campoId, campoNome, primeiraOpcao) {
+                var select = document.getElementById(id);
+                var valorAnterior = select.value;
+                select.replaceChildren();
+                select.add(new Option(primeiraOpcao, ""));
+
+                for (var registro of registros) {
+                    select.add(new Option(registro[campoNome], registro[campoId]));
+                }
+
+                select.value = valorAnterior;
+                if (select.selectedIndex < 0) select.value = "";
+            }
+
+            function metricaHabilitada(metrica) {
+                return Number(metrica.habilitado) === 1;
+            }
+
+            function contarHabilitadas(metricas) {
+                var quantidade = 0;
+
+                for (var metrica of metricas) {
+                    if (metricaHabilitada(metrica)) quantidade++;
+                }
+
+                return quantidade;
+            }
+
+            function obterEquipamentosLote(idLote) {
+                var equipamentos = [];
+
+                for (var equipamento of dadosPainel.equipamentos) {
+                    if (equipamento.fk_lote === idLote) equipamentos.push(equipamento);
+                }
+
+                return equipamentos;
+            }
+
+            function obterMetricasEquipamento(idEquipamento) {
+                var metricas = [];
+
+                for (var metrica of dadosPainel.metricas) {
+                    if (metrica.id_equipamento === idEquipamento) metricas.push(metrica);
+                }
+
+                return metricas;
+            }
+
+            function obterResumoLote(lote) {
+                var equipamentos = obterEquipamentosLote(lote.id_lote_equipamento);
+                var idsEquipamentos = new Set();
+                var idsHospitais = new Set();
+                var nomesHospitais = [];
+                var metricas = [];
+                var componentes = 0;
+
+                for (var equipamento of equipamentos) {
+                    idsEquipamentos.add(equipamento.id_equipamento);
+
+                    if (equipamento.fk_hospital && !idsHospitais.has(equipamento.fk_hospital)) {
+                        idsHospitais.add(equipamento.fk_hospital);
+                        nomesHospitais.push(equipamento.nome_hospital);
+                    }
+                }
+
+                for (var componente of dadosPainel.componentes) {
+                    if (idsEquipamentos.has(componente.fk_equipamento)) componentes++;
+                }
+
+                for (var metrica of dadosPainel.metricas) {
+                    if (metrica.id_lote_equipamento === lote.id_lote_equipamento) metricas.push(metrica);
+                }
+
+                return {
+                    equipamentos: equipamentos,
+                    hospitais: nomesHospitais,
+                    componentes: componentes,
+                    metricas: metricas,
+                    habilitadas: contarHabilitadas(metricas)
+                };
+            }
+
+            function atualizarResumo() {
+                var hospitais = new Set();
+
+                for (var equipamento of dadosPainel.equipamentos) {
+                    if (equipamento.fk_hospital) hospitais.add(equipamento.fk_hospital);
+                }
+
+                document.getElementById("totalLotes").textContent = dadosPainel.lotes.length;
+                document.getElementById("totalEquipamentos").textContent = dadosPainel.equipamentos.length;
+                document.getElementById("totalHospitais").textContent = hospitais.size;
+                document.getElementById("totalHabilitadas").textContent = contarHabilitadas(
+                    dadosPainel.metricas
+                );
+                document.getElementById("totalMetricas").textContent =
+                    "de " + dadosPainel.metricas.length + " parâmetros";
+            }
+
+            async function carregarPainel() {
+                document.getElementById("estadoCarga").hidden = false;
+                document.getElementById("estadoCarga").textContent = "Carregando equipamentos…";
+                document.getElementById("tentarNovamente").hidden = true;
+                document.getElementById("novoCadastro").disabled = true;
+                document.getElementById("conteudo").hidden = true;
+                versaoPrevia++;
+
+                if (location.protocol === "file:") {
+                    document.getElementById("estadoCarga").textContent =
+                        "Abra esta página pelo servidor: http://localhost:3000/painel_cliente/equipamentos.html";
+                    return;
+                }
+
+                if (!Number.isSafeInteger(idEmpresa) || idEmpresa <= 0) {
+                    document.getElementById("estadoCarga").textContent =
+                        "Empresa não encontrada. Faça login novamente.";
+                    return;
+                }
+
+                try {
+                    var respostas = await Promise.all([
+                        consultarApi("/equipamento/infraestrutura/" + idEmpresa),
+                        consultarApi("/hospital/" + idEmpresa)
+                    ]);
+
+                    dadosPainel = respostas[0];
+                    hospitaisCadastrados = respostas[1].hospitais;
+                    preencherSelect(
+                        "filtroLote",
+                        dadosPainel.lotes,
+                        "id_lote_equipamento",
+                        "numero_lote",
+                        "Todos os lotes"
+                    );
+                    preencherSelect(
+                        "filtroComponente",
+                        dadosPainel.tiposComponente,
+                        "id_tipo_componente",
+                        "nome_componente",
+                        "Todos os componentes"
+                    );
+                    atualizarFiltroEquipamentos();
+                    atualizarResumo();
+                    listarLotes();
+                    mostrarDetalhesLote();
+                    listarParametros();
+                    document.getElementById("estadoCarga").hidden = true;
+                    document.getElementById("conteudo").hidden = false;
+                    document.getElementById("novoCadastro").disabled = false;
+                } catch (erro) {
+                    document.getElementById("estadoCarga").textContent =
+                        "Não foi possível atualizar a tela. " + erro.message;
+                    document.getElementById("tentarNovamente").hidden = false;
+                }
+            }
+
+            function listarLotes() {
+                var tabela = document.getElementById("listaLotes");
+                var busca = normalizarBusca(document.getElementById("buscaLotes").value.trim());
+                tabela.replaceChildren();
+                lotesExibidos = [];
+
+                for (var lote of dadosPainel.lotes) {
+                    var resumo = obterResumoLote(lote);
+                    var textoBusca =
+                        lote.numero_lote + " " + lote.nome_modelo + " " + resumo.hospitais.join(" ");
+                    if (!normalizarBusca(textoBusca).includes(busca)) continue;
+
+                    lotesExibidos.push(lote.id_lote_equipamento);
+                    var linha = document.createElement("tr");
+                    linha.dataset.lote = lote.id_lote_equipamento;
+                    linha.dataset.selecionavel = "";
+                    linha.tabIndex = 0;
+                    linha.setAttribute("aria-selected", loteSelecionado === lote.id_lote_equipamento);
+                    criarCelula(linha, lote.numero_lote).dataset.serie = "";
+                    criarCelula(linha, lote.nome_modelo);
+                    criarCelula(
+                        linha,
+                        resumo.hospitais.join(", ") || "Sem hospital",
+                        resumo.hospitais.length + " hospital(is)"
+                    );
+                    criarCelula(linha, resumo.equipamentos.length);
+                    criarCelula(linha, resumo.componentes);
+
+                    var percentual = resumo.metricas.length
+                        ? Math.round((resumo.habilitadas / resumo.metricas.length) * 100)
+                        : 0;
+                    var celula = criarCelula(
+                        linha,
+                        resumo.habilitadas + " de " + resumo.metricas.length + " (" + percentual + "%)"
+                    );
+                    var progresso = document.createElement("progress");
+                    progresso.max = 100;
+                    progresso.value = percentual;
+                    progresso.setAttribute("aria-label", "Métricas habilitadas: " + percentual + "%");
+                    if (percentual < 100) progresso.dataset.parcial = "";
+                    celula.appendChild(progresso);
+                    tabela.appendChild(linha);
+                }
+
+                if (!lotesExibidos.length) {
+                    mostrarTabelaVazia(
+                        tabela,
+                        dadosPainel.lotes.length
+                            ? "Nenhum lote encontrado para esta busca."
+                            : "Nenhum lote cadastrado. Use Novo cadastro para começar pelo modelo e depois cadastrar o lote."
+                    );
+                }
+
+                if (loteSelecionado && !lotesExibidos.includes(loteSelecionado)) {
+                    loteSelecionado = null;
+                    mostrarDetalhesLote();
+                }
+            }
+
+            function adicionarMiniResumo(container, valor, descricao) {
+                var item = document.createElement("div");
+                var numero = document.createElement("strong");
+                numero.textContent = valor;
+                var texto = document.createElement("small");
+                texto.textContent = descricao;
+                item.append(numero, texto);
+                container.appendChild(item);
+            }
+
+            function criarBotaoEquipamento(container, texto, acao, idEquipamento) {
+                var botao = document.createElement("button");
+                botao.type = "button";
+                botao.textContent = texto;
+                botao.dataset.acao = acao;
+                botao.dataset.equipamento = idEquipamento;
+                botao.dataset.secundario = "";
+                container.appendChild(botao);
+            }
+
+            function mostrarDetalhesLote() {
+                var painel = document.getElementById("detalhesLote");
+                var lote = null;
+
+                for (var registro of dadosPainel.lotes) {
+                    if (registro.id_lote_equipamento === loteSelecionado) lote = registro;
+                }
+
+                painel.replaceChildren();
+
+                if (!lote) {
+                    var vazio = document.createElement("p");
+                    vazio.dataset.vazio = "";
+                    vazio.textContent = "Selecione um lote na tabela para ver os equipamentos e hospitais.";
+                    painel.appendChild(vazio);
+                    return;
+                }
+
+                var resumo = obterResumoLote(lote);
+                var legenda = document.createElement("small");
+                legenda.dataset.sobretitulo = "";
+                legenda.textContent = "Detalhes do lote";
+                var titulo = document.createElement("h2");
+                titulo.textContent = lote.numero_lote;
+                titulo.dataset.serie = "";
+                var descricao = document.createElement("p");
+                descricao.textContent =
+                    lote.nome_modelo + " · " + (resumo.hospitais.join(", ") || "Sem hospital");
+                var numeros = document.createElement("div");
+                numeros.dataset.miniResumo = "";
+                adicionarMiniResumo(numeros, resumo.equipamentos.length, "equipamentos");
+                adicionarMiniResumo(numeros, resumo.componentes, "componentes");
+                adicionarMiniResumo(numeros, resumo.habilitadas + "/" + resumo.metricas.length, "métricas");
+                painel.append(legenda, titulo, descricao, numeros);
+
+                var lista = document.createElement("div");
+                lista.dataset.equipamentos = "";
+
+                for (var equipamento of resumo.equipamentos) {
+                    var metricas = obterMetricasEquipamento(equipamento.id_equipamento);
+                    var cartao = document.createElement("article");
+                    cartao.dataset.equipamento = "";
+                    var topo = document.createElement("header");
+                    var serie = document.createElement("strong");
+                    serie.dataset.serie = "";
+                    serie.textContent = equipamento.numero_serie;
+                    var habilitadas = contarHabilitadas(metricas);
+                    var tipoSelo = "neutro";
+
+                    if (habilitadas > 0) tipoSelo = "aviso";
+                    if (habilitadas > 0 && habilitadas === metricas.length) tipoSelo = "sucesso";
+
+                    topo.append(
+                        serie,
+                        criarSelo(habilitadas + "/" + metricas.length + " métricas", tipoSelo)
+                    );
+                    var hospital = document.createElement("p");
+                    hospital.textContent = equipamento.nome_hospital || "Sem hospital";
+                    var acoes = document.createElement("nav");
+                    acoes.setAttribute("aria-label", "Ações de " + equipamento.numero_serie);
+                    criarBotaoEquipamento(acoes, "Editar métricas", "metricas", equipamento.id_equipamento);
+                    criarBotaoEquipamento(acoes, "Alocar hospital", "hospital", equipamento.id_equipamento);
+                    cartao.append(topo, hospital, acoes);
+                    lista.appendChild(cartao);
+                }
+
+                var botao = document.createElement("button");
+                botao.type = "button";
+                botao.dataset.acao = "limites";
+                botao.dataset.acaoLote = "";
+                botao.textContent = "Ver limites deste lote";
+                painel.append(lista, botao);
+            }
+
+            function selecionarLote(evento) {
+                if (evento.type === "keydown" && evento.key !== "Enter" && evento.key !== " ") return;
+                var linha = evento.target.closest("tr[data-lote]");
+                if (!linha) return;
+                evento.preventDefault();
+                loteSelecionado = Number(linha.dataset.lote);
+
+                for (var item of document.getElementById("listaLotes").children) {
+                    item.setAttribute("aria-selected", item === linha);
+                }
+
+                mostrarDetalhesLote();
+            }
+
+            function trocarAba(nome) {
+                var mostrarLotes = nome === "lotes";
+                document.getElementById("painelLotes").hidden = !mostrarLotes;
+                document.getElementById("painelParametros").hidden = mostrarLotes;
+                document.getElementById("abaLotes").setAttribute("aria-selected", mostrarLotes);
+                document.getElementById("abaParametros").setAttribute("aria-selected", !mostrarLotes);
+                document.getElementById("abaLotes").tabIndex = mostrarLotes ? 0 : -1;
+                document.getElementById("abaParametros").tabIndex = mostrarLotes ? -1 : 0;
+            }
+
+            function selecionarAba(evento) {
+                var botao = evento.target.closest("button[role='tab']");
+                if (!botao) return;
+                trocarAba(botao.id === "abaLotes" ? "lotes" : "parametros");
+            }
+
+            function navegarAbas(evento) {
+                if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(evento.key)) return;
+                evento.preventDefault();
+                var mostrarLotes =
+                    evento.key === "Home" ||
+                    (evento.key !== "End" &&
+                        document.getElementById("abaParametros").getAttribute("aria-selected") === "true");
+                trocarAba(mostrarLotes ? "lotes" : "parametros");
+                document.getElementById(mostrarLotes ? "abaLotes" : "abaParametros").focus();
+            }
+
+            function atualizarFiltroEquipamentos() {
+                var equipamentos = [];
+                var idLote = Number(document.getElementById("filtroLote").value);
+
+                for (var equipamento of dadosPainel.equipamentos) {
+                    if (!idLote || equipamento.fk_lote === idLote) equipamentos.push(equipamento);
+                }
+
+                preencherSelect(
+                    "filtroEquipamento",
+                    equipamentos,
+                    "id_equipamento",
+                    "numero_serie",
+                    "Todos os equipamentos"
+                );
+            }
+
+            function alterarFiltroLote() {
+                atualizarFiltroEquipamentos();
+                limparEditor();
+                listarParametros();
+            }
+
+            function alterarFiltroParametro() {
+                limparEditor();
+                listarParametros();
+            }
+
+            function agruparMetricas() {
+                var idLote = Number(document.getElementById("filtroLote").value);
+                var idComponente = Number(document.getElementById("filtroComponente").value);
+                var idEquipamento = Number(document.getElementById("filtroEquipamento").value);
+                var grupos = {};
+                var lista = [];
+
+                for (var metrica of dadosPainel.metricas) {
+                    if (idLote && metrica.id_lote_equipamento !== idLote) continue;
+                    if (idComponente && metrica.fk_tipo_componente !== idComponente) continue;
+                    if (idEquipamento && metrica.id_equipamento !== idEquipamento) continue;
+
+                    var chave =
+                        metrica.id_lote_equipamento +
+                        "-" +
+                        metrica.fk_tipo_componente +
+                        "-" +
+                        metrica.fk_tipo_metrica;
+
+                    if (!grupos[chave]) {
+                        grupos[chave] = { chave: chave, referencia: metrica, metricas: [] };
+                        lista.push(grupos[chave]);
+                    }
+
+                    grupos[chave].metricas.push(metrica);
+                }
+
+                return lista;
+            }
+
+            function parametrosDiferentes(grupo) {
+                var referencia = grupo.referencia;
+
+                for (var metrica of grupo.metricas) {
+                    if (metrica.limite_uso !== referencia.limite_uso) return true;
+                    if (metrica.limite_ociosidade !== referencia.limite_ociosidade) return true;
+                    if (metrica.habilitado !== referencia.habilitado) return true;
+                }
+
+                return false;
+            }
+
+            function formatarLimites(metricas, campo, simbolo) {
+                var minimo = null;
+                var maximo = null;
+                var semLimite = false;
+                var unidade = metricas[0].unidade || "";
+
+                for (var metrica of metricas) {
+                    if (metrica[campo] === null) {
+                        semLimite = true;
+                        continue;
+                    }
+
+                    var valor = Number(metrica[campo]);
+                    if (minimo === null || valor < minimo) minimo = valor;
+                    if (maximo === null || valor > maximo) maximo = valor;
+                }
+
+                if (minimo === null) return "Sem limite";
+
+                var texto = simbolo + " " + minimo.toLocaleString("pt-BR") + unidade;
+
+                if (minimo !== maximo) {
+                    texto = minimo.toLocaleString("pt-BR") + " a " + maximo.toLocaleString("pt-BR") + unidade;
+                }
+
+                if (semLimite) texto += " / sem limite";
+                return texto;
+            }
+
+            function listarParametros() {
+                gruposExibidos = agruparMetricas();
+                var tabela = document.getElementById("listaParametros");
+                var grupoAtual = null;
+                tabela.replaceChildren();
+
+                for (var grupo of gruposExibidos) {
+                    var referencia = grupo.referencia;
+                    var linha = document.createElement("tr");
+                    var equipamentos = new Set();
+                    var configuradas = 0;
+
+                    for (var metrica of grupo.metricas) {
+                        equipamentos.add(metrica.id_equipamento);
+                        if (metrica.id_parametro_metrica) configuradas++;
+                    }
+
+                    linha.dataset.grupo = grupo.chave;
+                    linha.dataset.selecionavel = "";
+                    linha.tabIndex = 0;
+                    linha.setAttribute("aria-selected", grupo.chave === grupoSelecionado);
+                    criarCelula(linha, referencia.numero_lote, referencia.nome_modelo).dataset.serie = "";
+                    criarCelula(
+                        linha,
+                        referencia.nome_componente,
+                        obterNomeMetrica(referencia.tipo_metrica) +
+                            " (" +
+                            (referencia.unidade || "sem unidade") +
+                            ") · " +
+                            equipamentos.size +
+                            " equip."
+                    );
+                    criarCelula(linha, formatarLimites(grupo.metricas, "limite_uso", "≤"));
+                    criarCelula(linha, formatarLimites(grupo.metricas, "limite_ociosidade", "≥"));
+                    var habilitadas = contarHabilitadas(grupo.metricas);
+                    var textoHabilitadas = habilitadas === 0 ? "Não" : "Sim";
+                    if (habilitadas > 0 && habilitadas < grupo.metricas.length) textoHabilitadas = "Parcial";
+                    criarCelula(linha, "").appendChild(
+                        criarSelo(
+                            textoHabilitadas + " (" + habilitadas + "/" + grupo.metricas.length + ")",
+                            habilitadas ? "sucesso" : "neutro"
+                        )
+                    );
+                    var padronizacao = "Padronizado";
+                    var tipoSelo = "sucesso";
+
+                    if (!configuradas) {
+                        padronizacao = "Sem configuração";
+                        tipoSelo = "neutro";
+                    } else if (configuradas !== grupo.metricas.length || parametrosDiferentes(grupo)) {
+                        padronizacao = "Divergente";
+                        tipoSelo = "aviso";
+                    }
+
+                    criarCelula(linha, "").appendChild(criarSelo(padronizacao, tipoSelo));
+                    tabela.appendChild(linha);
+                    if (grupo.chave === grupoSelecionado) grupoAtual = grupo;
+                }
+
+                if (!gruposExibidos.length)
+                    mostrarTabelaVazia(tabela, "Nenhuma métrica encontrada para os filtros selecionados.");
+                if (grupoAtual) mostrarEditor(grupoAtual, true);
+                else limparEditor();
+            }
+
+            function limparEditor() {
+                grupoSelecionado = null;
+                versaoPrevia++;
+                document.getElementById("editorVazio").hidden = false;
+                document.getElementById("formParametros").hidden = true;
+                document.getElementById("aplicarParametros").disabled = true;
+            }
+
+            function selecionarParametro(evento) {
+                if (evento.type === "keydown" && evento.key !== "Enter" && evento.key !== " ") return;
+                var linha = evento.target.closest("tr[data-grupo]");
+                if (!linha || salvandoParametros) return;
+                evento.preventDefault();
+
+                for (var grupo of gruposExibidos) {
+                    if (grupo.chave === linha.dataset.grupo) {
+                        grupoSelecionado = grupo.chave;
+                        mostrarEditor(grupo, false);
+                    }
+                }
+
+                for (var item of document.getElementById("listaParametros").children) {
+                    item.setAttribute("aria-selected", item === linha);
+                }
+
+                if (window.matchMedia("(max-width: 1250px)").matches) {
+                    document.getElementById("editor").scrollIntoView({ block: "start", behavior: "smooth" });
+                }
+            }
+
+            function obterGrupoSelecionado() {
+                for (var grupo of gruposExibidos) {
+                    if (grupo.chave === grupoSelecionado) return grupo;
+                }
+
+                return null;
+            }
+
+            function mostrarEditor(grupo, manterEscopo) {
+                var referencia = grupo.referencia;
+                var unidade = referencia.unidade || "";
+                var maximo = unidade.trim() === "%" ? 100 : 999.99;
+                document.getElementById("editorVazio").hidden = true;
+                document.getElementById("formParametros").hidden = false;
+                document.getElementById("tituloParametro").textContent =
+                    referencia.nome_componente + " · " + obterNomeMetrica(referencia.tipo_metrica);
+                document.getElementById("subtituloParametro").textContent =
+                    referencia.numero_lote +
+                    " · " +
+                    referencia.nome_modelo +
+                    " · Referência: " +
+                    referencia.numero_serie;
+                document.getElementById("avisoDivergencia").hidden = !parametrosDiferentes(grupo);
+                document.getElementById("limiteUso").value =
+                    referencia.limite_uso === null ? "" : referencia.limite_uso;
+                document.getElementById("limiteOciosidade").value =
+                    referencia.limite_ociosidade === null ? "" : referencia.limite_ociosidade;
+                document.getElementById("unidadeUso").textContent = unidade;
+                document.getElementById("unidadeOciosidade").textContent = unidade;
+                document.getElementById("metricaHabilitada").checked = metricaHabilitada(referencia);
+
+                for (var id of ["limiteUso", "limiteOciosidade", "sliderUso", "sliderOciosidade"]) {
+                    document.getElementById(id).max = maximo;
+                }
+
+                document.getElementById("sliderUso").value =
+                    referencia.limite_uso === null ? 0 : referencia.limite_uso;
+                document.getElementById("sliderOciosidade").value =
+                    referencia.limite_ociosidade === null ? 0 : referencia.limite_ociosidade;
+
+                if (!manterEscopo) {
+                    document.getElementById("escopo").value = document.getElementById("filtroEquipamento")
+                        .value
+                        ? "equipamento"
+                        : "lote";
+                }
+
+                mostrarErroFormulario("erroParametros", "");
+                atualizarPrevia();
+            }
+
+            function sincronizarLimite(evento) {
+                var pares = {
+                    limiteUso: "sliderUso",
+                    sliderUso: "limiteUso",
+                    limiteOciosidade: "sliderOciosidade",
+                    sliderOciosidade: "limiteOciosidade"
+                };
+                var destino = pares[evento.target.id];
+                if (destino) {
+                    document.getElementById(destino).value = evento.target.value || "0";
+                }
+            }
+
+            async function atualizarPrevia() {
+                var grupo = obterGrupoSelecionado();
+                if (!grupo) return;
+                var versao = ++versaoPrevia;
+                document.getElementById("aplicarParametros").disabled = true;
+                document.getElementById("impacto").textContent = "Calculando os equipamentos afetados…";
+
+                try {
+                    var escopo = document.getElementById("escopo").value;
+                    var resposta = await consultarApi(
+                        "/equipamento/parametro/" +
+                            idEmpresa +
+                            "/previa?idMetrica=" +
+                            grupo.referencia.id_metrica +
+                            "&escopo=" +
+                            escopo
+                    );
+                    if (versao !== versaoPrevia) return;
+                    var impacto = resposta.impacto;
+                    document.getElementById("impacto").textContent =
+                        "Afeta " +
+                        impacto.metricas +
+                        " métrica(s) em " +
+                        impacto.equipamentos +
+                        " equipamento(s) de " +
+                        impacto.lotes +
+                        " lote(s).";
+                    document.getElementById("aplicarParametros").disabled =
+                        salvandoParametros || impacto.metricas === 0;
+                } catch (erro) {
+                    if (versao !== versaoPrevia) return;
+                    document.getElementById("impacto").textContent =
+                        "Não foi possível calcular o impacto. Selecione o destino novamente para tentar.";
+                    mostrarErroFormulario("erroParametros", erro.message);
+                }
+            }
+
+            function validarLimites(uso, ociosidade) {
+                if (uso !== "" && ociosidade !== "" && Number(ociosidade) > Number(uso)) {
+                    return "O limite de ociosidade não pode ser maior que o limite de uso.";
+                }
+
+                return "";
+            }
+
+            async function salvarParametros(evento) {
+                evento.preventDefault();
+                document.getElementById("feedback").hidden = true;
+                var grupo = obterGrupoSelecionado();
+                var botao = document.getElementById("aplicarParametros");
+                if (!grupo || botao.disabled || salvandoParametros) return;
+                var uso = document.getElementById("limiteUso").value;
+                var ociosidade = document.getElementById("limiteOciosidade").value;
+                var erro = validarLimites(uso, ociosidade);
+                mostrarErroFormulario("erroParametros", erro);
+                if (erro) return;
+                salvandoParametros = true;
+                botao.disabled = true;
+                botao.textContent = "Aplicando…";
+                document.getElementById("escopo").disabled = true;
+
+                try {
+                    var resultado = await consultarApi("/equipamento/parametro/" + idEmpresa, "PUT", {
+                        idMetricaServer: grupo.referencia.id_metrica,
+                        escopoServer: document.getElementById("escopo").value,
+                        limiteUsoServer: uso,
+                        limiteOciosidadeServer: ociosidade,
+                        habilitadoServer: document.getElementById("metricaHabilitada").checked
+                    });
+                    mostrarMensagem(resultado.mensagem, "sucesso");
+                    await carregarPainel();
+                } catch (falha) {
+                    mostrarErroFormulario("erroParametros", falha.message);
+                } finally {
+                    salvandoParametros = false;
+                    botao.textContent = "Aplicar parâmetros";
+                    document.getElementById("escopo").disabled = false;
+                    if (obterGrupoSelecionado()) atualizarPrevia();
+                }
+            }
+
+            function executarAcaoLote(evento) {
+                var botao = evento.target.closest("button[data-acao]");
+                if (!botao) return;
+                var acao = botao.dataset.acao;
+                var idEquipamento = Number(botao.dataset.equipamento);
+
+                if (acao === "hospital") {
+                    abrirAlocacao(idEquipamento);
+                    return;
+                }
+
+                document.getElementById("filtroLote").value = loteSelecionado;
+                document.getElementById("filtroComponente").value = "";
+                atualizarFiltroEquipamentos();
+                document.getElementById("filtroEquipamento").value = acao === "metricas" ? idEquipamento : "";
+                limparEditor();
+                listarParametros();
+                trocarAba("parametros");
+                document.getElementById("abaParametros").focus();
+            }
+
+            function abrirCadastro() {
+                document.getElementById("formCadastro").reset();
+                mostrarErroFormulario("erroCadastro", "");
+                preencherSelect(
+                    "modeloLote",
+                    dadosPainel.modelos,
+                    "id_modelo_equipamento",
+                    "nome_modelo",
+                    "Selecione um modelo"
+                );
+                preencherSelect(
+                    "loteEquipamento",
+                    dadosPainel.lotes,
+                    "id_lote_equipamento",
+                    "numero_lote",
+                    "Selecione um lote"
+                );
+                preencherSelect(
+                    "hospitalEquipamento",
+                    hospitaisCadastrados,
+                    "id_hospital",
+                    "nome_hospital",
+                    "Sem hospital"
+                );
+                if (dadosPainel.modelos.length) document.getElementById("tipoCadastro").value = "lote";
+                if (dadosPainel.lotes.length) document.getElementById("tipoCadastro").value = "equipamento";
+                atualizarCamposCadastro();
+                document.getElementById("dialogCadastro").showModal();
+            }
+
+            function atualizarCamposCadastro() {
+                var tipo = document.getElementById("tipoCadastro").value;
+                var intervalo = document.getElementById("modoEquipamento").value === "intervalo";
+                var modelo = tipo === "modelo";
+                var lote = tipo === "lote";
+                var equipamento = tipo === "equipamento";
+                document.getElementById("camposModelo").hidden = !modelo;
+                document.getElementById("camposLote").hidden = !lote;
+                document.getElementById("camposEquipamento").hidden = !equipamento;
+                document.getElementById("camposIntervalo").hidden = !intervalo;
+                document.getElementById("campoSerie").hidden = intervalo;
+                document.getElementById("nomeModelo").required = modelo;
+                document.getElementById("modeloLote").required = lote;
+                document.getElementById("numeroLote").required = lote;
+                document.getElementById("loteEquipamento").required = equipamento;
+                document.getElementById("numeroSerie").required = equipamento && !intervalo;
+                document.getElementById("inicio").required = equipamento && intervalo;
+                document.getElementById("fim").required = equipamento && intervalo;
+
+                // Campos de outra forma de cadastro não participam da validação.
+                document.getElementById("nomeModelo").disabled = !modelo;
+                document.getElementById("modeloLote").disabled = !lote;
+                document.getElementById("numeroLote").disabled = !lote;
+                document.getElementById("loteEquipamento").disabled = !equipamento;
+                document.getElementById("hospitalEquipamento").disabled = !equipamento;
+                document.getElementById("modoEquipamento").disabled = !equipamento;
+                document.getElementById("numeroSerie").disabled = !equipamento || intervalo;
+                document.getElementById("prefixo").disabled = !equipamento || !intervalo;
+                document.getElementById("inicio").disabled = !equipamento || !intervalo;
+                document.getElementById("fim").disabled = !equipamento || !intervalo;
+                mostrarErroFormulario("erroCadastro", "");
+            }
+
+            function atualizarIntervalo() {
+                var prefixo = document.getElementById("prefixo").value.trim();
+                var inicio = document.getElementById("inicio").value;
+                var fim = document.getElementById("fim").value;
+                var quantidade = Number(fim) - Number(inicio) + 1;
+                var mensagem = "Cadastre até 500 equipamentos por envio, preservando os zeros da série.";
+
+                if (
+                    /^\d{1,9}$/.test(inicio) &&
+                    /^\d{1,9}$/.test(fim) &&
+                    quantidade > 0 &&
+                    quantidade <= 500
+                ) {
+                    var largura = Math.max(inicio.length, fim.length);
+                    mensagem =
+                        prefixo +
+                        inicio.padStart(largura, "0") +
+                        " até " +
+                        prefixo +
+                        fim.padStart(largura, "0") +
+                        " · " +
+                        quantidade +
+                        " equipamento(s)";
+                }
+
+                document.getElementById("previaIntervalo").textContent = mensagem;
+            }
+
+            async function salvarCadastro(evento) {
+                evento.preventDefault();
+                document.getElementById("feedback").hidden = true;
+                var botao = document.getElementById("salvarCadastro");
+                if (botao.disabled) return;
+                var tipo = document.getElementById("tipoCadastro").value;
+                var caminho = "/equipamento/";
+                var dados;
+
+                if (tipo === "modelo") {
+                    caminho += "modelo/" + idEmpresa;
+                    dados = { nomeServer: document.getElementById("nomeModelo").value.trim() };
+                } else if (tipo === "lote") {
+                    caminho += "lote/" + idEmpresa;
+                    dados = {
+                        numeroServer: document.getElementById("numeroLote").value.trim(),
+                        idModeloServer: document.getElementById("modeloLote").value
+                    };
+                } else {
+                    dados = {
+                        idLoteServer: document.getElementById("loteEquipamento").value,
+                        idHospitalServer: document.getElementById("hospitalEquipamento").value || null
+                    };
+
+                    if (document.getElementById("modoEquipamento").value === "intervalo") {
+                        caminho += "intervalo/" + idEmpresa;
+                        dados.prefixoServer = document.getElementById("prefixo").value.trim();
+                        dados.inicioServer = document.getElementById("inicio").value;
+                        dados.fimServer = document.getElementById("fim").value;
+                    } else {
+                        caminho += idEmpresa;
+                        dados.numeroSerieServer = document.getElementById("numeroSerie").value.trim();
+                    }
+                }
+
+                botao.disabled = true;
+                botao.textContent = "Cadastrando…";
+                mostrarErroFormulario("erroCadastro", "");
+
+                try {
+                    var resultado = await consultarApi(caminho, "POST", dados);
+                    document.getElementById("dialogCadastro").close();
+                    mostrarMensagem(resultado.mensagem, "sucesso");
+                    await carregarPainel();
+                } catch (erro) {
+                    mostrarErroFormulario("erroCadastro", erro.message);
+                } finally {
+                    botao.disabled = false;
+                    botao.textContent = "Cadastrar";
+                }
+            }
+
+            function abrirAlocacao(idEquipamento) {
+                equipamentoAlocacao = idEquipamento;
+                preencherSelect(
+                    "hospitalAlocacao",
+                    hospitaisCadastrados,
+                    "id_hospital",
+                    "nome_hospital",
+                    "Sem hospital"
+                );
+                mostrarErroFormulario("erroHospital", "");
+
+                for (var equipamento of dadosPainel.equipamentos) {
+                    if (equipamento.id_equipamento === idEquipamento) {
+                        document.getElementById("serieHospital").textContent = equipamento.numero_serie;
+                        document.getElementById("hospitalAlocacao").value = equipamento.fk_hospital || "";
+                    }
+                }
+
+                document.getElementById("dialogHospital").showModal();
+            }
+
+            async function salvarAlocacao(evento) {
+                evento.preventDefault();
+                document.getElementById("feedback").hidden = true;
+                var botao = document.getElementById("salvarHospital");
+                if (botao.disabled) return;
+                botao.disabled = true;
+                botao.textContent = "Salvando…";
+                mostrarErroFormulario("erroHospital", "");
+
+                try {
+                    var resultado = await consultarApi(
+                        "/equipamento/" + idEmpresa + "/" + equipamentoAlocacao + "/hospital",
+                        "PATCH",
+                        {
+                            idHospitalServer: document.getElementById("hospitalAlocacao").value || null
+                        }
+                    );
+                    document.getElementById("dialogHospital").close();
+                    mostrarMensagem(resultado.mensagem, "sucesso");
+                    await carregarPainel();
+                } catch (erro) {
+                    mostrarErroFormulario("erroHospital", erro.message);
+                } finally {
+                    botao.disabled = false;
+                    botao.textContent = "Salvar alocação";
+                }
+            }
+
+            function fecharDialog(evento) {
+                if (evento.target.closest("[data-fechar]")) evento.currentTarget.close();
+            }
+
+            document.getElementById("novoCadastro").addEventListener("click", abrirCadastro);
+            document.getElementById("tentarNovamente").addEventListener("click", carregarPainel);
+            document.getElementById("buscaLotes").addEventListener("input", listarLotes);
+            document.getElementById("listaLotes").addEventListener("click", selecionarLote);
+            document.getElementById("listaLotes").addEventListener("keydown", selecionarLote);
+            document.getElementById("detalhesLote").addEventListener("click", executarAcaoLote);
+            document.getElementById("abas").addEventListener("click", selecionarAba);
+            document.getElementById("abas").addEventListener("keydown", navegarAbas);
+            document.getElementById("filtroLote").addEventListener("change", alterarFiltroLote);
+            document.getElementById("filtroComponente").addEventListener("change", alterarFiltroParametro);
+            document.getElementById("filtroEquipamento").addEventListener("change", alterarFiltroParametro);
+            document.getElementById("listaParametros").addEventListener("click", selecionarParametro);
+            document.getElementById("listaParametros").addEventListener("keydown", selecionarParametro);
+            document.getElementById("formParametros").addEventListener("input", sincronizarLimite);
+            document.getElementById("escopo").addEventListener("change", atualizarPrevia);
+            document.getElementById("formParametros").addEventListener("submit", salvarParametros);
+            document.getElementById("tipoCadastro").addEventListener("change", atualizarCamposCadastro);
+            document.getElementById("modoEquipamento").addEventListener("change", atualizarCamposCadastro);
+            document.getElementById("camposIntervalo").addEventListener("input", atualizarIntervalo);
+            document.getElementById("formCadastro").addEventListener("submit", salvarCadastro);
+            document.getElementById("formHospital").addEventListener("submit", salvarAlocacao);
+            document.getElementById("dialogCadastro").addEventListener("click", fecharDialog);
+            document.getElementById("dialogHospital").addEventListener("click", fecharDialog);
+
+            carregarPainel();
+        </script>
+    </body>
+</html>

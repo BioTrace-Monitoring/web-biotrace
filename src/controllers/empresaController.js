@@ -1,149 +1,161 @@
 // Importando o empresaModel
 var empresaModel = require("../models/empresaModel");
+const crypto = require("crypto");
 
 // Função que cadastra uma nova empresa
-function cadastrarEmpresa(req, res)
-{
+function cadastrarEmpresa(req, res) {
     // Recuperando os dados enviados pelo form
-    var razao_social = req.body.razaoSocialEmpresaServer;
-    var cnpj = req.body.cnpjEmpresaServer;
-    var telefone = req.body.telefoneComercialEmpresaServer;
-    var cep = req.body.cepEmpresaServer;
-    var cidade = req.body.cidadeEmpresaServer;
-    var logradouro = req.body.logradouroEmpresaServer;
-    var bairro = req.body.bairroEmpresaServer;
-    var numero = req.body.numeroEnderecoEmpresaServer;
+    var razao_social = req.body.razaoSocialServer;
+    var cnpj = req.body.cnpjServer;
+    var telefone_comercial = req.body.telefoneComercialServer;
+    var cep = req.body.cepServer;
+    var numero = req.body.numeroServer;
+
 
     // Validando pra que nenhum dado venha vazio
-    if (razao_social == undefined)
-    {
+    if (razao_social == undefined) {
         res.status(400).send("Razão Social está undefined!");
-    }
-
-    else if (cnpj == undefined)
-    {
-        res.status(400).send("Seu CNPJ está undefined!");
-    }
-    
-    else if (telefone == undefined)
-    {
-        res.status(400).send("Seu telefone comercial está undefined!");
-    }
-    
-    else if (cep == undefined)
-    {
-        res.status(400).send("Seu CEP está undefined!");
-    }
-
-    else if (cidade == undefined)
-    {
-        res.status(400).send("Sua cidade está undefined!");
-    }
-
-    else if (logradouro == undefined)
-    {
-        res.status(400).send("Seu endereço está undefined!");
-    }
-
-    else if (bairro == undefined)
-    {
-        res.status(400).send("Seu bairro está undefined!");
-    }
-
-    else if (numero == undefined)
-    {
-        res.status(400).send("Seu número está undefined!");
-    }
-    
-    else
-    {
+    } else if (cnpj == undefined) {
+        res.status(400).send("CNPJ está undefined!");
+    } else if (telefone_comercial == undefined) {
+        res.status(400).send("Telefone Comercial está undefined!");
+    } else if (cep == undefined) {
+        res.status(400).send("CEP está undefined!");
+    } else if (numero == undefined) {
+        res.status(400).send("Número está undefined!");
+    } else {
         // Chama a função do model que executa o INSERT no banco
-        empresaModel.cadastrarEmpresa(razao_social, cnpj, telefone, cep, cidade, logradouro, bairro, numero)
+        empresaModel.cadastrarEmpresa(razao_social, cnpj, telefone_comercial, cep, numero)
             // Executado quando o cadastro ocorre com sucesso
-            .then(
-                function (resultado)
-                {
-                    console.log("Empresa cadastrada!");
+            .then(function (resultado) {
+                console.log("Empresa cadastrada!");
+                // Retorna o resultado para o front-end em formato JSON
+                res.json({
+                    sucesso: true,
+                    idInserido: resultado.insertId,
+                    mensagem: "Empresa cadastrada com sucesso"
+                });
+            }).catch(function (erro) {
+                console.log(erro);
+                console.log("\nHouve um erro ao realizar o cadastro! Erro: ", erro.sqlMessage);
 
-                    // Retorna o resultado para o front-end em formato JSON
-                    res.json(resultado);
+                if (erro.code === "ER_DUP_ENTRY" || erro.errno === 1062) {
+                    return res.status(409).json({
+                        sucesso: false,
+                        idInserido: null,
+                        mensagem: "Já existe uma empresa com esse CNPJ."
+                    });
                 }
-            // Executado quando tem algum erro durante o cadastro
-            ).catch(
-                function (erro)
-                {
-                    console.log(erro); // exibe erro no terminal
-                    console.log(
-                        "\nHouve um erro ao realizar o cadastro! Erro: ",
-                        erro.sqlMessage
-                    );
 
-                    res.status(500).json(erro.sqlMessage);
-                }
-            );
+                res.status(500).json({
+                    sucesso: false,
+                    idInserido: null,
+                    mensagem: "Erro ao cadastrar empresa"
+                });
+            });
+    }
+}
+
+function listarEmpresas(req, res) {
+    empresaModel.listarEmpresas()
+        .then(function (resultado) {
+            res.status(200).json({
+                sucesso: true,
+                empresas: resultado
+            });
+        })
+        .catch(function (erro) {
+            console.log(erro);
+            console.log("\nHouve um erro ao listar as empresas! Erro: ", erro.sqlMessage);
+            res.status(500).json({
+                sucesso: false
+            });
+        });
+}
+
+
+function excluirEmpresa(req, res) {
+    var idEmpresa = Number(req.params.idEmpresa);
+
+    if (!Number.isInteger(idEmpresa) || idEmpresa <= 0) {
+        return res.status(400).json("Id da empresa inválido!");
     }
 
-    // FLUXO:
-    // front envia os dados
-    // controller recebe e valida os dados
-    // model faz INSERT e banco salva a empresa
-    // resultado volta pro controller
-    // controller envia resultado pro front
-}
+    if (idEmpresa === 1) {
+        return res.status(403).json({
+            sucesso: false,
+            mensagem: "A empresa BioTrace não pode ser excluída."
+        });
+    }
 
-function visualizarEmpresa(req, res)
-{
-    // req -> requisição: Possui todas as informações da requisição
-    // res -> resposta: Retornar uma resposta pro usuario
-
-
-    // Chama a função do model que executa o SELECT no banco
-    empresaModel.visualizarEmpresa()
-        .then(
-            function(resultado)
-            {
-                // Verifica se algum registro foi encontrado
-                if (resultado.length > 0)
-                {
-                    // Retorna os dados encontrados em JSON
-                    res.json(resultado);
-                }
-                
-                else
-                {
-                    res.status(204).send("Nenhuma empresa encontrada!")
-                }
+    empresaModel.excluirEmpresa(idEmpresa)
+        .then(function (resultado) {
+            if (resultado.affectedRows === 0) {
+                return res.status(404).json({
+                    sucesso: false,
+                    mensagem: "Empresa já excluida ou não encontrada."
+                });
             }
-        )
-        // Executado caso erro na consulta
-        .catch(
-            function(erro)
-            {
-                console.log(erro);
-
-                console.log(
-                    "\nHouve um erro ao listar as empresas! Erro: ",
-                    erro.sqlMessage
-                );
-
-                res.status(500).json(erro.sqlMessage);
-            }
-        );
-
-    // FLUXO:
-    // front solicita os dados
-    // controller recebe a requisição
-    // model faz SELECT e banco retorna dados
-    // controller verifica se encontrou registros
-    // controller envia resultado pro front
+            res.status(200).json({ sucesso: true });
+        })
+        .catch(function (erro) {
+            console.log(erro);
+            console.log("\nHouve um erro ao excluir a empresa! Erro: ", erro.sqlMessage);
+            res.status(500).json({
+                sucesso: false,
+                mensagem: "Houve um erro ao excluir a empresa"
+            });
+        });
 }
-
 
 
 // Exportando as funções do controller
 // Outros arquivos podem usar essas funções
-module.exports =
-{
-    cadastrarEmpresa,
-    visualizarEmpresa
+function buscarEmpresa(req, res) {
+    empresaModel.buscarEmpresa(Number(req.params.idEmpresa))
+        .then(function (empresas) {
+            if (empresas.length === 0) {
+                return res.status(404).json({ sucesso: false, mensagem: "Empresa não encontrada." });
+            }
+            res.json({ sucesso: true, empresa: empresas[0] });
+        }).catch(function (erro) {
+            console.error("Erro ao buscar empresa:", erro);
+            res.status(500).json({ sucesso: false, mensagem: "Não foi possível carregar a empresa." });
+        });
 }
+
+function alterarEmpresa(req, res) {
+    var nome = req.body.razaoSocialServer;
+    var cnpj = req.body.cnpjServer;
+    var telefone = req.body.telefoneComercialServer;
+    var cep = req.body.cepServer;
+    var numero = req.body.numeroServer;
+
+    if (typeof nome !== "string" || !nome.trim() || nome.length > 100 ||
+        !/^\d{14}$/.test(cnpj) || !/^\d{10,11}$/.test(telefone) || !/^\d{8}$/.test(cep) ||
+        typeof numero !== "string" || !numero.trim() || numero.length > 10) {
+        return res.status(400).json({ sucesso: false, mensagem: "Preencha corretamente os dados da empresa." });
+    }
+
+    empresaModel.alterarEmpresa(Number(req.params.idEmpresa), nome.trim(), cnpj, telefone, cep, numero.trim())
+        .then(function (resultado) {
+            if (!resultado.affectedRows) {
+                return res.status(404).json({ sucesso: false, mensagem: "Empresa não encontrada." });
+            }
+            res.json({ sucesso: true, mensagem: "Empresa alterada com sucesso." });
+        }).catch(function (erro) {
+            console.error("Erro ao alterar empresa:", erro);
+            res.status(erro.code === "ER_DUP_ENTRY" ? 409 : 500).json({
+                sucesso: false,
+                mensagem: erro.code === "ER_DUP_ENTRY" ? "Já existe uma empresa com esse CNPJ." : "Não foi possível alterar a empresa."
+            });
+        });
+}
+
+module.exports = {
+    buscarEmpresa,
+    alterarEmpresa,
+    cadastrarEmpresa,
+    listarEmpresas,
+    excluirEmpresa
+};

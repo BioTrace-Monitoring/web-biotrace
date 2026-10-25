@@ -110,6 +110,19 @@ body
     color: #202938; /* Cor do texto*/
 }
 
+.campo-cad select
+{
+    width: 100%; /* Input ocupa toda a largura do campo*/
+    height: 38px; /* Altura do input*/
+    padding: 0 12px; /* Espaçamento interno -> 0 cima e baixo | 12px laterais*/
+    border: 1px solid #E1E3E7; /* Borda do input*/
+    border-radius: 7px; /* Arredonda os cantos do input*/
+    background: #F4F5F7; /* Cor de fundo do input*/
+    outline: none; /* Remove a borda padrão ao selecionar o input*/
+    font-size: 11px; /* Tamanho da escrita*/
+    color: #202938; /* Cor do texto*/
+}
+
 .campo-cad input:focus
 {
     border-color: #8646BD; /* Altera a cor da borda quando o input é selecionado*/

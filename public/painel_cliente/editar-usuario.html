@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar usuário | BioTrace</title>
+    <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="../css/style_cadastro_usuario.css">
+</head>
+
+<body>
+    <div class="app">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="logo">
+                    <img src="../assets/icons/BioTrace (4).png" alt="BioTrace Logo">
+                </a>
+                <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Fechar menu">&times;</button>
+            </div>
+
+            <nav class="sidebar-nav" aria-label="Menu principal">
+                <span class="nav-title">Principal</span>
+                <a href="index.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">📊</span>
+                    <span>Visão Geral</span>
+                </a>
+                <a href="equipamentos.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">📟</span>
+                    <span>Equipamentos</span>
+                </a>
+                <span class="nav-title nav-title-dashboards">Dashboards</span>
+                <a href="dash_geral.html" class="nav-item">
+                    <span class="nav-icon">📉</span>
+                    <span>Análise de lotes</span>
+                </a>
+
+                <span class="nav-title nav-title-spacing">Cadastros</span>
+                <a href="hospitais.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">🏥</span>
+                    <span>Cadastrar hospital</span>
+                </a>
+                <a href="cadastrar-usuario.html" class="nav-item active" aria-current="page">
+                    <span class="nav-icon" aria-hidden="true">👤</span>
+                    <span>Cadastrar usuário</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div id="usuario_avatar" class="usuario-avatar">BT</div>
+                    <div class="user-info">
+                        <strong id="nome_cliente">Usuário BioTrace</strong>
+                        <span id="email_cliente">perfil@biotrace.com</span>
+                    </div>
+                </div>
+                <button class="sidebar-logout" id="btnSair" type="button" aria-label="Sair da conta" title="Sair da conta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M9 5H5v14h4M10 12h10m-4-4 4 4-4 4" />
+                    </svg>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="mobile-header">
+                <button class="menu-button" id="menuButton" type="button" aria-label="Abrir menu"
+                    aria-controls="sidebar" aria-expanded="false">☰</button>
+                <img src="../assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo">
+            </header>
+
+            <div class="page-content">
+                <div class="page-heading">
+                    <div class="eyebrow"><span class="eyebrow-dot"></span>PAINEL DE OBSERVABILIDADE</div>
+                    <h1>Editar usuário</h1>
+                    <p>Altere os dados e clique em Salvar alterações.</p>
+                </div>
+                <section class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-icon" aria-hidden="true">✏️</div>
+                        <div>
+                            <h2>Dados do cadastro</h2>
+                            <p>Confira os dados e salve as alterações.</p>
+                        </div>
+                    </div>
+                    <p id="estado-carga" role="status">Carregando dados...</p>
+                    <form id="formulario-edicao" hidden>
+                        <div class="form-grid">
+                            <div class="form-field field-wide">
+                                <label for="ipt_nome_user">Nome completo</label>
+                                <input type="text" id="ipt_nome_user" required maxlength="45">
+                            </div>
+                            <div class="form-field">
+                                <label for="ipt_email_user">E-mail</label>
+                                <input type="email" id="ipt_email_user" required maxlength="100">
+                            </div>
+                            <div class="form-field">
+                                <label for="ipt_cargo_user">Cargo</label>
+                                <select id="ipt_cargo_user" required><option value="">Carregando...</option></select>
+                            </div>
+                            <div class="form-field">
+                                <label for="ipt_cpf_user">CPF</label>
+                                <input type="text" id="ipt_cpf_user" inputmode="numeric" required maxlength="14">
+                            </div>
+                            <div class="form-field">
+                                <label for="ipt_telefone_user">Telefone com DDD</label>
+                                <input type="tel" id="ipt_telefone_user" inputmode="numeric" required maxlength="15">
+                            </div>
+                            <div class="form-field">
+                                <label for="ipt_dt_nasc_user">Data de nascimento</label>
+                                <input type="text" id="ipt_dt_nasc_user" inputmode="numeric" maxlength="10" placeholder="DD/MM/AAAA" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="ipt_senha_user">Nova senha (opcional)</label>
+                                <input type="password" id="ipt_senha_user" minlength="8" autocomplete="new-password">
+                            </div>
+                            <div class="form-field">
+                                <label for="ipt_conf_senha_user">Confirmar nova senha</label>
+                                <input type="password" id="ipt_conf_senha_user" minlength="8" autocomplete="new-password">
+                            </div>
+                        </div>
+                        <p class="field-help">Deixe os campos de senha em branco para manter a senha atual.</p>
+                    <p id="mensagem-edicao" class="form-message" role="alert" hidden></p>
+                        <div class="form-actions">
+                            <a id="voltar-lista" class="button-secondary">Cancelar</a>
+                            <button id="btn-salvar" class="button-primary" type="submit">Salvar alterações</button>
+                        </div>
+                    </form>
+                    <a id="voltar-erro" class="button-secondary">Voltar à lista</a>
+                </section>
+            </div>
+        </main>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <script src="./js/dashboard.js"></script>
+    <script src="https://unpkg.com/imask"></script>
+    <script>
+        var mascaraCpf = IMask(document.getElementById("ipt_cpf_user"), {
+            mask: "000.000.000-00"
+        });
+
+        var mascaraTelefone = IMask(document.getElementById("ipt_telefone_user"), {
+            mask: [
+                { mask: "(00) 0000-0000" },
+                { mask: "(00) 00000-0000" }
+            ]
+        });
+
+        var mascaraNascimento = IMask(document.getElementById("ipt_dt_nasc_user"), {
+            mask: "00/00/0000"
+        });
+
+        var parametros = new URLSearchParams(window.location.search);
+        var idEmpresa = Number(localStorage.getItem("FK_EMPRESA"));
+        var idRegistro = Number(parametros.get("id"));
+        var caminhoLista = `listar-usuarios.html`;
+        var formulario = document.getElementById("formulario-edicao");
+        var mensagem = document.getElementById("mensagem-edicao");
+        var botaoSalvar = document.getElementById("btn-salvar");
+        document.getElementById("voltar-lista").href = caminhoLista;
+        document.getElementById("voltar-erro").href = caminhoLista;
+
+        async function carregarUsuario() {
+            try {
+                if (!Number.isSafeInteger(idEmpresa) || idEmpresa <= 0 || !Number.isSafeInteger(idRegistro) || idRegistro <= 0) {
+                    throw new Error("Cadastro inválido. Volte à lista e selecione um registro.");
+                }
+                var resposta = await fetch(`/usuario/${idEmpresa}/${idRegistro}`, {
+                    headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+                });
+                var dados = await resposta.json();
+                if (!resposta.ok) throw new Error(dados.mensagem || dados.erro || "Não foi possível carregar o cadastro.");
+                var usuario = dados.usuario;
+                var respostaCargos = await fetch("/usuario/cargos");
+                if (!respostaCargos.ok) throw new Error("Não foi possível carregar os cargos.");
+                var cargos = await respostaCargos.json();
+                var campoCargo = document.getElementById("ipt_cargo_user");
+                campoCargo.replaceChildren(new Option("Selecione um cargo", ""));
+                var cargosPermitidos = window.bioTraceAccess.cargo === "administrador" ? [2, 3, 4] : [4];
+                cargos.forEach(function (cargo) {
+                    if (cargosPermitidos.includes(Number(cargo.id))) campoCargo.add(new Option(cargo.nome, cargo.id));
+                });
+                document.getElementById("ipt_nome_user").value = usuario.nome_usuario == null ? "" : usuario.nome_usuario;
+                document.getElementById("ipt_email_user").value = usuario.email_usuario == null ? "" : usuario.email_usuario;
+                document.getElementById("ipt_cargo_user").value = usuario.fk_cargo == null ? "" : usuario.fk_cargo;
+                mascaraCpf.unmaskedValue = usuario.cpf_usuario == null ? "" : String(usuario.cpf_usuario);
+                mascaraTelefone.unmaskedValue = usuario.telefone_usuario == null ? "" : String(usuario.telefone_usuario);
+                mascaraNascimento.value = usuario.dt_nasc_usuario ? usuario.dt_nasc_usuario.split("-").reverse().join("/") : "";
+                document.getElementById("estado-carga").hidden = true;
+                document.getElementById("voltar-erro").hidden = true;
+                formulario.hidden = false;
+            } catch (erro) {
+                document.getElementById("estado-carga").textContent = erro.message;
+            }
+        }
+
+        function converterDataParaApi(valor) {
+            const partes = valor.split("/");
+            if (partes.length !== 3 || partes[0].length !== 2 || partes[1].length !== 2 || partes[2].length !== 4) {
+                return null;
+            }
+
+            const dia = Number(partes[0]);
+            const mes = Number(partes[1]);
+            const ano = Number(partes[2]);
+            const data = new Date(ano, mes - 1, dia);
+
+            if (data.getFullYear() !== ano || data.getMonth() !== mes - 1 || data.getDate() !== dia) {
+                return null;
+            }
+
+            return `${partes[2]}-${partes[1]}-${partes[0]}`;
+        }
+
+        async function salvarUsuario(evento) {
+            evento.preventDefault();
+            if (botaoSalvar.disabled) return;
+            mensagem.textContent = "";
+            mensagem.hidden = true;
+            if (document.getElementById("ipt_senha_user").value !== document.getElementById("ipt_conf_senha_user").value) {
+                mensagem.textContent = "As senhas não coincidem.";
+                mensagem.hidden = false;
+                return;
+            }
+            var dataNascimento = converterDataParaApi(document.getElementById("ipt_dt_nasc_user").value);
+            if (!dataNascimento) {
+                mensagem.textContent = "Informe uma data de nascimento válida no formato DD/MM/AAAA.";
+                mensagem.hidden = false;
+                return;
+            }
+            botaoSalvar.disabled = true;
+            botaoSalvar.textContent = "Salvando...";
+            try {
+                var resposta = await fetch(`/usuario/${idEmpresa}/${idRegistro}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
+                    body: JSON.stringify({
+                        nomeServer: document.getElementById("ipt_nome_user").value.trim(),
+                        emailServer: document.getElementById("ipt_email_user").value.trim(),
+                        cargoServer: document.getElementById("ipt_cargo_user").value.trim(),
+                        cpfServer: document.getElementById("ipt_cpf_user").value.trim().replace(/\D/g, ""),
+                        telefoneServer: document.getElementById("ipt_telefone_user").value.trim().replace(/\D/g, ""),
+                        dtNascimentoServer: dataNascimento,
+                        senhaServer: document.getElementById("ipt_senha_user").value
+                    })
+                });
+                var dados = await resposta.json();
+                if (!resposta.ok) throw new Error(dados.mensagem || dados.erro || "Não foi possível salvar as alterações.");
+                sessionStorage.setItem("cadastro-alterado", "Alterações salvas com sucesso.");
+                window.location.href = caminhoLista;
+            } catch (erro) {
+                mensagem.textContent = erro.message;
+                mensagem.hidden = false;
+            } finally {
+                botaoSalvar.disabled = false;
+                botaoSalvar.textContent = "Salvar alterações";
+            }
+        }
+
+        formulario.addEventListener("submit", salvarUsuario);
+        carregarUsuario();
+    </script>
+</body>
+</html>

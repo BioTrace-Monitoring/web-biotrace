@@ -1,0 +1,285 @@
+/* Import da fonte Outfit para Títulos e Geist para parágrafos*/
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&display=swap');
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    color: #202434;
+    font-family: 'Outfit', sans-serif; 
+}
+
+/* ÁREA PRINCIPAL */
+
+.area-login {
+    min-height: 720px;
+    padding: 80px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: radial-gradient(
+        circle at center,
+        #9a58d0 0%,
+        #7035a5 50%,
+        #42136d 100%
+    );
+}
+
+/* CARTÃO DE LOGIN */
+
+.cartao-login {
+    width: 100%;
+    max-width: 445px;
+    min-height: 550px;
+    padding: 42px;
+
+    background-color: #ffffff;
+    border-radius: 22px;
+    box-shadow: 0 12px 35px rgba(28, 5, 49, 0.22);
+
+    text-align: center;
+}
+
+.logo {
+    height: 50px;
+    margin-bottom: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #8445b7;
+    font-size: 39px;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.cartao-login h1 {
+    margin-bottom: 7px;
+    font-size: 27px;
+}
+
+.subtitulo {
+    margin-bottom: 30px;
+    color: #85858d;
+    font-size: 13px;
+}
+
+form {
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin: 0 0 8px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.campo {
+    height: 44px;
+    margin-bottom: 24px;
+    padding: 0 13px;
+
+    display: flex;
+    align-items: center;
+
+    background-color: #f4f4f5;
+    border: 1px solid #dedee2;
+    border-radius: 9px;
+}
+
+.campo:focus-within {
+    border-color: #8848b8;
+    box-shadow: 0 0 0 2px rgba(136, 72, 184, 0.12);
+}
+
+.icone {
+    color: #727782;
+    font-size: 16px;
+    margin-top: 2px;
+}
+.olho {
+    color: #727782;
+    font-size: 16px;
+}
+
+.campo input {
+    width: 100%;
+    height: 100%;
+    padding: 0 12px;
+
+    background: transparent;
+    border: none;
+    outline: none;
+
+    color: #40434a;
+    font-size: 13px;
+}
+
+.campo input::placeholder {
+    color: #858891;
+}
+
+button {
+    width: 100%;
+    height: 46px;
+
+    background-color: #8548b6;
+    border: none;
+    border-radius: 9px;
+    box-shadow: 0 7px 13px rgba(117, 52, 164, 0.28);
+
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #73399f;
+}
+
+.esqueci-senha {
+    display: block;
+    margin-top: 18px;
+
+    color: #74339e;
+    font-size: 12px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.esqueci-senha:hover {
+    text-decoration: underline;
+}
+
+/* FOOTER */
+
+.footer {
+    padding: 30px 6% 20px;
+    background-color: #070b17;
+    color: #aeb0bc;
+}
+
+.footer-conteudo {
+    max-width: 1250px;
+    margin: auto;
+    padding: 26px 0;
+
+    display: flex;
+    justify-content: space-between;
+    gap: 45px;
+
+    border-top: 1px solid #403550;
+}
+
+.footer-marca h2 {
+    margin-bottom: 10px;
+    color: #924bc1;
+    font-size: 28px;
+}
+
+.footer-marca p {
+    font-size: 13px;
+}
+
+.footer-coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.footer-coluna h3 {
+    margin-bottom: 4px;
+    color: #a551cc;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.footer-coluna p,
+.footer-coluna a {
+    color: #b7b8c1;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.footer-coluna a:hover,
+.footer-final a:hover {
+    color: #a551cc;
+}
+
+.redes-sociais {
+    display: flex;
+    gap: 9px;
+}
+
+.redes-sociais a {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #503066;
+    border-radius: 50%;
+
+    color: #a551cc;
+    font-size: 10px;
+}
+
+.footer-final {
+    max-width: 1250px;
+    margin: auto;
+    padding-top: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-top: 1px solid #222631;
+    font-size: 11px;
+}
+
+.footer-final a {
+    margin-left: 25px;
+    color: #b7b8c1;
+    text-decoration: none;
+}
+
+/* RESPONSIVIDADE (CELULAR) */
+
+@media (max-width: 1024px) {
+    .area-login {
+        min-height: 650px;
+        padding: 40px 18px;
+    }
+
+    .cartao-login {
+        min-height: 520px;
+        padding: 35px 25px;
+    }
+
+    .footer-conteudo {
+        flex-direction: column;
+    }
+
+    .footer-final {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .footer-final a {
+        margin-left: 0;
+        margin-right: 20px;
+    }
+}

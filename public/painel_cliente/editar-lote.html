@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar lote | BioTrace</title>
+    <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="../css/style_cadastro_usuario.css">
+</head>
+
+<body>
+    <div class="app">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="logo">
+                    <img src="../assets/icons/BioTrace (4).png" alt="BioTrace Logo">
+                </a>
+                <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Fechar menu">&times;</button>
+            </div>
+
+            <nav class="sidebar-nav" aria-label="Menu principal">
+                <span class="nav-title">Principal</span>
+                <a href="index.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">📊</span>
+                    <span>Visão Geral</span>
+                </a>
+                <a href="equipamentos.html" class="nav-item active" aria-current="page">
+                    <span class="nav-icon" aria-hidden="true">📟</span>
+                    <span>Equipamentos</span>
+                </a>
+                <span class="nav-title nav-title-dashboards">Dashboards</span>
+                <a href="dash_geral.html" class="nav-item">
+                    <span class="nav-icon">📉</span>
+                    <span>Análise de lotes</span>
+                </a>
+
+                <span class="nav-title nav-title-spacing">Cadastros</span>
+                <a href="hospitais.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">🏥</span>
+                    <span>Cadastrar hospital</span>
+                </a>
+                <a href="cadastrar-usuario.html" class="nav-item">
+                    <span class="nav-icon" aria-hidden="true">👤</span>
+                    <span>Cadastrar usuário</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div id="usuario_avatar" class="usuario-avatar">BT</div>
+                    <div class="user-info">
+                        <strong id="nome_cliente">Usuário BioTrace</strong>
+                        <span id="email_cliente">perfil@biotrace.com</span>
+                    </div>
+                </div>
+                <button class="sidebar-logout" id="btnSair" type="button" aria-label="Sair da conta" title="Sair da conta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M9 5H5v14h4M10 12h10m-4-4 4 4-4 4" />
+                    </svg>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="mobile-header">
+                <button class="menu-button" id="menuButton" type="button" aria-label="Abrir menu"
+                    aria-controls="sidebar" aria-expanded="false">☰</button>
+                <img src="../assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo">
+            </header>
+
+            <div class="page-content">
+                <div class="page-heading">
+                    <div class="eyebrow"><span class="eyebrow-dot"></span>PAINEL DE OBSERVABILIDADE</div>
+                    <h1>Editar lote</h1>
+                    <p>Altere os dados e clique em Salvar alterações.</p>
+                </div>
+                <section class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-icon" aria-hidden="true">✏️</div>
+                        <div>
+                            <h2>Dados do cadastro</h2>
+                            <p>Confira os dados e salve as alterações.</p>
+                        </div>
+                    </div>
+                    <p id="estado-carga" role="status">Carregando dados...</p>
+                    <form id="formulario-edicao" hidden>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="ipt_numero_lote">Número do lote</label>
+                                <input type="text" id="ipt_numero_lote" required maxlength="60">
+                            </div>
+                            <div class="form-field">
+                                <label for="ipt_modelo_lote">Modelo</label>
+                                <select id="ipt_modelo_lote" required><option value="">Carregando...</option></select>
+                            </div>
+                        </div>
+                        <p id="mensagem-edicao" class="form-message" role="alert" hidden></p>
+                        <div class="form-actions">
+                            <a id="voltar-lista" class="button-secondary">Cancelar</a>
+                            <button id="btn-salvar" class="button-primary" type="submit">Salvar alterações</button>
+                        </div>
+                    </form>
+                    <a id="voltar-erro" class="button-secondary">Voltar à lista</a>
+                </section>
+            </div>
+        </main>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <script src="./js/dashboard.js"></script>
+    <script>
+        var parametros = new URLSearchParams(window.location.search);
+        var idEmpresa = Number(localStorage.getItem("FK_EMPRESA"));
+        var idRegistro = Number(parametros.get("id"));
+        var caminhoLista = `listar-lotes.html`;
+        var formulario = document.getElementById("formulario-edicao");
+        var mensagem = document.getElementById("mensagem-edicao");
+        var botaoSalvar = document.getElementById("btn-salvar");
+        document.getElementById("voltar-lista").href = caminhoLista;
+        document.getElementById("voltar-erro").href = caminhoLista;
+
+        async function carregarLote() {
+            try {
+                if (!Number.isSafeInteger(idEmpresa) || idEmpresa <= 0 || !Number.isSafeInteger(idRegistro) || idRegistro <= 0) {
+                    throw new Error("Cadastro inválido. Volte à lista e selecione um registro.");
+                }
+                var resposta = await fetch(`/equipamento/lote/${idEmpresa}/${idRegistro}`, {
+                    headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+                });
+                var dados = await resposta.json();
+                if (!resposta.ok) throw new Error(dados.mensagem || dados.erro || "Não foi possível carregar o cadastro.");
+                var lote = dados.lote;
+                var respostaModelos = await fetch(`/equipamento/modelo/${idEmpresa}`);
+                if (!respostaModelos.ok) throw new Error("Não foi possível carregar os modelos.");
+                var dadosModelos = await respostaModelos.json();
+                var campoModelo = document.getElementById("ipt_modelo_lote");
+                campoModelo.replaceChildren(new Option("Selecione um modelo", ""));
+                dadosModelos.modelos.forEach(function (modelo) {
+                    campoModelo.add(new Option(modelo.nome_modelo, modelo.id_modelo_equipamento));
+                });
+                document.getElementById("ipt_numero_lote").value = lote.numero_lote == null ? "" : lote.numero_lote;
+                document.getElementById("ipt_modelo_lote").value = lote.fk_modelo_equipamento == null ? "" : lote.fk_modelo_equipamento;
+                document.getElementById("estado-carga").hidden = true;
+                document.getElementById("voltar-erro").hidden = true;
+                formulario.hidden = false;
+            } catch (erro) {
+                document.getElementById("estado-carga").textContent = erro.message;
+            }
+        }
+
+        async function salvarLote(evento) {
+            evento.preventDefault();
+            if (botaoSalvar.disabled) return;
+            mensagem.textContent = "";
+            mensagem.hidden = true;
+            botaoSalvar.disabled = true;
+            botaoSalvar.textContent = "Salvando...";
+            try {
+                var resposta = await fetch(`/equipamento/lote/${idEmpresa}/${idRegistro}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
+                    body: JSON.stringify({
+                        numeroServer: document.getElementById("ipt_numero_lote").value.trim(),
+                        idModeloServer: document.getElementById("ipt_modelo_lote").value.trim()
+                    })
+                });
+                var dados = await resposta.json();
+                if (!resposta.ok) throw new Error(dados.mensagem || dados.erro || "Não foi possível salvar as alterações.");
+                sessionStorage.setItem("cadastro-alterado", "Alterações salvas com sucesso.");
+                window.location.href = caminhoLista;
+            } catch (erro) {
+                mensagem.textContent = erro.message;
+                mensagem.hidden = false;
+            } finally {
+                botaoSalvar.disabled = false;
+                botaoSalvar.textContent = "Salvar alterações";
+            }
+        }
+
+        formulario.addEventListener("submit", salvarLote);
+        carregarLote();
+    </script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioTrace | Editar empresa</title>
+    <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+
+<body>
+    <header class="cabecalho">
+        <div class="cabecalho-marca">
+            <img src="../assets/icons/BioTrace (4).png" alt="Logo BioTrace" class="logo-biotrace">
+
+            <div class="cabecalho-logo-texto">
+                <h1>Painel Interno</h1>
+            </div>
+        </div>
+
+        <div class="cabecalho-usuario">
+            <div class="cabecalho-usuario-info">
+                <p id="b_usuario">Olá, nomeUser</p>
+            </div>
+
+            <a href="index.html" class="btn-voltar-painel">
+                Voltar ao painel
+            </a>
+
+            <button class="btn-sair" onclick="limparSessao()">Sair</button>
+        </div>
+    </header>
+
+    <main class="conteudo">
+        <div class="conteudo-principal">
+            <div class="boas-vindas">
+                <h2>Editar empresa</h2>
+                <p>Altere os dados e clique em Salvar alterações.</p>
+            </div>
+            <div class="form-container">
+                <p id="estado-carga" role="status">Carregando dados...</p>
+                <form id="formulario-edicao" hidden>
+                    <div class="form-grid">
+                        <div class="campo campo-largo">
+                            <label for="input-razao-social">Razão social</label>
+                            <input type="text" id="input-razao-social" required maxlength="100">
+                        </div>
+                        <div class="campo">
+                            <label for="input-cnpj">CNPJ</label>
+                            <input type="text" id="input-cnpj" inputmode="numeric" required maxlength="18">
+                        </div>
+                        <div class="campo">
+                            <label for="input-telefone">Telefone com DDD</label>
+                            <input type="tel" id="input-telefone" inputmode="numeric" required maxlength="15">
+                        </div>
+                        <div class="campo">
+                            <label for="input-cep">CEP</label>
+                            <input type="text" id="input-cep" inputmode="numeric" required maxlength="9">
+                        </div>
+                        <div class="campo">
+                            <label for="input-numero">Número do endereço</label>
+                            <input type="text" id="input-numero" required maxlength="10">
+                        </div>
+                    </div>
+                    <p id="mensagem-edicao" class="form-erro" role="alert"></p>
+                    <div class="form-botoes">
+                        <a id="voltar-lista" class="btn-voltar-link">Cancelar</a>
+                        <button id="btn-salvar" class="btn-salvar" type="submit">Salvar alterações</button>
+                    </div>
+                </form>
+                <a id="voltar-erro" class="btn-voltar-link">Voltar à lista</a>
+            </div>
+        </div>
+    </main>
+    <script src="./js/utils.js"></script>
+    <script src="https://unpkg.com/imask"></script>
+    <script>
+        var mascaraCnpj = IMask(document.getElementById("input-cnpj"), {
+            mask: "00.000.000/0000-00"
+        });
+
+        var mascaraTelefone = IMask(document.getElementById("input-telefone"), {
+            mask: [
+                { mask: "(00) 0000-0000" },
+                { mask: "(00) 00000-0000" }
+            ]
+        });
+
+        var mascaraCep = IMask(document.getElementById("input-cep"), {
+            mask: "00000-000"
+        });
+
+        var parametros = new URLSearchParams(window.location.search);
+        var idEmpresa = Number(parametros.get("id_empresa"));
+        var idRegistro = Number(parametros.get("id"));
+        var caminhoLista = `listar-empresas.html`;
+        var formulario = document.getElementById("formulario-edicao");
+        var mensagem = document.getElementById("mensagem-edicao");
+        var botaoSalvar = document.getElementById("btn-salvar");
+        document.getElementById("voltar-lista").href = caminhoLista;
+        document.getElementById("voltar-erro").href = caminhoLista;
+
+        async function carregarEmpresa() {
+            try {
+                if (!Number.isSafeInteger(idEmpresa) || idEmpresa <= 0) {
+                    throw new Error("Cadastro inválido. Volte à lista e selecione um registro.");
+                }
+                var resposta = await fetch(`/empresa/${idEmpresa}`, {
+                    headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+                });
+                var dados = await resposta.json();
+                if (!resposta.ok) throw new Error(dados.mensagem || dados.erro || "Não foi possível carregar o cadastro.");
+                var empresa = dados.empresa;
+                document.getElementById("input-razao-social").value = empresa.razao_social == null ? "" : empresa.razao_social;
+                mascaraCnpj.unmaskedValue = empresa.cnpj == null ? "" : String(empresa.cnpj);
+                mascaraTelefone.unmaskedValue = empresa.telefone_comercial == null ? "" : String(empresa.telefone_comercial);
+                mascaraCep.unmaskedValue = empresa.cep == null ? "" : String(empresa.cep);
+                document.getElementById("input-numero").value = empresa.numero == null ? "" : empresa.numero;
+                document.getElementById("estado-carga").hidden = true;
+                document.getElementById("voltar-erro").hidden = true;
+                formulario.hidden = false;
+            } catch (erro) {
+                document.getElementById("estado-carga").textContent = erro.message;
+            }
+        }
+
+        async function salvarEmpresa(evento) {
+            evento.preventDefault();
+            if (botaoSalvar.disabled) return;
+            mensagem.textContent = "";
+            mensagem.hidden = true;
+            botaoSalvar.disabled = true;
+            botaoSalvar.textContent = "Salvando...";
+            try {
+                var resposta = await fetch(`/empresa/${idEmpresa}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
+                    body: JSON.stringify({
+                        razaoSocialServer: document.getElementById("input-razao-social").value.trim(),
+                        cnpjServer: document.getElementById("input-cnpj").value.trim().replace(/\D/g, ""),
+                        telefoneComercialServer: document.getElementById("input-telefone").value.trim().replace(/\D/g, ""),
+                        cepServer: document.getElementById("input-cep").value.trim().replace(/\D/g, ""),
+                        numeroServer: document.getElementById("input-numero").value.trim()
+                    })
+                });
+                var dados = await resposta.json();
+                if (!resposta.ok) throw new Error(dados.mensagem || dados.erro || "Não foi possível salvar as alterações.");
+                sessionStorage.setItem("cadastro-alterado", "Alterações salvas com sucesso.");
+                window.location.href = caminhoLista;
+            } catch (erro) {
+                mensagem.textContent = erro.message;
+                mensagem.hidden = false;
+            } finally {
+                botaoSalvar.disabled = false;
+                botaoSalvar.textContent = "Salvar alterações";
+            }
+        }
+
+        formulario.addEventListener("submit", salvarEmpresa);
+        carregarEmpresa();
+    </script>
+</body>
+</html>

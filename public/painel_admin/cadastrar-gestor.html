@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioTrace | Cadastrar Gestor</title>
+    <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+
+<body>
+    <header class="cabecalho">
+        <div class="cabecalho-marca">
+            <img src="../assets/icons/BioTrace (4).png" alt="Logo BioTrace" class="logo-biotrace">
+
+            <div class="cabecalho-logo-texto">
+                <h1>Painel Interno</h1>
+            </div>
+        </div>
+
+        <div class="cabecalho-usuario">
+            <div class="cabecalho-usuario-info">
+                <p id="b_usuario">Olá, nomeUser</p>
+            </div>
+
+            <a href="index.html" class="btn-voltar-painel">
+                Voltar ao painel
+            </a>
+
+            <button class="btn-sair" onclick="limparSessao()">Sair</button>
+        </div>
+    </header>
+
+    <main class="conteudo">
+        <div class="conteudo-principal">
+            <div class="boas-vindas">
+                <h2>Cadastrar gestor</h2>
+                <p>Cadastre um gestor para a empresa correspondente.</p>
+            </div>
+
+            <div class="form-container">
+                <div class="form-grid">
+                    <div class="campo campo-largo">
+                        <label for="ipt_nome_user">Nome completo</label>
+                        <input type="text" id="ipt_nome_user" placeholder="Julia Araripe" autocomplete="off">
+                    </div>
+
+
+                    <div class="campo">
+                        <label for="ipt_dt_nasc_user">Data de nascimento</label>
+                        <input type="text" id="ipt_dt_nasc_user" inputmode="numeric" placeholder="DD/MM/AAAA"
+                            maxlength="10" autocomplete="off">
+                    </div>
+
+                    <div class="campo">
+                        <label for="ipt_telefone_user">Telefone</label>
+                        <input type="text" id="ipt_telefone_user" inputmode="numeric" placeholder="(00) 00000-0000"
+                            maxlength="15" autocomplete="off">
+                    </div>
+
+                    <div class="campo">
+                        <label for="ipt_cpf_user">CPF</label>
+                        <input type="text" id="ipt_cpf_user" inputmode="numeric" placeholder="000.000.000-00"
+                            maxlength="14" autocomplete="off">
+                    </div>
+
+                    <div class="campo">
+                        <label for="ipt_email_user">E-mail corporativo</label>
+                        <input type="email" id="ipt_email_user" placeholder="seuemail@email.com" autocomplete="off">
+                    </div>
+
+                    <div class="campo">
+                        <label for="ipt_senha_user">Senha</label>
+                        <div class="input-senha">
+                            <input type="password" id="ipt_senha_user" placeholder="Mínimo 8 caracteres">
+                            <button type="button" class="toggle-password" data-target="ipt_senha_user"
+                                aria-label="Mostrar senha" data-closed="../assets/img/eyeClose.png"
+                                data-open="../assets/img/eye.png">
+                                <img src="../assets/img/eyeClose.png" alt="Mostrar senha" class="toggle-password-icon">
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="campo">
+                        <label for="ipt_conf_senha_user">Confirmar senha</label>
+                        <div class="input-senha">
+                            <input type="password" id="ipt_conf_senha_user" placeholder="Repita a senha">
+                            <button type="button" class="toggle-password" data-target="ipt_conf_senha_user"
+                                aria-label="Mostrar senha" data-closed="../assets/img/eyeClose.png"
+                                data-open="../assets/img/eye.png">
+                                <img src="../assets/img/eyeClose.png" alt="Mostrar senha" class="toggle-password-icon">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="form-erro" id="form-erro"></p>
+
+                <div class="form-botoes">
+                    <a id="link-gestores" class="btn-voltar-link">Ver gestores cadastrados</a>
+                    <button type="button" class="btn-salvar" id="btn-cadastrar">Cadastrar gestor</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="sucesso-fundo" id="sucesso-cadastro" role="dialog" aria-modal="true"
+        aria-labelledby="titulo-sucesso" aria-describedby="descricao-sucesso" tabindex="-1">
+        <div class="sucesso-card">
+            <svg class="sucesso-icone" viewBox="0 0 52 52" aria-hidden="true">
+                <circle class="sucesso-circulo" cx="26" cy="26" r="24" fill="none" />
+                <path class="sucesso-check" fill="none" d="M14 27l8 8 16-17" />
+            </svg>
+            <h3 id="titulo-sucesso">Gestor cadastrado!</h3>
+            <p id="descricao-sucesso">Redirecionando para a listagem...</p>
+        </div>
+    </div>
+
+    <script src="./js/utils.js"></script>
+    <script src="https://unpkg.com/imask"></script>
+    <script>
+        IMask(document.getElementById("ipt_dt_nasc_user"),{
+            mask: "00/00/0000"
+        })
+
+        IMask(document.getElementById("ipt_telefone_user"),{
+            mask: "(00)00000-0000"
+        })
+
+        IMask(document.getElementById("ipt_cpf_user"),{
+            mask: "000.000.000-00"
+        })
+    </script>
+    <script>
+        function aplicarMascaraCPF(valor) {
+            valor = valor.replace(/\D/g, "");
+
+            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+            valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+
+            return valor;
+        }
+
+        function aplicarMascaraTelefone(valor) {
+            valor = valor.replace(/\D/g, "");
+
+            if (valor.length <= 10) {
+                valor = valor.replace(/^(\d{2})(\d)/, "($1) $2");
+                valor = valor.replace(/(\d{4})(\d)/, "$1-$2");
+            } else {
+                valor = valor.replace(/^(\d{2})(\d)/, "($1) $2");
+                valor = valor.replace(/(\d{5})(\d)/, "$1-$2");
+            }
+
+            return valor;
+        }
+
+        function aplicarMascaraCEP(valor) {
+            valor = valor.replace(/\D/g, "");
+
+            valor = valor.replace(/^(\d{5})(\d)/, "$1-$2");
+
+            return valor;
+        }
+
+        function aplicarMascaraData(valor) {
+            valor = valor.replace(/\D/g, "");
+
+            valor = valor.replace(/^(\d{2})(\d)/, "$1/$2");
+            valor = valor.replace(/^(\d{2})\/(\d{2})(\d)/, "$1/$2/$3");
+
+            return valor;
+        }
+
+        function converterDataParaAPI(data) {
+            const partes = data.split("/");
+
+            if (partes.length !== 3) {
+                return null;
+            }
+
+            const dia = partes[0];
+            const mes = partes[1];
+            const ano = partes[2];
+
+            if (
+                dia.length !== 2 ||
+                mes.length !== 2 ||
+                ano.length !== 4
+            ) {
+                return null;
+            }
+
+            return `${ano}-${mes}-${dia}`;
+        }
+
+        document.getElementById("ipt_cpf_user").addEventListener("input", function () {
+            this.value = aplicarMascaraCPF(this.value);
+        });
+
+        document.getElementById("ipt_telefone_user").addEventListener("input", function () {
+            this.value = aplicarMascaraTelefone(this.value);
+        });
+
+        document.getElementById("ipt_dt_nasc_user").addEventListener("input", function () {
+            this.value = aplicarMascaraData(this.value);
+        });
+
+
+        document.getElementById("link-gestores").href = "listar-gestores.html?id_empresa=" + obterIdEmpresa();
+
+        let cargos = [];
+
+        function mostrarErro(mensagem) {
+            const erro = document.getElementById("form-erro");
+            if (erro) {
+                erro.textContent = mensagem;
+            }
+        }
+
+        function limparErro() {
+            mostrarErro("");
+        }
+
+
+        function obterIdEmpresa() {
+            const parametros = new URLSearchParams(window.location.search);
+            return parametros.get("id_empresa");
+        }
+
+        document.getElementById("btn-cadastrar").addEventListener("click", function () {
+            const botao = document.getElementById("btn-cadastrar");
+            if (botao.disabled) return;
+            limparErro();
+
+            const idEmpresa = obterIdEmpresa();
+            const nome = document.getElementById("ipt_nome_user").value.trim();
+            const dtNasc = document.getElementById("ipt_dt_nasc_user").value.trim();
+            const telefone = document.getElementById("ipt_telefone_user").value.trim();
+            const cpf = document.getElementById("ipt_cpf_user").value.trim();
+            const email = document.getElementById("ipt_email_user").value.trim();
+            const senha = document.getElementById("ipt_senha_user").value;
+            const confSenha = document.getElementById("ipt_conf_senha_user").value;
+
+            if (idEmpresa <= 0) {
+                mostrarErro("ID da empresa inválido.");
+                return;
+            }
+
+            if (nome === "") {
+                mostrarErro("Informe o nome completo.");
+                return;
+            }
+
+            if (dtNasc === "") {
+                mostrarErro("Informe a data de nascimento.");
+                return;
+            }
+
+            if (telefone === "") {
+                mostrarErro("Informe o telefone.");
+                return;
+            }
+
+            if (cpf === "") {
+                mostrarErro("Informe o CPF.");
+                return;
+            }
+
+            if (email === "") {
+                mostrarErro("Informe o e-mail.");
+                return;
+            }
+
+            if (senha === "") {
+                mostrarErro("Informe a senha.");
+                return;
+            }
+
+            if (senha.length < 8) {
+                mostrarErro("A senha deve possuir 8 caracteres.");
+                return;
+            }
+
+            if (senha !== confSenha) {
+                mostrarErro("As senhas não coincidem.");
+                return;
+            }
+
+            const dtNascAPI = converterDataParaAPI(dtNasc);
+
+            if (dtNascAPI === null) {
+                mostrarErro("Informe uma data de nascimento válida.");
+                return;
+            }
+
+            const dados = {
+                nomeServer: nome,
+                emailServer: email,
+                senhaServer: senha,
+                cargoServer: 2,
+                cpfServer: cpf.replace(/\D/g, ""),
+                dtNascimentoServer: dtNascAPI,
+                telefoneServer: telefone.replace(/\D/g, "")
+            };
+
+            botao.disabled = true;
+            botao.textContent = "Cadastrando...";
+
+            fetch(`/usuario/${idEmpresa}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json", 'Authorization' : `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(dados)
+            }).then(function (resposta) {
+                if (!resposta.ok) {
+                    return resposta.text().then(function (mensagem) {
+                        throw new Error(mensagem);
+                    });
+                }
+
+                return resposta.json();
+            }).then(function (resultado) {
+                if (!resultado.sucesso) {
+                    throw new Error(resultado.mensagem || "Não foi possível cadastrar o gestor.");
+                }
+
+                const modal = document.getElementById("sucesso-cadastro");
+                modal.classList.add("aberto");
+                modal.focus();
+                setTimeout(function () {
+                    window.location.href = "listar-empresas.html";
+                }, 2000);
+            }).catch(function (erro) {
+                console.error("Erro ao cadastrar gestor:", erro);
+                botao.disabled = false;
+                botao.textContent = "Cadastrar gestor";
+
+                mostrarErro(
+                    erro.message || "Erro ao cadastrar gestor."
+                );
+            });
+
+
+        });
+
+        document.querySelectorAll(".toggle-password").forEach(function (botao) {
+            botao.addEventListener("click", function () {
+                const input = document.getElementById(this.dataset.target);
+                const mostrar = input.type === "password";
+                const imagem = this.querySelector(".toggle-password-icon");
+
+                input.type = mostrar ? "text" : "password";
+                this.setAttribute("aria-label", mostrar ? "Ocultar senha" : "Mostrar senha");
+                this.classList.toggle("ativo", mostrar);
+
+                if (imagem) {
+                    imagem.src = mostrar ? this.dataset.open : this.dataset.closed;
+                    imagem.alt = mostrar ? "Ocultar senha" : "Mostrar senha";
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

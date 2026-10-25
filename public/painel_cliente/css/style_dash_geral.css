@@ -1,0 +1,157 @@
+/* As cores e a estrutura principal vêm do estilo compartilhado do painel. */
+.dashboard-geral {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.dashboard-geral .global-filter-card,
+.dashboard-geral .dashboard-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+}
+
+.dashboard-geral .global-filter-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.dashboard-geral .batch-select-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    max-width: 350px;
+}
+
+.dashboard-geral .batch-select-wrapper label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--text-secondary);
+}
+
+.dashboard-geral .batch-select {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--background);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.dashboard-geral .batch-select:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 1px;
+}
+
+.dashboard-geral .filter-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.dashboard-geral .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.dashboard-geral .dashboard-card:last-child {
+    grid-column: 1 / -1;
+}
+
+.dashboard-geral .dashboard-card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+    box-shadow: 0 4px 20px #28242d08;
+}
+
+.dashboard-geral .card-header h2 {
+    margin-bottom: 4px;
+    font-size: 18px;
+}
+
+.dashboard-geral .card-header p {
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.dashboard-geral .chart-container-wrapper {
+    position: relative;
+    width: 100%;
+    height: 300px;
+}
+
+.dashboard-geral .batch-summary-footer,
+.dashboard-geral .forecasting-footer {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--background);
+}
+
+.dashboard-geral .summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-align: center;
+}
+
+.dashboard-geral .summary-label {
+    color: var(--text-secondary);
+    font-size: 11px;
+}
+
+.dashboard-geral .summary-value {
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.dashboard-geral .destaque { color: var(--primary); }
+.dashboard-geral .normal { color: #07835d; }
+.dashboard-geral .limite { color: #d92d20; }
+
+.dashboard-geral footer {
+    padding: 20px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+@media (max-width: 1100px) {
+    .dashboard-geral .dashboard-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-geral .global-filter-card,
+    .dashboard-geral .dashboard-card {
+        padding: 18px;
+    }
+
+    .dashboard-geral .chart-container-wrapper {
+        height: 250px;
+    }
+}

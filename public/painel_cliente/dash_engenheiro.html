@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Equipamentos por lote | BioTrace</title>
+        <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
+        <link rel="stylesheet" href="./css/style.css">
+        <link rel="stylesheet" href="./css/engenheiro.css">
+    </head>
+
+    <body>
+        <div class="app">
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <a href="index.html" class="logo">
+                        <img src="../assets/icons/BioTrace (4).png" alt="BioTrace Logo">
+                    </a>
+                    <button class="sidebar-close" id="sidebarClose" type="button">
+                        &times;
+                    </button>
+                </div>
+
+                <nav class="sidebar-nav">
+                    <span class="nav-title">Principal</span>
+                    <a href="index.html" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span>Visão Geral</span>
+                    </a>
+                    <a href="equipamentos.html" class="nav-item">
+                        <span class="nav-icon">📟</span>
+                        <span>Equipamentos</span>
+                    </a>
+
+                    <span class="nav-title nav-title-dashboards">Dashboards</span>
+                    <a href="dash_engenheiro.html" class="nav-item active">
+                        <span class="nav-icon">📈</span>
+                        <span>Equipamentos por lote</span>
+                    </a>
+
+                    <a href="dash_geral.html" class="nav-item">
+                        <span class="nav-icon">📉</span>
+                        <span>Análise de lotes</span>
+                    </a>
+
+                    <span class="nav-title nav-title-spacing">Cadastros</span>
+                    <a href="hospitais.html" class="nav-item">
+                        <span class="nav-icon">🏥</span>
+                        <span>Cadastrar hospital</span>
+                    </a>
+                    <a href="cadastrar-usuario.html" class="nav-item">
+                        <span class="nav-icon">👤</span>
+                        <span>Cadastrar usuário</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-footer">
+                    <div class="sidebar-user">
+                        <div id="usuario_avatar" class="usuario-avatar">BT</div>
+                        <div class="user-info">
+                            <strong id="nome_cliente">Usuário BioTrace</strong>
+                            <span id="email_cliente">perfil@biotrace.com</span>
+                        </div>
+                    </div>
+                    <button class="sidebar-logout" id="btnSair" type="button">
+                        <svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 5H5v14h4M10 12h10m-4-4 4 4-4 4">
+                        </svg>
+                    </button>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <header class="mobile-header">
+                    <button class="menu-button" id="menuButton" type="button">
+                        ☰
+                    </button>
+                    <img src="../assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo">
+                </header>
+
+                <div class="page-content">
+                    <div class="page-heading">
+                        <div>
+                            <div class="eyebrow">
+                                <span class="eyebrow-dot"></span>MONITORAMENTO
+                                DE EQUIPAMENTOS
+                            </div>
+                            <h1>Equipamentos por lote</h1>
+                            <p>
+                                Acompanhe os equipamentos de cada lote e veja os componentes,
+                                as métricas e os limites de cada equipamento.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="dashboard-engenheiro">
+                        <section class="seletor-lote">
+                            <div>
+                                <label for="selectLote">LOTE DE EQUIPAMENTOS</label>
+                                <select id="selectLote">
+                                    <option value="lote-001">LT-2026-001 · ECG-12</option>
+                                    <option value="lote-002">LT-2026-002 · BPAP</option>
+                                    <option value="lote-003">LT-2026-003 · Osteomax</option>
+                                </select>
+                            </div>
+                            <div><span class="rotulo">Empresa</span><strong>CardioVida Equipamentos Ltda</strong></div>
+                            <div><span class="rotulo">Dados de demonstração</span><span class="selo-demo">Dados estáticos</span></div>
+                        </section>
+
+                        <!-- Os dados dos equipamentos ficam nas tabelas abaixo. -->
+                        <section class="indicadores">
+                            <button class="card-indicador ativo" type="button" id="indicador-todos"><span>Equipamentos do lote</span><strong>5</strong></button>
+                            <button class="card-indicador" type="button" id="indicador-normal"><span>Sem alertas</span><strong class="normal">1</strong></button>
+                            <button class="card-indicador" type="button" id="indicador-atencao"><span>Em atenção</span><strong class="atencao">1</strong></button>
+                            <button class="card-indicador" type="button" id="indicador-limite"><span>Limite excedido</span><strong class="limite">2</strong></button>
+                            <button class="card-indicador" type="button" id="indicador-falha"><span>Falha de leitura</span><strong class="falha">1</strong></button>
+                            <button class="card-indicador" type="button" id="indicador-ocioso"><span>Abaixo do mínimo</span><strong class="ocioso">0</strong></button>
+                        </section>
+
+                        <section class="filtros-dashboard">
+                            <div class="linha-filtros">
+                                <label class="filtro-alertas"><input id="apenasAlertas" type="checkbox"> Somente equipamentos com alertas</label>
+                                <div class="componentes-filtro">
+                                    <button type="button" class="filtro-componente ativo" id="filtro-status">Todos</button>
+                                    <button type="button" class="filtro-componente" id="filtro-cpu">CPU</button>
+                                    <button type="button" class="filtro-componente" id="filtro-ram">Memória RAM</button>
+                                    <button type="button" class="filtro-componente" id="filtro-disco">Disco</button>
+                                    <button type="button" class="filtro-componente" id="filtro-rede">Rede</button>
+                                    <button type="button" class="filtro-componente" id="filtro-sistema">Sistema Operacional</button>
+                                </div>
+                            </div>
+                            <div class="linha-filtros">
+                                <label for="buscaEquipamento" class="somente-leitor">Buscar equipamento ou hospital</label>
+                                <input type="search" id="buscaEquipamento" placeholder="Buscar série ou hospital...">
+                                <button type="button" class="botao-exportar">↓ Exportar equipamentos (CSV)</button>
+                            </div>
+                        </section>
+
+                        <p class="resultado-filtros"><span id="resultadoBusca">5 de 5 equipamentos</span> · O status considera o componente selecionado.</p>
+                        <section id="lote-001" class="painel-lote">
+                            <div class="cabecalho-tabela"><h2>LT-2026-001 · ECG-12</h2><span>Equipamentos e métricas</span></div>
+                            <div class="rolagem-tabela">
+                                <table class="tabela-equipamentos">
+                                    <thead><tr><th>Equipamento</th><th>Hospital</th><th>Componentes</th><th>Métricas habilitadas</th><th>Status</th><th>Detalhes</th></tr></thead>
+                                    <tbody>
+                                        <tr class="linha-equipamento limite status-limite cpu-limite">
+                                            <td><strong>ECG12-0001</strong></td><td>Hospital São Lucas</td><td>5 componentes</td><td>13 de 13</td>
+                                            <td><span class="status limite">Limite excedido</span></td>
+                                            <td><a class="botao-detalhes" id="abrir-ECG12-0001" href="dashboard_equipamento.html?serie=ECG12-0001">Ver detalhes</a></td>
+                                        </tr>
+                                        <tr class="linha-equipamento normal">
+                                            <td><strong>ECG12-0002</strong></td><td>Hospital São Lucas</td><td>5 componentes</td><td>13 de 13</td>
+                                            <td><span class="status normal">Sem alertas</span></td>
+                                            <td><a class="botao-detalhes" id="abrir-ECG12-0002" href="dashboard_equipamento.html?serie=ECG12-0002">Ver detalhes</a></td>
+                                        </tr>
+                                        <tr class="linha-equipamento limite status-limite disco-limite">
+                                            <td><strong>ECG12-0003</strong></td><td>Hospital Vida</td><td>5 componentes</td><td>13 de 13</td>
+                                            <td><span class="status limite">Limite excedido</span></td>
+                                            <td><a class="botao-detalhes" id="abrir-ECG12-0003" href="dashboard_equipamento.html?serie=ECG12-0003">Ver detalhes</a></td>
+                                        </tr>
+                                        <tr class="linha-equipamento falha status-falha rede-falha">
+                                            <td><strong>ECG12-0004</strong></td><td>Hospital Vida</td><td>5 componentes</td><td>13 de 13</td>
+                                            <td><span class="status falha">Falha de leitura</span></td>
+                                            <td><a class="botao-detalhes" id="abrir-ECG12-0004" href="dashboard_equipamento.html?serie=ECG12-0004">Ver detalhes</a></td>
+                                        </tr>
+                                        <tr class="linha-equipamento atencao status-atencao cpu-atencao">
+                                            <td><strong>ECG12-0005</strong></td><td>Santa Clara</td><td>5 componentes</td><td>13 de 13</td>
+                                            <td><span class="status atencao">Em atenção</span></td>
+                                            <td><a class="botao-detalhes" id="abrir-ECG12-0005" href="dashboard_equipamento.html?serie=ECG12-0005">Ver detalhes</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                        <section id="lote-002" class="painel-lote oculto">
+                            <div class="cabecalho-tabela"><h2>LT-2026-002 · BPAP</h2><span>Equipamentos e métricas</span></div>
+                            <div class="rolagem-tabela">
+                                <table class="tabela-equipamentos">
+                                    <thead><tr><th>Equipamento</th><th>Hospital</th><th>Componentes</th><th>Métricas habilitadas</th><th>Status</th><th>Detalhes</th></tr></thead>
+                                    <tbody>
+                                        <tr class="linha-equipamento ocioso status-ocioso cpu-ocioso">
+                                            <td><strong>BPAP-0101</strong></td><td>Hospital São Lucas</td><td>5 componentes</td><td>13 de 13</td>
+                                            <td><span class="status ocioso">Abaixo do mínimo</span></td>
+                                            <td><a class="botao-detalhes" id="abrir-BPAP-0101" href="dashboard_equipamento.html?serie=BPAP-0101">Ver detalhes</a></td>
+                                        </tr>
+                                        <tr class="linha-equipamento normal">
+                                            <td><strong>BPAP-0102</strong></td><td>Hospital Vida</td><td>5 componentes</td><td>13 de 13</td>
+                                            <td><span class="status normal">Sem alertas</span></td>
+                                            <td><a class="botao-detalhes" id="abrir-BPAP-0102" href="dashboard_equipamento.html?serie=BPAP-0102">Ver detalhes</a></td>
+                                        </tr>
+                                        <tr class="linha-equipamento normal">
+                                            <td><strong>BPAP-0103</strong></td><td>Santa Clara</td><td>5 componentes</td><td>13 de 13</td>
+                                            <td><span class="status normal">Sem alertas</span></td>
+                                            <td><a class="botao-detalhes" id="abrir-BPAP-0103" href="dashboard_equipamento.html?serie=BPAP-0103">Ver detalhes</a></td>
+                                        </tr>
+                                        <tr class="linha-equipamento normal">
+                                            <td><strong>BPAP-0104</strong></td><td>Santa Clara</td><td>5 componentes</td><td>12 de 13</td>
+                                            <td><span class="status normal">Sem alertas</span></td>
+                                            <td><a class="botao-detalhes" id="abrir-BPAP-0104" href="dashboard_equipamento.html?serie=BPAP-0104">Ver detalhes</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                        <section id="lote-003" class="painel-lote oculto">
+                            <div class="cabecalho-tabela"><h2>LT-2026-003 · Osteomax</h2><span>Equipamentos e métricas</span></div>
+                            <div class="rolagem-tabela">
+                                <table class="tabela-equipamentos">
+                                    <thead><tr><th>Equipamento</th><th>Hospital</th><th>Componentes</th><th>Métricas habilitadas</th><th>Status</th><th>Detalhes</th></tr></thead>
+                                    <tbody>
+                                        <tr class="linha-equipamento normal">
+                                            <td><strong>OST-2001</strong></td><td>Hospital São Lucas</td><td>5 componentes</td><td>13 de 13</td>
+                                            <td><span class="status normal">Sem alertas</span></td>
+                                            <td><a class="botao-detalhes" id="abrir-OST-2001" href="dashboard_equipamento.html?serie=OST-2001">Ver detalhes</a></td>
+                                        </tr>
+                                        <tr class="linha-equipamento normal">
+                                            <td><strong>OST-2002</strong></td><td>Hospital São Lucas</td><td>5 componentes</td><td>13 de 13</td>
+                                            <td><span class="status normal">Sem alertas</span></td>
+                                            <td><a class="botao-detalhes" id="abrir-OST-2002" href="dashboard_equipamento.html?serie=OST-2002">Ver detalhes</a></td>
+                                        </tr>
+                                        <tr class="linha-equipamento normal">
+                                            <td><strong>OST-2003</strong></td><td>Sem hospital</td><td>5 componentes</td><td>13 de 13</td>
+                                            <td><span class="status normal">Sem alertas</span></td>
+                                            <td><a class="botao-detalhes" id="abrir-OST-2003" href="dashboard_equipamento.html?serie=OST-2003">Ver detalhes</a></td>
+                                        </tr>
+                                        <tr class="linha-equipamento normal">
+                                            <td><strong>OST-2004</strong></td><td>Hospital Vida</td><td>5 componentes</td><td>13 de 13</td>
+                                            <td><span class="status normal">Sem alertas</span></td>
+                                            <td><a class="botao-detalhes" id="abrir-OST-2004" href="dashboard_equipamento.html?serie=OST-2004">Ver detalhes</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                        <p id="tabelaVazia" class="tabela-vazia oculto">Nenhum equipamento encontrado. Ajuste os filtros para ver outros resultados.</p>
+                        <footer>BioTrace Hardware Intelligence © 2026 · Dados simulados para demonstração</footer>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+
+        <script src="./js/dashboard.js"></script>
+        <script src="./js/engenheiro.js"></script>
+    </body>
+</html>

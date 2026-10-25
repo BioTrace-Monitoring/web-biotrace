@@ -4,14 +4,13 @@ var database = require("../database/config");
 
 
 // Função que cadastra um novo usuário
-function cadastrarEmpresa(razao_social, cnpj, telefone, cep, cidade, logradouro, bairro, numero)
-{
+function cadastrarEmpresa(razao_social, cnpj, telefone, cep, cidade, logradouro, bairro, numero) {
     console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function cadastrarUsuario():", razao_social, cnpj, telefone, cep, cidade, logradouro, bairro, numero);
-    
+
     // Insert que insere uma nova empresa na tabela empresa
     var instrucaoSql = `
-        INSERT INTO empresa(razao_social, cnpj, telefone_comercial, cep, cidade, logradouro, bairro, numero) VALUES
-        ('${razao_social}', '${cnpj}', '${telefone}', '${cep}', '${cidade}', '${logradouro}', '${bairro}', '${numero}');
+    INSERT INTO empresa (razao_social, cnpj, telefone_comercial, cep, numero) VALUES
+    ('${razao_social}', '${cnpj}', '${telefone}', '${cep}', '${numero}');
     `;
 
     // Exibe a query montada no terminal
@@ -21,53 +20,58 @@ function cadastrarEmpresa(razao_social, cnpj, telefone, cep, cidade, logradouro,
     return database.executar(instrucaoSql);
 }
 
-
-
-
-// Função responsável por buscar os dados de um usuário
-function visualizarEmpresa()
-{
-    console.log("ACESSEI O USUARIO MODEL \n \n\t\t >>Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function visualizarUsuario():")
-
-    // Select que busca os dados de um usuário pelo seu id
+function listarEmpresas() {
     var instrucaoSql = `
-        SELECT
-        e.id_empresa,
-        e.razao_social,
-        e.cnpj,
-        e.telefone_comercial,
-        e.cep,
-        e.cidade,
-        e.logradouro,
-        e.bairro,
-        e.numero,
+    SELECT e.id_empresa, e.razao_social, e.cnpj, e.telefone_comercial, e.cep, e.numero,
+           u.nome_usuario AS nome_administrador
+    FROM empresa e
+    LEFT JOIN usuario u
+        ON u.fk_empresa = e.id_empresa
+        AND u.fk_cargo = (SELECT id_cargo FROM cargo WHERE nome = 'Administrador')
+    WHERE e.ativo = TRUE
+`;
 
-        CASE
-            WHEN
-                u.id_usuario IS NOT NULL
-            THEN true
-            ELSE false
-        END AS temGestor,
-        u.nome_usuario AS nomeGestor
-        FROM empresa e
-
-        LEFT JOIN usuario u ON u.fk_empresa = e.id_empresa AND u.fk_nivel_acesso = 1
-        ORDER BY e.id_empresa DESC;
-    `;
-
-    // Exibe a query montada no terminal
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
 
-    // Executa a query no banco e retorna o resultado
     return database.executar(instrucaoSql);
 }
 
+function excluirEmpresa(idEmpresa) {
+    var instrucaoSql = `
+        UPDATE empresa
+        SET ativo = FALSE
+        WHERE id_empresa = ${Number(idEmpresa)}
+        AND ativo = TRUE;
+    `;
 
+    console.log("Executando a instrução SQL: \n" + instrucaoSql);
+
+    return database.executar(instrucaoSql);
+}
 
 // Exportando as funções do model
 // Outros arquivos podem usar essas funções
+function buscarEmpresa(idEmpresa) {
+    var instrucaoSql = `
+        SELECT id_empresa, razao_social, cnpj, telefone_comercial, cep, numero
+        FROM empresa WHERE id_empresa = ? AND ativo = TRUE;
+    `;
+    return database.executar(instrucaoSql, [idEmpresa]);
+}
+
+function alterarEmpresa(idEmpresa, razaoSocial, cnpj, telefone, cep, numero) {
+    var instrucaoSql = `
+        UPDATE empresa SET razao_social = ?, cnpj = ?, telefone_comercial = ?, cep = ?, numero = ?
+        WHERE id_empresa = ? AND ativo = TRUE;
+    `;
+    return database.executar(instrucaoSql, [razaoSocial, cnpj, telefone, cep, numero, idEmpresa]);
+}
+
 module.exports =
 {
+    buscarEmpresa,
+    alterarEmpresa,
     cadastrarEmpresa,
-    visualizarEmpresa
+    listarEmpresas,
+    excluirEmpresa
 };

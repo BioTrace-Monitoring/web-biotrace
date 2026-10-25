@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar usuário | BioTrace</title>
+    <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="../css/style_cadastro_usuario.css">
+</head>
+
+<body>
+    <div class="app">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="logo">
+                    <img src="../assets/icons/BioTrace (4).png" alt="BioTrace Logo">
+                </a>
+                <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Fechar menu">&times;</button>
+            </div>
+
+            <nav class="sidebar-nav">
+                    <span class="nav-title">Principal</span>
+                    <a href="index.html" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span>Visão Geral</span>
+                    </a>
+                    <a href="equipamentos.html" class="nav-item">
+                        <span class="nav-icon">📟</span>
+                        <span>Equipamentos</span>
+                    </a>
+
+                    <span class="nav-title nav-title-dashboards">Dashboards</span>
+                    <a href="dash_engenheiro.html" class="nav-item">
+                        <span class="nav-icon">📈</span>
+                        <span>Equipamentos por lote</span>
+                    </a>
+
+                    <a href="dash_geral.html" class="nav-item">
+                        <span class="nav-icon">📉</span>
+                        <span>Análise de lotes</span>
+                    </a>
+
+                    <span class="nav-title nav-title-spacing">Cadastros</span>
+                    <a href="hospitais.html" class="nav-item">
+                        <span class="nav-icon">🏥</span>
+                        <span>Cadastrar hospital</span>
+                    </a>
+                    <a href="cadastrar-usuario.html" class="nav-item active">
+                        <span class="nav-icon">👤</span>
+                        <span>Cadastrar usuário</span>
+                    </a>
+                </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div id="usuario_avatar" class="usuario-avatar">BT</div>
+                    <div class="user-info">
+                        <strong id="nome_cliente">Usuário BioTrace</strong>
+                        <span id="email_cliente">perfil@biotrace.com</span>
+                    </div>
+                </div>
+                <button class="sidebar-logout" id="btnSair" type="button" aria-label="Sair da conta" title="Sair da conta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M9 5H5v14h4M10 12h10m-4-4 4 4-4 4" />
+                    </svg>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="mobile-header">
+                <button class="menu-button" id="menuButton" type="button" aria-label="Abrir menu"
+                    aria-controls="sidebar" aria-expanded="false">☰</button>
+                <img src="../assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo">
+            </header>
+
+            <div class="page-content">
+                <div class="page-heading">
+                    <div class="eyebrow"><span class="eyebrow-dot"></span>PAINEL DE OBSERVABILIDADE</div>
+                    <h1>Cadastrar usuário</h1>
+                    <p>Preencha os dados para adicionar um usuário à sua empresa.</p>
+                </div>
+
+                <section class="form-card" aria-labelledby="titulo-dados-usuario">
+                    <div class="form-card-header">
+                        <div class="form-card-icon" aria-hidden="true">👤</div>
+                        <div>
+                            <h2 id="titulo-dados-usuario">Dados do usuário</h2>
+                            <p>Os campos marcados com <span class="required-mark">*</span> são obrigatórios.</p>
+                        </div>
+                    </div>
+
+                    <form id="formulario-cadastro" novalidate>
+                        <div class="form-grid">
+                            <div class="form-field field-wide">
+                                <label for="ipt_nome_user">Nome completo <span class="required-mark">*</span></label>
+                                <input type="text" id="ipt_nome_user" maxlength="100" autocomplete="name"
+                                    placeholder="Ex.: Maria da Silva" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="ipt_email_user">E-mail <span class="required-mark">*</span></label>
+                                <input type="email" id="ipt_email_user" autocomplete="email"
+                                    placeholder="nome@empresa.com.br" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="ipt_cargo_user">Cargo <span class="required-mark">*</span></label>
+                                <select id="ipt_cargo_user" required>
+                                    <option value="">Carregando cargos...</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="ipt_cpf_user">CPF <span class="required-mark">*</span></label>
+                                <input type="text" id="ipt_cpf_user" inputmode="numeric" maxlength="14"
+                                    autocomplete="off" placeholder="000.000.000-00" required>
+                                <p class="field-help">Informe os 11 dígitos do CPF.</p>
+                            </div>
+                            <div class="form-field">
+                                <label for="ipt_telefone_user">Telefone <span class="required-mark">*</span></label>
+                                <input type="tel" id="ipt_telefone_user" inputmode="numeric" maxlength="15"
+                                    autocomplete="tel" placeholder="(00) 00000-0000" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="ipt_dt_nasc_user">Data de nascimento <span
+                                        class="required-mark">*</span></label>
+                                <input type="text" id="ipt_dt_nasc_user" inputmode="numeric" maxlength="10"
+                                    autocomplete="bday" placeholder="DD/MM/AAAA" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="ipt_senha_user">Senha <span class="required-mark">*</span></label>
+                                <div class="password-input-wrap">
+                                    <input type="password" id="ipt_senha_user" minlength="8" autocomplete="new-password"
+                                        placeholder="Mínimo de 8 caracteres" required>
+                                    <button class="password-toggle" type="button" data-target="ipt_senha_user"
+                                        aria-label="Mostrar senha" aria-pressed="false">
+                                        <span class="password-toggle-icon" aria-hidden="true"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <label for="ipt_conf_senha_user">Confirmar senha <span
+                                        class="required-mark">*</span></label>
+                                <div class="password-input-wrap">
+                                    <input type="password" id="ipt_conf_senha_user" minlength="8"
+                                        autocomplete="new-password" placeholder="Digite a senha novamente" required>
+                                    <button class="password-toggle" type="button" data-target="ipt_conf_senha_user"
+                                        aria-label="Mostrar senha" aria-pressed="false">
+                                        <span class="password-toggle-icon" aria-hidden="true"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <a href="listar-usuarios.html" class="button-secondary">Ver usuários cadastrados</a>
+                            <button class="button-primary" id="btn_cadastrar_usuario" type="submit">
+                                Cadastrar usuário
+                            </button>
+                        </div>
+                        <p class="form-message" id="mensagem-cadastro" role="status" aria-live="polite" hidden></p>
+                    </form>
+                </section>
+            </div>
+        </main>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div id="cadastro-sucesso" class="login-sucesso" role="status" aria-live="polite">
+        <div class="sucesso-card">
+            <div class="sucesso-check">
+                <span>✓</span>
+            </div>
+            <h2>Cadastro realizado!</h2>
+            <p id="mensagem-sucesso-cadastro"></p>
+            <div class="sucesso-carregando">
+                <span></span>
+            </div>
+        </div>
+    </div>
+    <script src="./js/dashboard.js"></script>
+    <script src="https://unpkg.com/imask"></script>
+    <script>
+        const formularioCadastro = document.getElementById("formulario-cadastro");
+        const campoCargo = document.getElementById("ipt_cargo_user");
+        const mensagemCadastro = document.getElementById("mensagem-cadastro");
+        const botaoCadastro = document.getElementById("btn_cadastrar_usuario");
+        const telaSucessoCadastro = document.getElementById("cadastro-sucesso");
+        const textoSucessoCadastro = document.getElementById("mensagem-sucesso-cadastro");
+        let temporizadorSucesso;
+
+        IMask(document.getElementById("ipt_cpf_user"), {
+            mask: "000.000.000-00"
+        });
+
+        IMask(document.getElementById("ipt_telefone_user"), {
+            mask: [
+                { mask: "(00) 0000-0000" },
+                { mask: "(00) 00000-0000" }
+            ]
+        });
+
+        IMask(document.getElementById("ipt_dt_nasc_user"), {
+            mask: "00/00/0000"
+        });
+
+        function somenteDigitos(valor) {
+            return valor.replace(/\D/g, "");
+        }
+
+        function exibirMensagem(texto, sucesso = false) {
+            mensagemCadastro.textContent = texto;
+            mensagemCadastro.classList.toggle("sucesso", sucesso);
+            mensagemCadastro.hidden = !texto;
+        }
+
+        function exibirSucessoCadastro(nome) {
+            textoSucessoCadastro.textContent = `O cadastro de ${nome} foi concluído com sucesso.`;
+            telaSucessoCadastro.classList.remove("ativo");
+            void telaSucessoCadastro.offsetWidth;
+            telaSucessoCadastro.classList.add("ativo");
+
+            window.clearTimeout(temporizadorSucesso);
+            temporizadorSucesso = window.setTimeout(function () {
+                telaSucessoCadastro.classList.remove("ativo");
+            }, 2200);
+        }
+
+        async function carregarCargos() {
+            const cargosPermitidos = window.bioTraceAccess?.cargosPermitidos || [];
+            if (cargosPermitidos.length === 0) {
+                campoCargo.replaceChildren(new Option("Cargo indisponível", ""));
+                campoCargo.disabled = true;
+                exibirMensagem("Seu perfil não permite cadastrar usuários.");
+                return;
+            }
+
+            try {
+                const resposta = await fetch("/usuario/cargos");
+                if (!resposta.ok) throw new Error("Não foi possível carregar os cargos.");
+
+                const cargos = await resposta.json();
+                campoCargo.replaceChildren(new Option("Selecione um cargo", ""));
+
+                cargos.filter((cargo) => {
+                    const nomeCargo = cargo.nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase();
+                    return Number(cargo.id) !== 1 && cargosPermitidos.includes(nomeCargo);
+                }).forEach((cargo) => {
+                    campoCargo.add(new Option(cargo.nome, cargo.id));
+                });
+
+                if (campoCargo.options.length === 1) {
+                    throw new Error("Nenhum cargo permitido está disponível para cadastro.");
+                }
+            } catch (erro) {
+                campoCargo.replaceChildren(new Option("Cargos indisponíveis", ""));
+                campoCargo.disabled = true;
+                exibirMensagem(erro.message || "Não foi possível carregar os cargos.");
+            }
+        }
+
+        function converterDataParaApi(valor) {
+            const partes = valor.split("/");
+            if (partes.length !== 3 || partes[0].length !== 2 || partes[1].length !== 2 || partes[2].length !== 4) {
+                return null;
+            }
+
+            const dia = Number(partes[0]);
+            const mes = Number(partes[1]);
+            const ano = Number(partes[2]);
+            const data = new Date(ano, mes - 1, dia);
+
+            if (data.getFullYear() !== ano || data.getMonth() !== mes - 1 || data.getDate() !== dia) {
+                return null;
+            }
+
+            return `${partes[2]}-${partes[1]}-${partes[0]}`;
+        }
+
+        document.querySelectorAll(".password-toggle").forEach(function (botao) {
+            botao.addEventListener("click", function () {
+                const input = document.getElementById(this.dataset.target);
+                const mostrar = input.type === "password";
+
+                input.type = mostrar ? "text" : "password";
+                this.setAttribute("aria-label", mostrar ? "Ocultar senha" : "Mostrar senha");
+                this.setAttribute("aria-pressed", String(mostrar));
+                this.classList.toggle("visivel", mostrar);
+            });
+        });
+
+        formularioCadastro.addEventListener("submit", async function (evento) {
+            evento.preventDefault();
+            exibirMensagem("");
+
+            const idEmpresa = Number(localStorage.getItem("FK_EMPRESA"));
+            const nome = document.getElementById("ipt_nome_user").value.trim();
+            const email = document.getElementById("ipt_email_user").value.trim();
+            const senha = document.getElementById("ipt_senha_user").value;
+            const confirmarSenha = document.getElementById("ipt_conf_senha_user").value;
+            const cpf = somenteDigitos(document.getElementById("ipt_cpf_user").value);
+            const telefone = somenteDigitos(document.getElementById("ipt_telefone_user").value);
+            const dataNascimento = converterDataParaApi(document.getElementById("ipt_dt_nasc_user").value);
+            const cargo = Number(campoCargo.value);
+            const nomeCargo = campoCargo.selectedOptions[0]?.textContent
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .trim()
+                .toLowerCase();
+
+            if (!Number.isInteger(idEmpresa) || idEmpresa <= 0) {
+                exibirMensagem("Não foi possível identificar a empresa da sessão. Entre novamente.");
+                return;
+            }
+            if (!nome || !email || !senha || !campoCargo.value || !cpf || !telefone) {
+                exibirMensagem("Preencha todos os campos obrigatórios.");
+                return;
+            }
+            if (!window.bioTraceAccess.cargosPermitidos.includes(nomeCargo)) {
+                exibirMensagem("Seu perfil não permite cadastrar esse cargo.");
+                return;
+            }
+            if (!document.getElementById("ipt_email_user").checkValidity()) {
+                exibirMensagem("Informe um endereço de e-mail válido.");
+                return;
+            }
+            if (cpf.length !== 11) {
+                exibirMensagem("O CPF deve conter 11 dígitos.");
+                return;
+            }
+            if (telefone.length < 10 || telefone.length > 11) {
+                exibirMensagem("Informe um telefone com DDD.");
+                return;
+            }
+            if (!dataNascimento) {
+                exibirMensagem("Informe uma data de nascimento válida no formato DD/MM/AAAA.");
+                return;
+            }
+            if (senha.length < 8) {
+                exibirMensagem("A senha deve ter pelo menos 8 caracteres.");
+                return;
+            }
+            if (senha !== confirmarSenha) {
+                exibirMensagem("As senhas não coincidem.");
+                return;
+            }
+
+            botaoCadastro.disabled = true;
+            botaoCadastro.textContent = "Cadastrando...";
+
+            try {
+                const resposta = await fetch(`/usuario/${idEmpresa}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    },
+                    body: JSON.stringify({
+                        nomeServer: nome,
+                        emailServer: email,
+                        senhaServer: senha,
+                        cargoServer: cargo,
+                        cpfServer: cpf,
+                        dtNascimentoServer: dataNascimento,
+                        telefoneServer: telefone
+                    })
+                });
+
+                const conteudo = await resposta.text();
+                let resultado;
+                try {
+                    resultado = JSON.parse(conteudo);
+                } catch {
+                    resultado = { mensagem: conteudo };
+                }
+
+                if (!resposta.ok) {
+                    throw new Error(resultado.mensagem || resultado.erro || conteudo || "Não foi possível cadastrar o usuário.");
+                }
+
+                exibirMensagem("");
+                exibirSucessoCadastro(nome);
+                formularioCadastro.reset();
+            } catch (erro) {
+                exibirMensagem(erro.message || "Não foi possível cadastrar o usuário. Tente novamente.");
+            } finally {
+                botaoCadastro.disabled = false;
+                botaoCadastro.textContent = "Cadastrar usuário";
+            }
+        });
+
+        carregarCargos();
+    </script>
+</body>
+
+</html>

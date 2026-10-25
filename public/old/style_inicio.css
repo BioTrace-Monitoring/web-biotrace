@@ -1,0 +1,307 @@
+/* Import da fonte Outfit para Títulos e Geist para parágrafos*/
+@import url('https://fonts.googleapis.com/css2?family=Geist:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&display=swap');
+
+*
+{
+    margin: 0; /* Remove as margens padrão que os navegadores colocam automaticamente*/
+    padding: 0; /* Remove o espaçamento interno padrão de todos os elementos */
+    box-sizing: border-box; /* Evitar que elementos cresçam a mais*/
+    font-family: 'Outfit'; /* Fonte padrão da página*/
+}
+
+body
+{
+    min-height: 100px; /* Define uma altura mínima para o body*/
+    background: #FBF9FF; /* Cor de fundo da página*/
+}
+
+a
+{
+    text-decoration: none; /* Tira o sublinhado dos links*/
+}
+
+button
+{
+    cursor: pointer; /* Mão do mouse aparece*/
+    border: none; /* Remove a borda padrão dos botões*/
+    font-family: 'Outfit'; /* Fonte utilizada nos botões*/
+}
+
+.cabecalho
+{
+    display: flex; /* Alinhar elementos horizontalmente*/
+    align-items: center; /* Centraliza os elementos verticalmente*/
+    justify-content: space-between; /* Coloca espaço entre os elementos do header*/
+    background: #FFFFFF; /* Cor de fundo do header*/
+    padding: 14px 32px; /* Espaçamento interno -> 14px cima e baixo | 32px laterais*/
+    border-bottom: 1px solid #ECEAF3; /* Borda inferior do header*/
+}
+
+.cabecalho-marca
+{
+    display: flex; /* Alinhar elementos horizontalmente*/
+    align-items: center; /* Centraliza os elementos verticalmente*/
+    gap: 12px; /* Espaço entre a logo e o texto*/
+}
+
+.logo-biotrace
+{
+    width: 42px; /* Largura da logo*/
+    height: 42px; /* Altura da logo*/
+    object-fit: contain; /* Mantém a proporção da imagem*/
+}
+
+.cabecalho-logo-texto h1
+{
+    font-size: 16px; /* Tamanho da escrita*/
+    font-weight: bold; /* Negrito*/
+}
+
+.cabecalho-usuario
+{
+    display: flex; /* Alinhar elementos horizontalmente*/
+    align-items: center; /* Centraliza os elementos verticalmente*/
+    gap: 14px; /* Espaço entre o nome do usuário e o botão*/
+}
+
+.btn-sair
+{
+    background: none; /* Remove a cor de fundo do botão*/
+    border: 1px solid #ECEAF3; /* Borda do botão*/
+    padding: 8px 14px; /* Espaçamento interno -> 8px cima e baixo | 14px laterais*/
+    border-radius: 100px; /* Deixa o botão arredondado*/
+    font-size: 12px; /* Tamanho da escrita*/
+    font-weight: 600; /* Semi negrito*/
+    color: #6B6B76; /* Cor do texto*/
+}
+
+.container-inicio
+{
+    max-width: 1180px; /* Largura máxima do conteúdo*/
+    margin: 0 auto; /* Centraliza o container horizontalmente*/
+    padding: 36px 24px 80px; /* Espaçamento interno -> 36px cima | 24px laterais | 80px baixo*/
+}
+
+.cabecalho-inicio
+{
+    display: flex; /* Alinhar elementos horizontalmente*/
+    align-items: flex-start; /* Alinha os elementos no início verticalmente*/
+    justify-content: space-between; /* Separa o texto e o botão*/
+    gap: 16px; /* Espaço entre os elementos*/
+    margin-bottom: 28px; /* Espaço abaixo do cabeçalho da página*/
+}
+
+.cabecalho-inicio h2
+{
+    font-size: 26px; /* Tamanho da escrita*/
+    font-weight: bold; /* Negrito*/
+}
+
+.cabecalho-inicio p
+{
+    font-family: 'Geist'; /* Fonte utilizada no subtítulo*/
+    color: #6B6B76; /* Cor do texto*/
+    font-size: 14px; /* Tamanho da escrita*/
+    margin-top: 4px; /* Espaço acima do texto*/
+}
+
+.btn-cadastrar-empresa
+{
+    display: flex; /* Alinhar elementos horizontalmente*/
+    align-items: center; /* Centraliza o conteúdo verticalmente*/
+    gap: 8px; /* Espaço entre os elementos do botão*/
+    background: #8E39E2; /* Cor de fundo do botão*/
+    color: #FFFFFF; /* Cor do texto*/
+    padding: 13px 22px; /* Espaçamento interno -> 13px cima e baixo | 22px laterais*/
+    border-radius: 100px; /* Deixa o botão arredondado*/
+    font-weight: bold; /* Negrito*/
+    font-size: 14px; /* Tamanho da escrita*/
+}
+
+.card-tabela
+{
+    background: #FFFFFF; /* Cor de fundo da tabela*/
+    border: 1px solid #ECEAF3; /* Borda ao redor da tabela*/
+    border-radius: 18px; /* Arredonda os cantos da tabela*/
+}
+
+table
+{
+    width: 100%; /* Faz a tabela ocupar toda a largura disponível*/
+}
+
+thead th
+{
+    text-align: left; /* Alinha os títulos das colunas à esquerda*/
+    font-size: 11px; /* Tamanho da escrita*/
+    color: #6B6B76; /* Cor do texto*/
+    font-weight: bold; /* Negrito*/
+    padding: 16px 20px; /* Espaçamento interno -> 16px cima e baixo | 20px laterais*/
+    background: #FBFAFE; /* Cor de fundo do cabeçalho da tabela*/
+    border-bottom: 1px solid #ECEAF3; /* Borda inferior das colunas*/
+}
+
+tbody td
+{
+    padding: 16px 20px; /* Espaçamento interno das células*/
+    font-size: 13px; /* Tamanho da escrita*/
+    border-bottom: 1px solid #ECEAF3; /* Borda inferior de cada linha*/
+}
+
+.empresa-nome
+{
+    font-weight: bold; /* Negrito*/
+    font-size: 14px; /* Tamanho da escrita*/
+}
+
+.empresa-cnpj
+{
+    font-family: 'Geist';
+    font-size: 12px; /* Tamanho da escrita*/
+    color: #6B6B76; /* Cor do texto*/
+    margin-top: 2px; /* Espaço acima do CNPJ*/
+}
+
+.obs
+{
+    align-items: center; /* Centraliza os elementos verticalmente*/ 
+    gap: 6px; /* Espaço entre os elementos*/
+    padding: 5px 12px; /* Espaçamento interno -> 5px cima e baixo | 12px laterais*/
+    border-radius: 100px; /* Deixa o elemento arredondado*/
+    font-size: 11px; /* Tamanho da escrita*/
+    font-weight: bold; /* Negrito*/
+}
+
+.obs.com-gestor
+{
+    background: #DFF7EC; /* Cor de fundo do gestor cadastrado*/
+    color: #10B981; /* Cor do texto*/
+}
+
+.btn-cadastrar-gestor
+{
+    background: #F5EBFF; /* Cor de fundo do botão*/
+    color: #7A32D6; /* Cor do texto*/
+    padding: 7px 12px; /* Espaçamento interno -> 7px cima e baixo | 12px laterais*/
+    border-radius: 100px; /* Deixa o botão arredondado*/
+    font-size: 11px; /* Tamanho da escrita*/
+    font-weight: 600; /* Semi negrito*/
+}
+
+.acoes-tabela
+{
+    display: flex; /* Alinhar elementos horizontalmente*/
+    justify-content: flex-end; /* Alinha os elementos no final da célula*/
+}
+
+.btn-editar
+{
+    width: 34px; /* Largura do botão*/
+    height: 34px; /* Altura do botão*/
+    display: flex; /* Alinhar elementos horizontalmente*/
+    align-items: center; /* Centraliza o conteúdo verticalmente*/
+    justify-content: center; /* Centraliza o conteúdo horizontalmente*/
+    background: #F5EBFF; /* Cor de fundo do botão*/
+    color: #7A32D6; /* Cor do ícone*/
+    border-radius: 8px; /* Arredonda os cantos do botão*/
+    font-size: 18px; /* Tamanho da escrita*/
+}
+
+
+.container-cliente
+{
+    display: flex; /* Alinhar elementos horizontalmente*/
+    align-items: center; /* Centraliza o conteúdo verticalmente*/
+    justify-content: center; /* Centraliza o conteúdo horizontalmente*/
+    padding-top: 200px;
+}
+
+.principal
+{
+    text-align: center; /* Alinha ao centro*/
+}
+
+.principal h1
+{
+    font-size: 32px; /* Tamanho da escrita*/
+    margin-bottom: 8px; /* Espaço abaixo do cabeçalho*/
+}
+
+.principal p
+{
+    font-size: 16px; /* Tamanho da escrita*/
+    color: #6B6B76; /* Cor do texto*/
+}
+
+
+   /* RESPONSIVIDADE UNIFICADA */
+
+
+@media (max-width: 768px) {
+
+    .cabecalho {
+        padding: 12px 16px;
+    }
+
+    .logo-biotrace {
+        width: 36px;
+        height: 36px;
+    }
+
+    .cabecalho-logo-texto h1 {
+        font-size: 14px;
+    }
+
+    .btn-sair {
+        padding: 6px 10px;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+ 
+    .container-inicio {
+        padding: 24px 16px 40px;
+    }
+
+    .cabecalho-inicio {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+    }
+
+    .cabecalho-inicio h2 {
+        font-size: 22px;
+    }
+
+    .btn-cadastrar-empresa {
+        width: 100%;
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+    .card-tabela {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        min-width: 600px;
+    }
+
+    thead th,
+    tbody td {
+        white-space: nowrap;
+    }
+
+    .container-cliente {
+        padding: 60px 16px 40px;
+    }
+
+    .principal h1 {
+        font-size: 24px;
+    }
+
+    .principal p {
+        font-size: 14px;
+    }
+}
