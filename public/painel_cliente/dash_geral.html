@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Análise de lotes | BioTrace</title>
+        <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
+        <link rel="stylesheet" href="./css/style.css">
+        <link rel="stylesheet" href="./css/style_dash_geral.css">
+    </head>
+
+    <body>
+        <div class="app">
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <a href="index.html" class="logo">
+                        <img src="../assets/icons/BioTrace (4).png" alt="BioTrace Logo">
+                    </a>
+                    <button class="sidebar-close" id="sidebarClose" type="button">
+                        &times;
+                    </button>
+                </div>
+
+                <nav class="sidebar-nav">
+                    <span class="nav-title">Principal</span>
+                    <a href="index.html" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span>Visão Geral</span>
+                    </a>
+                    <a href="equipamentos.html" class="nav-item">
+                        <span class="nav-icon">📟</span>
+                        <span>Equipamentos</span>
+                    </a>
+
+                    <span class="nav-title nav-title-dashboards">Dashboards</span>
+                    <a href="dash_engenheiro.html" class="nav-item">
+                        <span class="nav-icon">📈</span>
+                        <span>Equipamentos por lote</span>
+                    </a>
+
+                    <a href="dash_geral.html" class="nav-item active">
+                        <span class="nav-icon">📉</span>
+                        <span>Análise de lotes</span>
+                    </a>
+
+                    <span class="nav-title nav-title-spacing">Cadastros</span>
+                    <a href="hospitais.html" class="nav-item">
+                        <span class="nav-icon">🏥</span>
+                        <span>Cadastrar hospital</span>
+                    </a>
+                    <a href="cadastrar-usuario.html" class="nav-item">
+                        <span class="nav-icon">👤</span>
+                        <span>Cadastrar usuário</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-footer">
+                    <div class="sidebar-user">
+                        <div id="usuario_avatar" class="usuario-avatar">BT</div>
+                        <div class="user-info">
+                            <strong id="nome_cliente">Usuário BioTrace</strong>
+                            <span id="email_cliente">perfil@biotrace.com</span>
+                        </div>
+                    </div>
+                    <button class="sidebar-logout" id="btnSair" type="button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 5H5v14h4M10 12h10m-4-4 4 4-4 4" />
+                        </svg>
+                    </button>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <header class="mobile-header">
+                    <button class="menu-button" id="menuButton" type="button">
+                        ☰
+                    </button>
+                    <img src="../assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo">
+                </header>
+
+                <div class="page-content">
+                    <div class="page-heading">
+                        <div class="eyebrow"><span class="eyebrow-dot"></span>ANÁLISE PREDITIVA</div>
+                        <h1>Análise de lotes</h1>
+                        <p>Acompanhe os alertas, a previsão de degradação e o comportamento térmico dos lotes.</p>
+                    </div>
+                    <div class="dashboard-geral">
+                        <!-- Barra de Filtro Global de Lote -->
+                        <section class="global-filter-card">
+                            <div class="batch-select-wrapper">
+                                <label for="selectLoteGlobal">Selecionar Lote para Análise</label>
+                                <select id="selectLoteGlobal" class="batch-select"></select>
+                            </div>
+                        </section>
+
+                        <!-- Grid de Gráficos Analíticos -->
+                        <div class="dashboard-grid">
+                            <!-- Card 1: Gráfico de Pizza (Saúde do Lote) -->
+                            <div class="dashboard-card">
+                                <div class="card-header">
+                                    <h2>Proporção de Alertas</h2>
+                                    <p>Status atual dos componentes</p>
+                                </div>
+                                <div class="chart-container-wrapper">
+                                    <canvas id="pizzaLoteCanvas"></canvas>
+                                </div>
+                                <div class="batch-summary-footer" id="batchSummaryFooter"></div>
+                            </div>
+
+                            <!-- Card 2: Gráfico de Tendência e Regressão Linear (Forecasting) -->
+                            <div class="dashboard-card">
+                                <div class="card-header">
+                                    <h2>Previsão de Degradação (CPU/Temp)</h2>
+                                    <p>Histórico real + Projeção de limite crítico</p>
+                                </div>
+                                <div class="chart-container-wrapper">
+                                    <canvas id="forecastingCanvas"></canvas>
+                                </div>
+                                <div class="forecasting-footer" id="forecastingFooter"></div>
+                            </div>
+
+                            <!-- Card 3: Gráfico de Dispersão / Correlação Uptime vs Temperatura -->
+                            <div class="dashboard-card">
+                                <div class="card-header">
+                                    <h2>Correlação: Uptime vs. Temperatura</h2>
+                                    <p>Avaliação de estresse térmico acumulado por lote</p>
+                                </div>
+                                <div class="chart-container-wrapper">
+                                    <canvas id="correlationCanvas"></canvas>
+                                </div>
+                                <div class="forecasting-footer" id="correlationFooter">
+                                    <div class="summary-item"><span class="summary-label">Métrica Analisada</span><span class="summary-value destaque">Pearson (r)</span></div>
+                                    <div class="summary-item"><span class="summary-label">Correlação Geral</span><span class="summary-value normal">Forte (+0.95)</span></div>
+                                    <div class="summary-item"><span class="summary-label">Status Térmico</span><span class="summary-value limite">Lote 1 em Alerta</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <footer>BioTrace Hardware Intelligence © 2026 · Dados simulados para demonstração</footer>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <script src="./js/dashboard.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="./js/dash_geral.js"></script>
+    </body>
+</html>

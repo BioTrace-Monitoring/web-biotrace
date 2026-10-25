@@ -63,28 +63,23 @@ function classificar(comp) {
 function inicializar() {
   const select = document.getElementById("selectLoteGlobal");
   if (!select) return;
-  select.innerHTML = lotesMock.map(l => `<option value="${l.id_lote_equipamento}">${l.numero_lote} · Modelo ${l.nome_modelo}</option>`).join("");
+  for (const lote of lotesMock) {
+    select.innerHTML += `<option value="${lote.id_lote_equipamento}">${lote.numero_lote} · Modelo ${lote.nome_modelo}</option>`;
+  }
+
+  select.addEventListener("change", function () {
+    atualizarDashboard(select.value);
+  });
   
   if (lotesMock.length > 0) {
     atualizarDashboard(lotesMock[0].id_lote_equipamento);
   }
 }
 
-function mudarLoteGlobal(idLote) {
-  atualizarDashboard(idLote);
-}
-
 function atualizarDashboard(idLote) {
   const lote = lotesMock.find(l => l.id_lote_equipamento === parseInt(idLote));
   if (!lote) return;
 
-  const metaEl = document.getElementById("filterMeta");
-  if (metaEl) {
-    metaEl.innerHTML = `
-      <div><b>Cliente:</b> ${lote.cliente}</div>
-      <div><b>Modelo:</b> ${lote.nome_modelo}</div>
-    `;
-  }
 
   renderizarGraficoPizza(lote);
   renderizarGraficoForecasting(lote);
@@ -123,7 +118,7 @@ function renderizarGraficoPizza(lote) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Geist', size: 12 } } },
+        legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'sans-serif', size: 12 } } },
         tooltip: {
           callbacks: {
             label: function(context) {
@@ -146,8 +141,8 @@ function renderizarGraficoPizza(lote) {
   if (footerEl) {
     footerEl.innerHTML = `
       <div class="summary-item"><span class="summary-label">Componentes</span><span class="summary-value">${totalComp}</span></div>
-      <div class="summary-item"><span class="summary-label">Integridade</span><span class="summary-value" style="color:var(--status-normal);">${taxaSucesso}%</span></div>
-      <div class="summary-item"><span class="summary-label">Anomalias</span><span class="summary-value" style="color:var(--status-excedeu);">${qtdAlertas}</span></div>
+      <div class="summary-item"><span class="summary-label">Integridade</span><span class="summary-value normal">${taxaSucesso}%</span></div>
+      <div class="summary-item"><span class="summary-label">Anomalias</span><span class="summary-value limite">${qtdAlertas}</span></div>
     `;
   }
 }
@@ -167,8 +162,8 @@ function renderizarGraficoForecasting(lote) {
         {
           label: 'Histórico Real (Temp Média)',
           data: fData.real,
-          borderColor: '#8E39E2',
-          backgroundColor: 'rgba(142,57,226,0.1)',
+          borderColor: '#6d3fc0',
+          backgroundColor: 'rgba(109,63,192,0.1)',
           borderWidth: 2.5,
           tension: 0.2,
           fill: true
@@ -187,7 +182,7 @@ function renderizarGraficoForecasting(lote) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Geist', size: 11 } } },
+        legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'sans-serif', size: 11 } } },
         tooltip: { mode: 'index', intersect: false }
       },
       scales: {
@@ -195,11 +190,11 @@ function renderizarGraficoForecasting(lote) {
           min: 30,
           max: 100,
           grid: { color: '#ECEAF3' },
-          ticks: { font: { family: 'JetBrains Mono', size: 10 } }
+          ticks: { font: { family: 'monospace', size: 10 } }
         },
         x: {
           grid: { display: false },
-          ticks: { font: { family: 'Geist', size: 11 } }
+          ticks: { font: { family: 'sans-serif', size: 11 } }
         }
       }
     }
@@ -208,8 +203,8 @@ function renderizarGraficoForecasting(lote) {
   const fFooter = document.getElementById("forecastingFooter");
   if (fFooter) {
     fFooter.innerHTML = `
-      <div class="summary-item"><span class="summary-label">Tendência (Slope)</span><span class="summary-value" style="color:var(--primary);">+3.5 ºC/sem</span></div>
-      <div class="summary-item"><span class="summary-label">Limite Crítico</span><span class="summary-value" style="color:var(--status-excedeu);">${fData.limiteCritico} ºC</span></div>
+      <div class="summary-item"><span class="summary-label">Tendência (Slope)</span><span class="summary-value destaque">+3.5 ºC/sem</span></div>
+      <div class="summary-item"><span class="summary-label">Limite Crítico</span><span class="summary-value limite">${fData.limiteCritico} ºC</span></div>
       <div class="summary-item"><span class="summary-label">Risco de Exaustão</span><span class="summary-value">Em ~3 semanas</span></div>
     `;
   }
@@ -250,8 +245,8 @@ function renderizarGraficoCorrelacao() {
             { x: 300, y: 61.0 },
             { x: 400, y: 65.0 }
           ],
-          backgroundColor: '#8E39E2',
-          borderColor: '#8E39E2',
+          backgroundColor: '#6d3fc0',
+          borderColor: '#6d3fc0',
           pointRadius: 6,
           pointHoverRadius: 8,
           showLine: true,
@@ -281,7 +276,7 @@ function renderizarGraficoCorrelacao() {
       plugins: {
         legend: {
           position: 'bottom',
-          labels: { boxWidth: 12, font: { family: 'Geist', size: 11 } }
+          labels: { boxWidth: 12, font: { family: 'sans-serif', size: 11 } }
         },
         tooltip: {
           callbacks: {
@@ -293,20 +288,20 @@ function renderizarGraficoCorrelacao() {
       },
       scales: {
         x: {
-          title: { display: true, text: 'Uptime Contínuo (Horas)', font: { family: 'Geist', size: 12 } },
+          title: { display: true, text: 'Uptime Contínuo (Horas)', font: { family: 'sans-serif', size: 12 } },
           grid: { color: '#ECEAF3' },
-          ticks: { font: { family: 'JetBrains Mono', size: 10 } }
+          ticks: { font: { family: 'monospace', size: 10 } }
         },
         y: {
-          title: { display: true, text: 'Temperatura da CPU (ºC)', font: { family: 'Geist', size: 12 } },
+          title: { display: true, text: 'Temperatura da CPU (ºC)', font: { family: 'sans-serif', size: 12 } },
           min: 40,
           max: 100,
           grid: { color: '#ECEAF3' },
-          ticks: { font: { family: 'JetBrains Mono', size: 10 } }
+          ticks: { font: { family: 'monospace', size: 10 } }
         }
       }
     }
   });
 }
 
-window.onload = inicializar;
+document.addEventListener("DOMContentLoaded", inicializar);
