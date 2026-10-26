@@ -5,7 +5,7 @@ var ambiente_processo = 'desenvolvimento';
 // Seleciona o arquivo .env correspondente ao ambiente definido acima
 // producao -> le as variáveis de .env
 // desenvolvimento ->le as variáveis de .env.dev
-var caminho_env = ambiente_processo === 'producao' ? '.env' : '.env.example';
+var caminho_env = ambiente_processo === 'producao' ? '.env' : '.env.dev';
 
 // Carrega as variáveis de ambiente do arquivo selecionado
 require("dotenv").config({ path: caminho_env });
