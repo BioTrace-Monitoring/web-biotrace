@@ -1,19 +1,15 @@
-// Clima real da API; recursos de hardware continuam sendo demonstrativos.
-// O local é uma comparação escolhida pelo usuário, sem vínculo com um hospital real.
-var locaisClima = [
-    { nome: "São Paulo · SP", latitude: -23.5505, longitude: -46.6333 },
-    { nome: "Campinas · SP", latitude: -22.9056, longitude: -47.0608 },
-    { nome: "Curitiba · PR", latitude: -25.4284, longitude: -49.2733 }
-];
-var dadosClima = [];
+// Clima do local de instalação de cada hospital do cenário demonstrativo.
+var dadosClima = {};
+var assinaturaHospitaisClima = "";
 var estadoClima = "carregando";
 var mensagemClima = "Consultando o histórico meteorológico…";
 var cacheClima = {};
 var requisicaoClima = null;
 var consultaClima = 0;
-var buscaCidadeAtual = 0;
 var graficosContexto = {};
 var principalContexto = null;
+// Limiar demonstrativo de espaço livre, em percentual.
+var limiteEspacoLivre = 20;
 
 function mediaContexto(valores) {
     var validos = valores.filter(function (valor) { return Number.isFinite(valor); });
@@ -29,11 +25,29 @@ function formatarDataContexto(instante, hora) {
 
 function atualizarAnalisesComplementares(principal) {
     principalContexto = principal;
+    if (!principal) {
+        consultaClima++;
+        if (requisicaoClima) requisicaoClima.abort();
+        dadosClima = {};
+        assinaturaHospitaisClima = "";
+        return;
+    }
     document.getElementById("escopoComplementar").textContent = lotesPreditivos[principal.indice].numero + " · "
         + modelosPreditivos[document.getElementById("filtroModelo").value].nome + " · " + principal.unidades.length
         + " unidades. Os gráficos abaixo aprofundam este lote.";
     if (!document.getElementById("painelRecursos").hidden) atualizarRecursosContexto();
-    atualizarClimaContexto();
+    var hospitais = obterHospitaisContexto();
+    document.getElementById("hospitaisClima").textContent = "Locais de instalação (demonstrativos) · " + hospitais.map(function (id) {
+        var hospital = hospitaisPreditivos[id];
+        return hospital.nome + " — " + hospital.cidade;
+    }).join(" · ");
+    var assinatura = hospitais.join(",");
+    if (assinatura !== assinaturaHospitaisClima) carregarClimaContexto(false);
+    else atualizarClimaContexto();
+}
+
+function obterHospitaisContexto() {
+    return Array.from(new Set(unidadesPreditivas.map(function (u) { return u.fk_hospital; }))).sort();
 }
 
 function mostrarAbaContexto(recursos, focar) {
@@ -134,6 +148,28 @@ function calcularTaxasRede(leituras) {
     return Object.keys(horarios).map(function (instante) { return { x: Number(instante), y: mediaContexto(horarios[instante]) }; }).sort(function (a, b) { return a.x - b.x; });
 }
 
+function atualizarCardArmazenamento(unidades) {
+    var validas = unidades.filter(function (unidade) {
+        return Number.isFinite(unidade.disco_percent) && unidade.disco_percent >= 0 && unidade.disco_percent <= 100;
+    });
+    validas.sort(function (a, b) { return b.disco_percent - a.disco_percent; });
+    var menorFolga = validas[0];
+    var abaixoDoLimite = validas.filter(function (unidade) {
+        return 100 - unidade.disco_percent < limiteEspacoLivre;
+    }).length;
+    document.getElementById("armazenamentoPercentual").textContent = menorFolga ? formatarPreditivo(100 - menorFolga.disco_percent, 1) + "%" : "—";
+    var detalhe = "Sem leitura válida de percentual de uso do disco.";
+    if (menorFolga) {
+        detalhe = menorFolga.numero_serie;
+        if (Number.isFinite(menorFolga.disco_livre_gb)) detalhe += " · " + formatarPreditivo(menorFolga.disco_livre_gb, 1) + " GB livres";
+    }
+    document.getElementById("armazenamentoUnidade").textContent = detalhe;
+    document.getElementById("armazenamentoAlertas").textContent = validas.length ? abaixoDoLimite : "—";
+    document.getElementById("armazenamentoLimite").textContent = "Unidades com menos de " + formatarPreditivo(limiteEspacoLivre, 0) + "% livre";
+    document.getElementById("armazenamentoCobertura").textContent = validas.length + " de " + unidades.length + " unidades alocadas com leitura válida · última coleta de cada unidade.";
+    document.getElementById("armazenamentoAlertas").classList.toggle("valor-alerta", abaixoDoLimite > 0);
+}
+
 function atualizarRecursosContexto() {
     if (!principalContexto) return;
     var leituras = principalContexto.leituras;
@@ -142,10 +178,9 @@ function atualizarRecursosContexto() {
     document.getElementById("recursoDisco").textContent = formatarPreditivo(Math.min.apply(null, ultimas.map(function (u) { return u.disco_livre_gb; })), 1) + " GB";
     document.getElementById("recursoCpu").textContent = formatarPreditivo(mediaContexto(ultimas.map(function (u) { return u.cpu_percent; })), 1) + "%";
     var ram = graficoDispersaoContexto("graficoRamUptime", "vazioRamUptime", agruparRecursoContexto(leituras, "memoria_percent"), "Uptime contínuo (h)", "Uso de RAM (%)", "h", "%", "#6d3fc0");
-    var disco = graficoDispersaoContexto("graficoDiscoUptime", "vazioDiscoUptime", agruparRecursoContexto(leituras, "disco_livre_gb"), "Uptime contínuo (h)", "Espaço livre (GB)", "h", "GB", "#169b80");
+    atualizarCardArmazenamento(ultimas);
     var processos = graficoDispersaoContexto("graficoProcessosCpu", "vazioProcessosCpu", leituras.map(function (l) { return { x: l.processos_ativos, y: l.cpu_percent }; }), "Processos ativos", "Uso da CPU (%)", "processos", "%", "#bc7a2e");
     document.getElementById("insightRam").textContent = ram ? "Tendência: " + (ram.inclinacao >= 0 ? "+" : "") + formatarPreditivo(ram.inclinacao, 3) + " pontos percentuais/h · R² " + formatarPreditivo(ram.r2, 2) + ". Médias por faixa de uptime do lote." : "Dados insuficientes para ajustar a tendência de RAM.";
-    document.getElementById("insightDisco").textContent = disco ? "Variação de espaço livre: " + formatarPreditivo(disco.inclinacao, 3) + " GB/h · R² " + formatarPreditivo(disco.r2, 2) + ". Avalie o acúmulo de arquivos quando a tendência for negativa." : "Dados insuficientes para ajustar a tendência de disco.";
     document.getElementById("insightProcessos").textContent = processos && processos.pearson !== null ? "Pearson r = " + formatarPreditivo(processos.pearson, 2) + " · R² " + formatarPreditivo(processos.r2, 2) + " · " + leituras.length + " leituras individuais. Associação no cenário demonstrativo." : "Sem variação suficiente para calcular a associação.";
     var taxas = calcularTaxasRede(leituras);
     document.getElementById("recursoRede").textContent = taxas.length ? formatarPreditivo(mediaContexto(taxas.map(function (t) { return t.y; })), 2) : "—";
@@ -169,58 +204,67 @@ function normalizarClima(resposta) {
     return horas.sort(function (a, b) { return a.instante - b.instante; });
 }
 
-function parearClima(leituras, clima) {
+function parearClima(leituras, climaPorHospital) {
     var porHora = {};
     var grupos = {};
-    for (var i = 0; i < clima.length; i++) porHora[Math.floor(clima[i].instante / 3600000)] = clima[i];
-    for (var i = 0; i < leituras.length; i++) {
-        var leitura = leituras[i];
-        var hora = Math.floor(new Date(leitura.data_hora_br).getTime() / 3600000);
-        if (!porHora[hora] || !Number.isFinite(leitura.temperatura_cpu)) continue;
-        if (!grupos[hora]) grupos[hora] = [];
-        grupos[hora].push(leitura.temperatura_cpu);
-    }
-    return Object.keys(grupos).map(function (hora) {
-        var externo = porHora[hora];
-        return { x: externo.temperatura, y: mediaContexto(grupos[hora]), instante: externo.instante, umidade: externo.umidade };
+    Object.keys(climaPorHospital).forEach(function (id) {
+        climaPorHospital[id].forEach(function (clima) {
+            porHora[id + ":" + Math.floor(clima.instante / 3600000)] = clima;
+        });
+    });
+    leituras.forEach(function (leitura) {
+        if (!hospitaisPreditivos[leitura.fk_hospital] || !Number.isFinite(leitura.temperatura_cpu)) return;
+        var chave = leitura.fk_hospital + ":" + Math.floor(new Date(leitura.data_hora_br).getTime() / 3600000);
+        if (!porHora[chave]) return;
+        if (!grupos[chave]) grupos[chave] = [];
+        grupos[chave].push(leitura.temperatura_cpu);
+    });
+    return Object.keys(grupos).map(function (chave) {
+        var externo = porHora[chave];
+        return { x: externo.temperatura, y: mediaContexto(grupos[chave]), instante: externo.instante, umidade: externo.umidade };
     }).sort(function (a, b) { return a.instante - b.instante; });
 }
 
 async function carregarClimaContexto(forcar) {
-    var local = locaisClima[Number(document.getElementById("localClima").value)];
-    if (!local) return;
+    if (!principalContexto) return;
+    var hospitais = obterHospitaisContexto();
+    assinaturaHospitaisClima = hospitais.join(",");
     var consulta = ++consultaClima;
     if (requisicaoClima) requisicaoClima.abort();
-    dadosClima = [];
+    dadosClima = {};
     estadoClima = "carregando";
-    mensagemClima = "Consultando " + local.nome + " · histórico no período da telemetria demonstrativa…";
+    mensagemClima = "Consultando o clima dos locais de instalação dos hospitais…";
     document.getElementById("atualizarClima").disabled = true;
     atualizarClimaContexto();
-    // O último dia completo evita solicitar horas futuras ao arquivo histórico.
     var inicio = new Date(referenciaPreditiva - 30 * 86400000).toISOString().slice(0, 10);
     var fim = new Date(referenciaPreditiva - 86400000).toISOString().slice(0, 10);
-    var chave = local.latitude + "," + local.longitude + ":" + inicio + ":" + fim;
     var controller = new AbortController();
     requisicaoClima = controller;
     var timeout = setTimeout(function () { controller.abort(); }, 12000);
     try {
-        if (!forcar && cacheClima[chave]) dadosClima = cacheClima[chave];
-        else {
+        var respostas = await Promise.allSettled(hospitais.map(async function (id) {
+            var hospital = hospitaisPreditivos[id];
+            if (!Number.isFinite(hospital.latitude) || !Number.isFinite(hospital.longitude)) throw new Error("Localização indisponível");
+            var chave = hospital.latitude + "," + hospital.longitude + ":" + inicio + ":" + fim;
+            if (!forcar && cacheClima[chave]) return cacheClima[chave];
             var url = new URL("https://historical-forecast-api.open-meteo.com/v1/forecast");
-            url.search = new URLSearchParams({ latitude: local.latitude, longitude: local.longitude, start_date: inicio, end_date: fim, hourly: "temperature_2m,relative_humidity_2m", timezone: "UTC", timeformat: "unixtime", temperature_unit: "celsius" }).toString();
+            url.search = new URLSearchParams({ latitude: hospital.latitude, longitude: hospital.longitude, start_date: inicio, end_date: fim, hourly: "temperature_2m,relative_humidity_2m", timezone: "UTC", timeformat: "unixtime", temperature_unit: "celsius" }).toString();
             var resposta = await fetch(url.toString(), { signal: controller.signal });
-            if (!resposta.ok) throw new Error("Falha na consulta meteorológica (HTTP " + resposta.status + ").");
+            if (!resposta.ok) throw new Error("Clima indisponível");
             var normalizados = normalizarClima(await resposta.json());
-            if (consulta !== consultaClima) return;
-            dadosClima = normalizados;
             cacheClima[chave] = normalizados;
-        }
-        estadoClima = "pronto";
-        mensagemClima = local.nome + " · Open-Meteo · previsões históricas arquivadas · UTC alinhado à coleta · consulta " + formatarDataContexto(Date.now(), true) + " (Brasília).";
-    } catch (erro) {
+            return normalizados;
+        }));
         if (consulta !== consultaClima) return;
-        estadoClima = "erro";
-        mensagemClima = "Clima indisponível para " + local.nome + ". " + (erro.name === "AbortError" ? "Tempo de consulta excedido." : erro.message) + " Tente atualizar. A telemetria demonstrativa permanece disponível.";
+        var indisponiveis = [];
+        respostas.forEach(function (resposta, indice) {
+            var id = hospitais[indice];
+            if (resposta.status === "fulfilled") dadosClima[id] = resposta.value;
+            else indisponiveis.push(hospitaisPreditivos[id].nome);
+        });
+        estadoClima = Object.keys(dadosClima).length ? "pronto" : "erro";
+        mensagemClima = "Open-Meteo · clima disponível para " + Object.keys(dadosClima).length + " de " + hospitais.length + " hospitais · consulta " + formatarDataContexto(Date.now(), true) + " (Brasília).";
+        if (indisponiveis.length) mensagemClima += " Sem clima para " + indisponiveis.join(", ") + ". Leituras desses locais são excluídas dos gráficos climáticos. Tente atualizar.";
     } finally {
         clearTimeout(timeout);
         if (consulta === consultaClima) {
@@ -250,7 +294,10 @@ function atualizarClimaContexto() {
     document.getElementById("statusClima").textContent = mensagemClima;
     var periodo = Number(document.getElementById("filtroPeriodo").value);
     var inicio = referenciaPreditiva - periodo * 86400000;
-    var clima = dadosClima.filter(function (hora) { return hora.instante >= inicio && hora.instante <= referenciaPreditiva; });
+    var clima = {};
+    Object.keys(dadosClima).forEach(function (id) {
+        clima[id] = dadosClima[id].filter(function (hora) { return hora.instante >= inicio && hora.instante <= referenciaPreditiva; });
+    });
     var pares = parearClima(principalContexto.leituras, clima);
     var ajuste = pares.length >= 3 ? calcularRegressao(pares) : null;
     var temperatura = mediaContexto(pares.map(function (p) { return p.x; }));
@@ -259,9 +306,9 @@ function atualizarClimaContexto() {
     document.getElementById("climaUmidade").textContent = umidade === null ? "—" : formatarPreditivo(umidade, 0) + "%";
     document.getElementById("climaR2").textContent = ajuste && ajuste.r2 !== null ? formatarPreditivo(ajuste.r2, 2) : "—";
     document.getElementById("climaPares").textContent = estadoClima === "pronto" ? pares.length : "—";
-    document.getElementById("climaCobertura").textContent = pares.length + " de " + principalContexto.pontos.length + " horários da coleta; horas sem clima são excluídas";
-    document.getElementById("insightClima").textContent = ajuste && ajuste.pearson !== null ? "Pearson r = " + formatarPreditivo(ajuste.pearson, 2) + " · " + pares.length + " horários distintos, com média entre unidades. Associação exploratória; o hardware é simulado." : "Ainda não há horários ou variação suficientes para calcular uma associação. Nenhum dado climático é inventado para preencher lacunas.";
-    document.getElementById("subtituloMargemClima").textContent = locaisClima[Number(document.getElementById("localClima").value)].nome + " · lotes do recorte · últimos " + periodo + " dias";
+    document.getElementById("climaCobertura").textContent = pares.length + " pares hospital/hora com clima do local de instalação";
+    document.getElementById("insightClima").textContent = ajuste && ajuste.pearson !== null ? "Pearson r = " + formatarPreditivo(ajuste.pearson, 2) + " · " + pares.length + " pares hospital/hora, com média entre unidades do mesmo hospital. Hardware demonstrativo." : "Ainda não há horários ou variação suficientes para calcular uma associação. Nenhum dado climático é inventado para preencher lacunas.";
+    document.getElementById("subtituloMargemClima").textContent = "Clima do hospital de cada equipamento · últimos " + periodo + " dias";
     var limite = modelosPreditivos[document.getElementById("filtroModelo").value].limite;
     var margens = calcularMargensClima(resultadosPreditivos, clima, limite, 28);
     var comCalor = margens.filter(function (m) { return m.quente !== null; }).sort(function (a, b) { return a.quente - b.quente; });
@@ -269,7 +316,7 @@ function atualizarClimaContexto() {
         ? "Menor folga média com clima ≥ 28 °C: " + comCalor[0].lote + " · " + formatarPreditivo(comCalor[0].quente, 1) + " °C de margem em " + comCalor[0].horariosQuentes + " horário(s) pareado(s). Compare as condições de operação entre os lotes."
         : "Sem horários pareados com clima ≥ 28 °C neste recorte. As barras disponíveis mostram a margem média em horários abaixo desse corte.";
     if (document.getElementById("painelAmbiente").hidden) return;
-    var vazio = estadoClima === "carregando" ? "Consultando histórico da cidade…" : estadoClima === "erro" ? "Histórico indisponível. Use Atualizar clima para tentar novamente." : "";
+    var vazio = estadoClima === "carregando" ? "Consultando histórico dos hospitais…" : estadoClima === "erro" ? "Histórico indisponível. Use Atualizar clima para tentar novamente." : "";
     if (vazio) mensagemGraficoContexto("graficoClimaCpu", "vazioClimaCpu", vazio);
     else graficoDispersaoContexto("graficoClimaCpu", "vazioClimaCpu", pares, "Temperatura externa (°C)", "Temperatura média da CPU (°C)", "°C", "°C", "#6d3fc0");
     var opcoes = opcoesContexto("Lote de equipamentos", "Margem térmica média (°C)", "", "°C");
@@ -289,46 +336,6 @@ function atualizarClimaContexto() {
     }, options: opcoes }, vazio || (margens.some(function (m) { return m.horariosAmenos + m.horariosQuentes > 0; }) ? "" : "Sem horários pareados entre clima e coleta no período selecionado."));
 }
 
-async function buscarCidadeContexto(evento) {
-    evento.preventDefault();
-    var nome = document.getElementById("nomeCidadeClima").value.trim();
-    if (nome.length < 3) { document.getElementById("statusBuscaCidade").textContent = "Digite pelo menos três caracteres."; return; }
-    var busca = ++buscaCidadeAtual;
-    var controller = new AbortController();
-    var timeout = setTimeout(function () { controller.abort(); }, 10000);
-    document.getElementById("botaoBuscarCidade").disabled = true;
-    document.getElementById("statusBuscaCidade").textContent = "Buscando cidades…";
-    try {
-        var url = new URL("https://geocoding-api.open-meteo.com/v1/search");
-        url.search = new URLSearchParams({ name: nome, count: 5, language: "pt", countryCode: "BR", format: "json" }).toString();
-        var resposta = await fetch(url.toString(), { signal: controller.signal });
-        if (!resposta.ok) throw new Error("Busca indisponível. Tente novamente.");
-        var dados = await resposta.json();
-        if (busca !== buscaCidadeAtual) return;
-        var resultados = (Array.isArray(dados.results) ? dados.results : []).filter(function (r) {
-            return Number.isFinite(r.latitude) && Number.isFinite(r.longitude) && Math.abs(r.latitude) <= 90 && Math.abs(r.longitude) <= 180 && typeof r.name === "string";
-        });
-        if (!resultados.length) { document.getElementById("statusBuscaCidade").textContent = "Nenhuma cidade encontrada. Tente informar também o estado."; return; }
-        locaisClima = resultados.map(function (r) { return { nome: r.name + (r.admin1 ? " · " + r.admin1 : ""), latitude: r.latitude, longitude: r.longitude }; });
-        var select = document.getElementById("localClima");
-        select.replaceChildren();
-        for (var i = 0; i < locaisClima.length; i++) {
-            var opcao = document.createElement("option");
-            opcao.value = String(i);
-            opcao.textContent = locaisClima[i].nome;
-            select.appendChild(opcao);
-        }
-        select.value = "0";
-        document.getElementById("statusBuscaCidade").textContent = resultados.length + " localidade(s) · Geocodificação Open-Meteo / GeoNames.";
-        carregarClimaContexto(false);
-    } catch (erro) {
-        if (busca === buscaCidadeAtual) document.getElementById("statusBuscaCidade").textContent = erro.name === "AbortError" ? "A busca demorou demais. Tente novamente." : "Não foi possível buscar cidades. Tente novamente.";
-    } finally {
-        clearTimeout(timeout);
-        if (busca === buscaCidadeAtual) document.getElementById("botaoBuscarCidade").disabled = false;
-    }
-}
-
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("abaAmbiente").onclick = function () { mostrarAbaContexto(false); };
     document.getElementById("abaRecursos").onclick = function () { mostrarAbaContexto(true); };
@@ -340,8 +347,5 @@ document.addEventListener("DOMContentLoaded", function () {
             mostrarAbaContexto(recursos, true);
         }
     };
-    document.getElementById("buscarCidadeClima").onsubmit = buscarCidadeContexto;
-    document.getElementById("localClima").onchange = function () { carregarClimaContexto(false); };
     document.getElementById("atualizarClima").onclick = function () { carregarClimaContexto(true); };
-    carregarClimaContexto(false);
 });

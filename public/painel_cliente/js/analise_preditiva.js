@@ -10,6 +10,12 @@ var lotesPreditivos = [
     { numero: "LT-2026-002", equipamento: "BPAP", prefixo: "BPAP", cor: "#6d3fc0" },
     { numero: "LT-2026-003", equipamento: "Osteomax", prefixo: "OST", cor: "#169b80" }
 ];
+// Hospitais e localizações fictícios para demonstrar a alocação dos notebooks.
+var hospitaisPreditivos = {
+    1: { nome: "Hospital São Lucas", cidade: "São Paulo · SP", latitude: -23.5505, longitude: -46.6333 },
+    2: { nome: "Hospital Vida", cidade: "Campinas · SP", latitude: -22.9056, longitude: -47.0608 },
+    3: { nome: "Santa Clara", cidade: "Curitiba · PR", latitude: -25.4284, longitude: -49.2733 }
+};
 var referenciaPreditiva = new Date("2026-11-03T12:00:00-03:00").getTime();
 var leiturasPreditivas = criarLeiturasDemonstrativas();
 var resultadosPreditivos = [];
@@ -21,24 +27,38 @@ var investigandoModelo = false;
 function criarLeiturasDemonstrativas() {
     var leituras = [];
     var variacoes = [-0.6, 0.8, -0.4, 1.1, -0.9, 0.3, -0.7, 0.6, -0.3, 0.9, -0.8, 0.5, 0.1];
-    var hospitais = ["Hospital São Lucas", "Hospital Vida", "Santa Clara"];
+    // Oscilações reproduzíveis de carga, memória e limpeza de arquivos.
+    // Cada recurso varia de forma própria, além da tendência de uptime.
+    var picosMemoria = [0, 6, 1, 8, 2, 12, 5, 9, 3, 11, 4, 10, 2];
+    var limpezasDisco = [0, -8, -16, 6, -4, -18, 12, 2, -10, 15, 5, -8, 18];
+    var tarefasProcessos = [4, -12, 18, -4, 10, -18, 8, 22, -10, 14, -6, 16, 0];
     var modelos = Object.keys(modelosPreditivos);
     for (var m = 0; m < modelos.length; m++) {
         var modelo = modelosPreditivos[modelos[m]];
         for (var l = 0; l < lotesPreditivos.length; l++) {
             for (var u = 0; u < 3; u++) {
                 for (var i = 0; i < variacoes.length; i++) {
+                    var usoCpu = 18 + ((i * 17 + u * 9 + l * 13) % 72);
+                    var oscilacaoTermica = variacoes[i] * (6 + l * 2 + m);
+                    var oscilacaoMemoria = picosMemoria[i] * (1 + l * 0.5);
+                    // O primeiro lote mantém um cenário de gravação mais constante.
+                    var oscilacaoDisco = limpezasDisco[i] * (l === 0 ? 0.4 : 1.5);
+                    var espacoLivre = Number((160 - l * 18 - m * 4 - i * (l === 0 ? 7 : 3) - u * 2 + oscilacaoDisco).toFixed(2));
+                    var capacidadeDisco = u === 0 ? 512 : 256;
+                    var tarefas = tarefasProcessos[(i + u + l) % tarefasProcessos.length];
                     leituras.push({
                         modelo: modelos[m], lote: l,
                         numero_serie: lotesPreditivos[l].prefixo + "-" + String(m * 100 + l * 10 + u + 1).padStart(4, "0"),
-                        hospital: hospitais[u],
+                        fk_hospital: l === 2 && u === 2 ? null : u + 1,
+                        hospital: l === 2 && u === 2 ? "" : hospitaisPreditivos[u + 1].nome,
                         data_hora_br: new Date(referenciaPreditiva - (12 - i) * 50 * 3600000).toISOString(),
                         uptime_horas: i * 50,
-                        temperatura_cpu: Number((modelo.bases[l] + modelo.inclinacoes[l] * i * 50 + variacoes[i] + (u - 1) * 1.2).toFixed(2)),
-                        cpu_percent: 18 + ((i * 17 + u * 9 + l * 13) % 72),
-                        memoria_percent: Number((34 + l * 4 + m * 2 + i * (l === 0 ? 3.1 : 1.2) + u * 1.4 + variacoes[i]).toFixed(2)),
-                        disco_livre_gb: Number((160 - l * 18 - m * 4 - i * (l === 0 ? 7 : 3) - u * 2 + variacoes[i]).toFixed(2)),
-                        processos_ativos: 82 + ((i * 17 + u * 9 + l * 13) % 72) + (i % 3) * 8,
+                        temperatura_cpu: Number((modelo.bases[l] + modelo.inclinacoes[l] * i * 50 + oscilacaoTermica + (u - 1) * 1.2).toFixed(2)),
+                        cpu_percent: usoCpu,
+                        memoria_percent: Number((34 + l * 4 + m * 2 + i * (l === 0 ? 3.1 : 1.2) + u * 1.4 + oscilacaoMemoria).toFixed(2)),
+                        disco_livre_gb: espacoLivre,
+                        disco_percent: Number((100 - espacoLivre / capacidadeDisco * 100).toFixed(2)),
+                        processos_ativos: 90 + Math.round(usoCpu * 0.6) + tarefas,
                         rede_erros_entrada: i * (l + 2) + Math.floor(i * i / 3),
                         rede_erros_saida: i * (l + 1) + Math.floor(i * i / 6)
                     });
@@ -145,7 +165,7 @@ function atualizarAnalise() {
     var modelo = modelosPreditivos[modeloId];
     var inicio = referenciaPreditiva - periodo * 24 * 3600000;
     var leituras = leiturasPreditivas.filter(function (leitura) {
-        return leitura.modelo === modeloId && (loteId === "todos" || leitura.lote === Number(loteId))
+        return Boolean(hospitaisPreditivos[leitura.fk_hospital]) && leitura.modelo === modeloId && (loteId === "todos" || leitura.lote === Number(loteId))
             && new Date(leitura.data_hora_br).getTime() >= inicio;
     });
     resultadosPreditivos = [];
@@ -160,13 +180,22 @@ function atualizarAnalise() {
     resultadosPreditivos.sort(function (a, b) { return a.margem - b.margem; });
     unidadesPreditivas.sort(function (a, b) { return b.temperatura_cpu - a.temperatura_cpu; });
     var principal = resultadosPreditivos[0];
+    document.getElementById("conteudoAnalise").hidden = !principal;
+    document.getElementById("semEquipamentosAlocados").hidden = Boolean(principal);
+    document.getElementById("exportarAnalise").disabled = !principal;
+    if (!principal) {
+        document.getElementById("escopoAnalise").textContent = "Nenhum equipamento alocado em hospital no recorte selecionado.";
+        atualizarEnderecoAnalise();
+        if (typeof atualizarAnalisesComplementares === "function") atualizarAnalisesComplementares(null);
+        return;
+    }
     var atencao = unidadesPreditivas.filter(function (unidade) { return unidade.temperatura_cpu >= modelo.limite - 5; }).length;
     var projecoes = resultadosPreditivos.filter(function (resultado) { return resultado.horasLimite !== null; });
     projecoes.sort(function (a, b) { return a.horasLimite - b.horasLimite; });
     var proximo = projecoes[0];
 
     document.getElementById("escopoAnalise").innerHTML = '<strong>● Recorte demonstrativo</strong><span>' + unidadesPreditivas.length
-        + ' unidades · ' + resultadosPreditivos.length + ' lote(s) · ' + leituras.length + ' leituras</span><span>'
+        + ' unidades alocadas em hospitais · ' + resultadosPreditivos.length + ' lote(s) · ' + leituras.length + ' leituras</span><span>'
         + modelo.nome + ' · últimos ' + periodo + ' dias</span>';
     document.getElementById("kpiUnidades").textContent = unidadesPreditivas.length;
     document.getElementById("detalheUnidades").textContent = resultadosPreditivos.length + " lote(s) · " + leituras.length + " leituras válidas";

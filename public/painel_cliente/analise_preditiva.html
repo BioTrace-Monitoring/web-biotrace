@@ -96,6 +96,7 @@
                     </div>
 
                     <div class="dashboard-preditiva">
+                        <p class="nota-grafico">Todos os indicadores, gráficos e exportações consideram somente equipamentos alocados em hospitais.</p>
                         <section class="filtros-preditivos" aria-label="Filtros da análise">
                             <div class="campo-preditivo">
                                 <label for="filtroComponente">Componente</label>
@@ -131,6 +132,8 @@
 
                         <div class="escopo-preditivo" id="escopoAnalise" aria-live="polite"></div>
 
+                        <p id="semEquipamentosAlocados" class="painel-preditivo" hidden>Não há equipamentos alocados em hospitais para analisar neste recorte. Ajuste os filtros para consultar outra seleção.</p>
+                        <div id="conteudoAnalise" class="dashboard-preditiva">
                         <section class="aviso-preditivo" id="avisoPreditivo" aria-labelledby="tituloAviso">
                             <div class="icone-aviso" aria-hidden="true">↗</div>
                             <div class="texto-aviso">
@@ -204,25 +207,17 @@
                             </div>
 
                             <div id="painelAmbiente" role="tabpanel" aria-labelledby="abaAmbiente">
-                                <section class="painel-preditivo configuracao-clima" aria-label="Local de comparação">
-                                    <div class="descricao-clima"><span class="selo-api">API EXTERNA · OPEN-METEO</span><h3>O ambiente externo acompanha o aquecimento?</h3><p>Explore o clima da cidade no mesmo horário das leituras. Local de comparação livre para este cenário demonstrativo.</p></div>
-                                    <form id="buscarCidadeClima" class="busca-cidade">
-                                        <label for="nomeCidadeClima">Buscar cidade brasileira</label>
-                                        <div><input id="nomeCidadeClima" type="search" placeholder="Ex.: Ribeirão Preto" minlength="3" maxlength="100" required><button class="botao-preditivo secundario" id="botaoBuscarCidade" type="submit">Buscar</button></div>
-                                        <p id="statusBuscaCidade" role="status"></p>
-                                    </form>
-                                    <div class="campo-preditivo"><label for="localClima">Local de comparação</label><select id="localClima"><option value="0">São Paulo · SP</option><option value="1">Campinas · SP</option><option value="2">Curitiba · PR</option></select></div>
-                                </section>
+                                <p class="nota-grafico" id="hospitaisClima">Clima vinculado aos hospitais de instalação dos equipamentos alocados.</p>
                                 <div class="estado-clima"><p id="statusClima" role="status">Consultando o histórico meteorológico…</p><button class="botao-texto" id="atualizarClima" type="button">↻ Atualizar clima</button></div>
                                 <div class="indicadores-contexto" aria-label="Resumo do clima pareado">
                                     <article><span>Temperatura externa média</span><strong id="climaTemperatura">—</strong><small>Nos horários pareados com a coleta</small></article>
                                     <article><span>Umidade externa média</span><strong id="climaUmidade">—</strong><small>Contexto meteorológico da cidade</small></article>
                                     <article><span>Ajuste clima × CPU (R²)</span><strong id="climaR2">—</strong><small>Associação no cenário demonstrativo</small></article>
-                                    <article><span>Horários pareados</span><strong id="climaPares">—</strong><small id="climaCobertura">Aguardando dados da API</small></article>
+                                    <article><span>Pares hospital / hora</span><strong id="climaPares">—</strong><small id="climaCobertura">Aguardando dados da API</small></article>
                                 </div>
                                 <div class="grade-contexto">
                                     <article class="grafico-preditivo">
-                                        <div class="cabecalho-grafico"><div><h2>Clima externo × temperatura da CPU</h2><p>Média do lote por horário × temperatura externa da cidade</p></div><span class="etiqueta-grafico">REGRESSÃO</span></div>
+                                        <div class="cabecalho-grafico"><div><h2>Clima externo × temperatura da CPU</h2><p>Média por hospital e horário × clima do respectivo local de instalação</p></div><span class="etiqueta-grafico">REGRESSÃO</span></div>
                                         <div class="area-regressao"><canvas id="graficoClimaCpu" role="img" aria-label="Dispersão entre temperatura externa da cidade e temperatura média da CPU do lote, cruzadas pelo horário UTC."></canvas><p id="vazioClimaCpu" class="mensagem-contexto" hidden></p></div>
                                         <p class="leitura-contexto" id="insightClima">Aguardando horários em comum entre a API e a telemetria.</p>
                                         <p class="nota-grafico">Clima externo da API + hardware simulado. A temperatura da cidade não mede a sala ou o gabinete; esta associação não isola carga, ventilação ou climatização.</p>
@@ -243,6 +238,15 @@
                                     <article><span>Uso médio atual de CPU</span><strong id="recursoCpu">—</strong><small>Últimas leituras do lote</small></article>
                                     <article><span>Erros de rede por hora</span><strong id="recursoRede">—</strong><small>Média das taxas no recorte</small></article>
                                 </div>
+                                    <article class="grafico-preditivo card-armazenamento">
+                                        <div class="cabecalho-grafico"><div><h2>Capacidade de armazenamento</h2><p>Espaço disponível nas unidades alocadas do lote</p></div><span class="etiqueta-grafico">ÚLTIMA LEITURA</span></div>
+                                        <div class="resumo-armazenamento">
+                                            <div><span>Menor percentual livre</span><strong id="armazenamentoPercentual">—</strong><p id="armazenamentoUnidade"></p></div>
+                                            <div><span id="armazenamentoLimite">Unidades abaixo do limite</span><strong id="armazenamentoAlertas">—</strong></div>
+                                        </div>
+                                        <p class="nota-grafico" id="armazenamentoCobertura"></p>
+                                        <p class="nota-grafico">O percentual considera a capacidade de cada disco. Limiar demonstrativo de atenção configurado em 20% de espaço livre.</p>
+                                    </article>
                                 <div class="grade-contexto">
                                     <article class="grafico-preditivo">
                                         <div class="cabecalho-grafico"><div><h2>Memória RAM × uptime</h2><p>O consumo cresce durante a operação contínua?</p></div><span class="etiqueta-grafico">REGRESSÃO</span></div>
@@ -251,18 +255,12 @@
                                         <p class="nota-grafico">Crescimento persistente orienta a investigação de processos e retenção de memória. A tendência, sozinha, não confirma vazamento.</p>
                                     </article>
                                     <article class="grafico-preditivo">
-                                        <div class="cabecalho-grafico"><div><h2>Espaço livre × uptime</h2><p>Há acúmulo de arquivos durante a operação?</p></div><span class="etiqueta-grafico">REGRESSÃO</span></div>
-                                        <div class="area-regressao"><canvas id="graficoDiscoUptime" role="img" aria-label="Regressão do espaço livre médio em disco, em gigabytes, por uptime em horas."></canvas><p id="vazioDiscoUptime" class="mensagem-contexto" hidden></p></div>
-                                        <p class="leitura-contexto" id="insightDisco"></p>
-                                        <p class="nota-grafico">Ajuda a priorizar revisão de logs, arquivos temporários e políticas de retenção antes de reduzir a margem de armazenamento.</p>
-                                    </article>
-                                    <article class="grafico-preditivo">
                                         <div class="cabecalho-grafico"><div><h2>Processos ativos × uso da CPU</h2><p>A carga de processamento acompanha o número de processos?</p></div><span class="etiqueta-grafico">REGRESSÃO</span></div>
                                         <div class="area-regressao"><canvas id="graficoProcessosCpu" role="img" aria-label="Dispersão de quantidade de processos ativos e uso da CPU em percentual, com reta de regressão."></canvas><p id="vazioProcessosCpu" class="mensagem-contexto" hidden></p></div>
                                         <p class="leitura-contexto" id="insightProcessos"></p>
                                         <p class="nota-grafico">A quantidade de processos não identifica o processo responsável. Use a relação para direcionar uma inspeção da carga de trabalho.</p>
                                     </article>
-                                    <article class="grafico-preditivo">
+                                    <article class="grafico-preditivo grafico-rede">
                                         <div class="cabecalho-grafico"><div><h2>Estabilidade da rede ao longo do tempo</h2><p>Novos erros de entrada e saída por hora de operação</p></div><span class="etiqueta-grafico">TAXA POR INTERVALO</span></div>
                                         <div class="area-regressao"><canvas id="graficoErrosRede" role="img" aria-label="Taxa de novos erros de rede por hora, calculada pela diferença dos contadores consecutivos de cada equipamento."></canvas><p id="vazioErrosRede" class="mensagem-contexto" hidden></p></div>
                                         <p class="leitura-contexto" id="insightRede"></p>
@@ -327,6 +325,7 @@
                             <summary class="botao-texto">Como interpretar esta análise</summary>
                             <p class="nota-grafico">A regressão usa médias por faixa de uptime de cada lote. R² descreve o ajuste aos dados observados, e MAE é o erro médio absoluto desse ajuste; não representam certeza da previsão. A projeção mantém a tendência observada por até 72 horas e exige pelo menos quatro faixas de uptime. Uptime é o tempo desde a inicialização, não a idade do componente. As comparações não controlam diferenças de carga e ambiente. Esta demonstração não estima vida útil nem tempo até falha.</p>
                         </details>
+                        </div>
                         <footer class="rodape-preditivo"><span>BioTrace Hardware Intelligence © 2026</span><span>Hardware simulado · Clima via API · Referência: 03/11/2026, 12h (Brasília)</span></footer>
                     </div>
                 </div>
