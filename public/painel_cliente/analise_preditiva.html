@@ -1,340 +1,823 @@
 <!doctype html>
 <html lang="pt-BR">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Análise preditiva | BioTrace</title>
-        <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
-        <link rel="stylesheet" href="./css/style.css">
-        <link rel="stylesheet" href="./css/analise_preditiva.css">
-        <link rel="stylesheet" href="./css/contexto_preditivo.css">
-    </head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Análise preditiva | BioTrace</title>
+    <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/analise_preditiva.css" />
+  </head>
 
-    <body>
-        <div class="app">
-            <aside class="sidebar" id="sidebar">
-                <div class="sidebar-header">
-                    <a href="index.html" class="logo">
-                        <img src="../assets/icons/BioTrace (4).png" alt="BioTrace Logo">
-                    </a>
-                    <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Fechar menu">
-                        &times;
-                    </button>
-                </div>
-
-                <nav class="sidebar-nav" aria-label="Menu principal">
-                    <span class="nav-title">Principal</span>
-                    <a href="index.html" class="nav-item">
-                        <span class="nav-icon">📊</span>
-                        <span>Visão Geral</span>
-                    </a>
-                    <a href="equipamentos.html" class="nav-item">
-                        <span class="nav-icon">📟</span>
-                        <span>Equipamentos</span>
-                    </a>
-
-                    <span class="nav-title nav-title-dashboards">Dashboards</span>
-                    <a href="dash_engenheiro.html" class="nav-item">
-                        <span class="nav-icon">📈</span>
-                        <span>Equipamentos por lote</span>
-                    </a>
-
-                    <a href="dash_geral.html" class="nav-item">
-                        <span class="nav-icon">📉</span>
-                        <span>Análise de lotes</span>
-                    </a>
-                    <a href="analise_preditiva.html" class="nav-item active" aria-current="page">
-                        <span class="nav-icon">🔬</span>
-                        <span>Análise preditiva</span>
-                    </a>
-
-                    <span class="nav-title nav-title-spacing">Cadastros</span>
-                    <a href="hospitais.html" class="nav-item">
-                        <span class="nav-icon">🏥</span>
-                        <span>Cadastrar hospital</span>
-                    </a>
-                    <a href="cadastrar-usuario.html" class="nav-item">
-                        <span class="nav-icon">👤</span>
-                        <span>Cadastrar usuário</span>
-                    </a>
-                </nav>
-
-                <div class="sidebar-footer">
-                    <div class="sidebar-user">
-                        <div id="usuario_avatar" class="usuario-avatar">BT</div>
-                        <div class="user-info">
-                            <strong id="nome_cliente">Usuário BioTrace</strong>
-                            <span id="email_cliente">perfil@biotrace.com</span>
-                        </div>
-                    </div>
-                    <button class="sidebar-logout" id="btnSair" type="button" aria-label="Sair da conta">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M9 5H5v14h4M10 12h10m-4-4 4 4-4 4"></path>
-                        </svg>
-                    </button>
-                </div>
-            </aside>
-
-            <main class="main-content">
-                <header class="mobile-header">
-                    <button class="menu-button" id="menuButton" type="button" aria-label="Abrir menu" aria-controls="sidebar" aria-expanded="false">
-                        ☰
-                    </button>
-                    <img src="../assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo">
-                </header>
-
-                <div class="page-content">
-                    <noscript><p class="aviso-sem-js">Ative o JavaScript para explorar os filtros e os gráficos desta demonstração.</p></noscript>
-                    <button id="voltarAnalise" class="botao-texto voltar-analise" type="button" hidden>← Voltar à análise</button>
-                    <div class="cabecalho-preditivo">
-                        <div class="page-heading">
-                            <div class="eyebrow"><span class="eyebrow-dot"></span>HARDWARE / ANÁLISE PREDITIVA</div>
-                            <h1 id="tituloAnalise">Análise preditiva</h1>
-                            <p id="descricaoAnalise">Antecipe desvios térmicos e compare o comportamento dos seus componentes.</p>
-                        </div>
-                        <span class="selo-demonstracao">HARDWARE DEMONSTRATIVO</span>
-                    </div>
-
-                    <div class="dashboard-preditiva">
-                        <p class="nota-grafico">Todos os indicadores, gráficos e exportações consideram somente equipamentos alocados em hospitais.</p>
-                        <section class="filtros-preditivos" aria-label="Filtros da análise">
-                            <div class="campo-preditivo">
-                                <label for="filtroComponente">Componente</label>
-                                <select id="filtroComponente"><option value="cpu">CPU</option></select>
-                            </div>
-                            <div class="campo-preditivo">
-                                <label for="filtroModelo">Modelo do componente</label>
-                                <select id="filtroModelo">
-                                    <option value="i5">Intel Core i5-13450HX</option>
-                                    <option value="i7">Intel Core i7-12700</option>
-                                    <option value="ryzen">AMD Ryzen 5 5600G</option>
-                                </select>
-                            </div>
-                            <div class="campo-preditivo">
-                                <label for="filtroLote">Lote / equipamento</label>
-                                <select id="filtroLote">
-                                    <option value="todos">Todos os lotes</option>
-                                    <option value="0">LT-2026-001 · ECG-12</option>
-                                    <option value="1">LT-2026-002 · BPAP</option>
-                                    <option value="2">LT-2026-003 · Osteomax</option>
-                                </select>
-                            </div>
-                            <div class="campo-preditivo">
-                                <label for="filtroPeriodo">Período</label>
-                                <select id="filtroPeriodo">
-                                    <option value="7">Últimos 7 dias</option>
-                                    <option value="14">Últimos 14 dias</option>
-                                    <option value="30" selected>Últimos 30 dias</option>
-                                </select>
-                            </div>
-                            <button id="limparFiltros" class="botao-texto" type="button">Limpar filtros</button>
-                        </section>
-
-                        <div class="escopo-preditivo" id="escopoAnalise" aria-live="polite"></div>
-
-                        <p id="semEquipamentosAlocados" class="painel-preditivo" hidden>Não há equipamentos alocados em hospitais para analisar neste recorte. Ajuste os filtros para consultar outra seleção.</p>
-                        <div id="conteudoAnalise" class="dashboard-preditiva">
-                        <section class="aviso-preditivo" id="avisoPreditivo" aria-labelledby="tituloAviso">
-                            <div class="icone-aviso" aria-hidden="true">↗</div>
-                            <div class="texto-aviso">
-                                <span class="rotulo-preditivo" id="rotuloAviso">ATENÇÃO PREVENTIVA</span>
-                                <h2 id="tituloAviso">Analisando a tendência térmica…</h2>
-                                <p id="descricaoAviso"></p>
-                            </div>
-                            <button class="botao-preditivo" id="investigarModelo" type="button">Investigar modelo <span aria-hidden="true">→</span></button>
-                        </section>
-
-                        <section class="indicadores-preditivos" aria-label="Indicadores do recorte selecionado">
-                            <article class="card-preditivo">
-                                <div class="topo-indicador"><h2>Unidades analisadas</h2><span class="icone-indicador" aria-hidden="true">▦</span></div>
-                                <strong id="kpiUnidades">—</strong>
-                                <p id="detalheUnidades">Aguardando análise</p>
-                            </article>
-                            <article class="card-preditivo">
-                                <div class="topo-indicador"><h2>Em atenção</h2><span class="icone-indicador" aria-hidden="true">!</span></div>
-                                <strong class="valor-alerta" id="kpiAtencao">—</strong>
-                                <p id="detalheAtencao">Aguardando análise</p>
-                            </article>
-                            <article class="card-preditivo">
-                                <div class="topo-indicador"><h2>Margem térmica</h2><span class="icone-indicador" aria-hidden="true">↕</span></div>
-                                <strong id="kpiMargem">—</strong>
-                                <p>Limite de projeto − maior leitura atual</p>
-                            </article>
-                            <article class="card-preditivo">
-                                <div class="topo-indicador"><h2>Até o limite de projeto</h2><span class="icone-indicador" aria-hidden="true">◷</span></div>
-                                <strong class="valor-destaque" id="kpiTempo">—</strong>
-                                <p id="detalheTempo">Projeção na janela de 72 horas</p>
-                            </article>
-                        </section>
-
-                        <section class="grade-preditiva" aria-label="Gráficos de regressão linear">
-                            <article class="grafico-preditivo">
-                                <div class="cabecalho-grafico">
-                                    <div><h2>Temperatura × uptime contínuo</h2><p id="subtituloTermico">Comparação entre lotes do mesmo modelo de CPU</p></div>
-                                    <span class="etiqueta-grafico">REGRESSÃO LINEAR</span>
-                                </div>
-                                <div class="area-regressao" id="areaTermica"><canvas id="graficoTermico" role="img" aria-label="Dispersão de temperatura da CPU em graus Celsius por uptime em horas, com reta de regressão por lote. Os resultados também estão na tabela de lotes abaixo."></canvas></div>
-                                <div class="legenda-regressao" id="legendaTermica"></div>
-                                <div class="resumo-regressao">
-                                    <div><span id="rotuloAjuste">R² do lote prioritário</span><strong class="valor-destaque" id="resumoAjuste">—</strong></div>
-                                    <div><span>Erro médio do ajuste</span><strong id="resumoErro">—</strong></div>
-                                    <div><span>Limite de projeto</span><strong id="resumoLimite">—</strong></div>
-                                </div>
-                                <p class="nota-grafico">Pontos: médias por faixa de uptime · reta contínua: ajuste · tracejado: projeção de até 72 h. Cada lote tem seu próprio ajuste.</p>
-                            </article>
-                            <article class="grafico-preditivo">
-                                <div class="cabecalho-grafico">
-                                    <div><h2>Temperatura × uso da CPU</h2><p id="subtituloCarga">Como a temperatura varia com a carga de trabalho</p></div>
-                                </div>
-                                <div class="area-regressao" id="areaCarga"><canvas id="graficoCarga" role="img" aria-label="Dispersão de temperatura por percentual de uso da CPU, com regressão linear do lote prioritário."></canvas></div>
-                                <div class="legenda-regressao"><span class="item-legenda"><span class="ponto-legenda"></span>Medições</span><span class="item-legenda"><span class="linha-legenda"></span>Regressão</span></div>
-                                <div class="resumo-regressao">
-                                    <div><span>Pearson (r)</span><strong class="valor-destaque" id="cargaPearson">—</strong></div>
-                                    <div><span>Ajuste (R²)</span><strong id="cargaAjuste">—</strong></div>
-                                    <div><span>Amostras</span><strong id="cargaAmostras">—</strong></div>
-                                </div>
-                                <p class="nota-grafico">Associação entre carga e temperatura no lote selecionado. Correlação não demonstra causalidade.</p>
-                            </article>
-                        </section>
-
-                        <section class="contexto-preditivo" aria-labelledby="tituloContexto">
-                            <div class="titulo-secao">
-                                <div><span class="rotulo-preditivo">ALÉM DA TEMPERATURA</span><h2 id="tituloContexto">Contexto e estabilidade</h2><p id="escopoComplementar">Aprofundamento do lote prioritário no recorte selecionado.</p></div>
-                                <div class="abas-contexto" role="tablist" aria-label="Análises complementares">
-                                    <button id="abaAmbiente" class="aba-contexto ativa" type="button" role="tab" aria-selected="true" aria-controls="painelAmbiente">Clima e hardware</button>
-                                    <button id="abaRecursos" class="aba-contexto" type="button" role="tab" aria-selected="false" aria-controls="painelRecursos" tabindex="-1">Recursos e rede</button>
-                                </div>
-                            </div>
-
-                            <div id="painelAmbiente" role="tabpanel" aria-labelledby="abaAmbiente">
-                                <p class="nota-grafico" id="hospitaisClima">Clima vinculado aos hospitais de instalação dos equipamentos alocados.</p>
-                                <div class="estado-clima"><p id="statusClima" role="status">Consultando o histórico meteorológico…</p><button class="botao-texto" id="atualizarClima" type="button">↻ Atualizar clima</button></div>
-                                <div class="indicadores-contexto" aria-label="Resumo do clima pareado">
-                                    <article><span>Temperatura externa média</span><strong id="climaTemperatura">—</strong><small>Nos horários pareados com a coleta</small></article>
-                                    <article><span>Umidade externa média</span><strong id="climaUmidade">—</strong><small>Contexto meteorológico da cidade</small></article>
-                                    <article><span>Ajuste clima × CPU (R²)</span><strong id="climaR2">—</strong><small>Associação no cenário demonstrativo</small></article>
-                                    <article><span>Pares hospital / hora</span><strong id="climaPares">—</strong><small id="climaCobertura">Aguardando dados da API</small></article>
-                                </div>
-                                <div class="grade-contexto">
-                                    <article class="grafico-preditivo">
-                                        <div class="cabecalho-grafico"><div><h2>Clima externo × temperatura da CPU</h2><p>Média por hospital e horário × clima do respectivo local de instalação</p></div><span class="etiqueta-grafico">REGRESSÃO</span></div>
-                                        <div class="area-regressao"><canvas id="graficoClimaCpu" role="img" aria-label="Dispersão entre temperatura externa da cidade e temperatura média da CPU do lote, cruzadas pelo horário UTC."></canvas><p id="vazioClimaCpu" class="mensagem-contexto" hidden></p></div>
-                                        <p class="leitura-contexto" id="insightClima">Aguardando horários em comum entre a API e a telemetria.</p>
-                                        <p class="nota-grafico">Clima externo da API + hardware simulado. A temperatura da cidade não mede a sala ou o gabinete; esta associação não isola carga, ventilação ou climatização.</p>
-                                    </article>
-                                    <article class="grafico-preditivo">
-                                        <div class="cabecalho-grafico"><div><h2>Margem térmica por lote e clima</h2><p id="subtituloMargemClima">Quais lotes têm menor folga em horários mais quentes?</p></div><span class="etiqueta-grafico">COMPARAÇÃO DE LOTES</span></div>
-                                        <div class="area-regressao"><canvas id="graficoMargemClima" role="img" aria-label="Barras com a margem térmica média de cada lote em horários com temperatura externa abaixo de 28 graus Celsius e a partir de 28 graus Celsius."></canvas><p id="vazioMargemClima" class="mensagem-contexto" hidden></p></div>
-                                        <p class="leitura-contexto" id="resumoMargemClima">Aguardando horários em comum entre clima e coleta.</p>
-                                        <p class="nota-grafico">Margem média = limite de projeto − temperatura média da CPU. Quanto menor, mais próximo do limite; valores negativos indicam média acima dele. O corte de 28 °C é exploratório. Faixas sem dados ficam sem barra. Clima externo: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> · hardware simulado. Carga e uptime também podem explicar diferenças.</p>
-                                    </article>
-                                </div>
-                            </div>
-
-                            <div id="painelRecursos" role="tabpanel" aria-labelledby="abaRecursos" tabindex="0" hidden>
-                                <div class="indicadores-contexto" aria-label="Resumo de recursos do lote">
-                                    <article><span>Maior uso atual de RAM</span><strong id="recursoRam">—</strong><small>Última leitura de cada unidade</small></article>
-                                    <article><span>Menor espaço livre atual</span><strong id="recursoDisco">—</strong><small>Unidade com menor folga de disco</small></article>
-                                    <article><span>Uso médio atual de CPU</span><strong id="recursoCpu">—</strong><small>Últimas leituras do lote</small></article>
-                                    <article><span>Erros de rede por hora</span><strong id="recursoRede">—</strong><small>Média das taxas no recorte</small></article>
-                                </div>
-                                    <article class="grafico-preditivo card-armazenamento">
-                                        <div class="cabecalho-grafico"><div><h2>Capacidade de armazenamento</h2><p>Espaço disponível nas unidades alocadas do lote</p></div><span class="etiqueta-grafico">ÚLTIMA LEITURA</span></div>
-                                        <div class="resumo-armazenamento">
-                                            <div><span>Menor percentual livre</span><strong id="armazenamentoPercentual">—</strong><p id="armazenamentoUnidade"></p></div>
-                                            <div><span id="armazenamentoLimite">Unidades abaixo do limite</span><strong id="armazenamentoAlertas">—</strong></div>
-                                        </div>
-                                        <p class="nota-grafico" id="armazenamentoCobertura"></p>
-                                        <p class="nota-grafico">O percentual considera a capacidade de cada disco. Limiar demonstrativo de atenção configurado em 20% de espaço livre.</p>
-                                    </article>
-                                <div class="grade-contexto">
-                                    <article class="grafico-preditivo">
-                                        <div class="cabecalho-grafico"><div><h2>Memória RAM × uptime</h2><p>O consumo cresce durante a operação contínua?</p></div><span class="etiqueta-grafico">REGRESSÃO</span></div>
-                                        <div class="area-regressao"><canvas id="graficoRamUptime" role="img" aria-label="Regressão de uso médio de RAM em percentual por hora de uptime."></canvas><p id="vazioRamUptime" class="mensagem-contexto" hidden></p></div>
-                                        <p class="leitura-contexto" id="insightRam"></p>
-                                        <p class="nota-grafico">Crescimento persistente orienta a investigação de processos e retenção de memória. A tendência, sozinha, não confirma vazamento.</p>
-                                    </article>
-                                    <article class="grafico-preditivo">
-                                        <div class="cabecalho-grafico"><div><h2>Processos ativos × uso da CPU</h2><p>A carga de processamento acompanha o número de processos?</p></div><span class="etiqueta-grafico">REGRESSÃO</span></div>
-                                        <div class="area-regressao"><canvas id="graficoProcessosCpu" role="img" aria-label="Dispersão de quantidade de processos ativos e uso da CPU em percentual, com reta de regressão."></canvas><p id="vazioProcessosCpu" class="mensagem-contexto" hidden></p></div>
-                                        <p class="leitura-contexto" id="insightProcessos"></p>
-                                        <p class="nota-grafico">A quantidade de processos não identifica o processo responsável. Use a relação para direcionar uma inspeção da carga de trabalho.</p>
-                                    </article>
-                                    <article class="grafico-preditivo grafico-rede">
-                                        <div class="cabecalho-grafico"><div><h2>Estabilidade da rede ao longo do tempo</h2><p>Novos erros de entrada e saída por hora de operação</p></div><span class="etiqueta-grafico">TAXA POR INTERVALO</span></div>
-                                        <div class="area-regressao"><canvas id="graficoErrosRede" role="img" aria-label="Taxa de novos erros de rede por hora, calculada pela diferença dos contadores consecutivos de cada equipamento."></canvas><p id="vazioErrosRede" class="mensagem-contexto" hidden></p></div>
-                                        <p class="leitura-contexto" id="insightRede"></p>
-                                        <p class="nota-grafico">Diferença dos contadores dividida pelo intervalo, com média entre unidades. Reinícios e quedas nos contadores são descartados. Não representa indisponibilidade ou perda percentual de pacotes.</p>
-                                    </article>
-                                </div>
-                                <p class="nota-grafico">Telemetria demonstrativa com os campos já previstos na coleta Python: memória, disco, processos e contadores de erros de rede.</p>
-                            </div>
-                        </section>
-
-                        <section class="painel-preditivo" id="painelLotes">
-                            <div class="titulo-secao">
-                                <div><h2>Lotes para acompanhamento</h2><p>Compare as tendências e escolha onde aprofundar a investigação.</p></div>
-                                <button id="exportarAnalise" class="botao-preditivo secundario" type="button">↓ Exportar análise</button>
-                            </div>
-                            <div class="rolagem-preditiva">
-                                <table class="tabela-preditiva">
-                                    <caption class="somente-leitor-preditivo">Resultados da regressão por lote no período selecionado</caption>
-                                    <thead><tr><th scope="col">Lote / equipamento</th><th scope="col">Unidades</th><th scope="col">Tendência</th><th scope="col">R²</th><th scope="col">Margem atual</th><th scope="col">Situação</th><th scope="col">Investigação</th></tr></thead>
-                                    <tbody id="tabelaLotes"></tbody>
-                                </table>
-                            </div>
-                        </section>
-
-                        <section class="grade-investigacao" id="investigacaoModelo" aria-label="Investigação do modelo" hidden>
-                            <article class="painel-preditivo">
-                                <span class="rotulo-preditivo">COMPORTAMENTO OBSERVADO</span>
-                                <h2 id="tituloTendencia">Tendência do lote</h2>
-                                <strong class="tendencia-valor" id="valorTendencia">—</strong>
-                                <p id="descricaoTendencia"></p>
-                                <div class="recomendacao-preditiva"><h3>Avaliação sugerida</h3><p id="avaliacaoSugerida"></p></div>
-                            </article>
-                            <article class="painel-preditivo">
-                                <span class="rotulo-preditivo">IDENTIFICAÇÃO DO COMPONENTE</span>
-                                <h2 id="nomeFicha">Modelo da CPU</h2>
-                                <dl class="ficha-componente">
-                                    <div><dt>Fabricante</dt><dd id="fabricanteFicha">—</dd></div>
-                                    <div><dt>Componente</dt><dd>CPU</dd></div>
-                                    <div><dt>Limite de projeto</dt><dd id="limiteFicha">—</dd></div>
-                                    <div><dt>Origem da referência</dt><dd>Cenário demonstrativo</dd></div>
-                                </dl>
-                                <p class="nota-grafico">Identificação e limite simulados. O limite exibido representa uma configuração de projeto para esta demonstração.</p>
-                            </article>
-                        </section>
-
-                        <section class="painel-preditivo" id="painelUnidades" hidden>
-                            <div class="titulo-secao">
-                                <div><h2>Unidades para inspeção</h2><p id="resumoInspecao">Ordenadas pela maior temperatura atual.</p></div>
-                                <label><span class="somente-leitor-preditivo">Buscar número de série ou hospital</span><input type="search" class="busca-unidades" id="buscarUnidade" placeholder="Buscar série ou hospital…"></label>
-                            </div>
-                            <div class="rolagem-preditiva">
-                                <table class="tabela-preditiva">
-                                    <caption class="somente-leitor-preditivo">Última leitura por unidade no período selecionado</caption>
-                                    <thead><tr><th scope="col">Equipamento</th><th scope="col">Hospital</th><th scope="col">Lote</th><th scope="col">Temperatura</th><th scope="col">Uso da CPU</th><th scope="col">Margem</th><th scope="col">Situação</th></tr></thead>
-                                    <tbody id="tabelaUnidades"></tbody>
-                                </table>
-                            </div>
-                            <p id="unidadesVazias" class="vazio-preditivo" hidden>Nenhuma unidade encontrada. Tente outro número de série ou hospital.</p>
-                        </section>
-
-                        <details class="painel-preditivo">
-                            <summary class="botao-texto">Como interpretar esta análise</summary>
-                            <p class="nota-grafico">A regressão usa médias por faixa de uptime de cada lote. R² descreve o ajuste aos dados observados, e MAE é o erro médio absoluto desse ajuste; não representam certeza da previsão. A projeção mantém a tendência observada por até 72 horas e exige pelo menos quatro faixas de uptime. Uptime é o tempo desde a inicialização, não a idade do componente. As comparações não controlam diferenças de carga e ambiente. Esta demonstração não estima vida útil nem tempo até falha.</p>
-                        </details>
-                        </div>
-                        <footer class="rodape-preditivo"><span>BioTrace Hardware Intelligence © 2026</span><span>Hardware simulado · Clima via API · Referência: 03/11/2026, 12h (Brasília)</span></footer>
-                    </div>
-                </div>
-            </main>
+  <body>
+    <div class="app">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <a href="index.html" class="logo">
+            <img src="../assets/icons/BioTrace (4).png" alt="BioTrace Logo" />
+          </a>
+          <button
+            class="sidebar-close"
+            id="sidebarClose"
+            type="button"
+            aria-label="Fechar menu"
+          >
+            &times;
+          </button>
         </div>
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
-        <script src="./js/dashboard.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
-        <script src="./js/analise_preditiva.js"></script>
-        <script src="./js/contexto_preditivo.js"></script>
-    </body>
+
+        <nav class="sidebar-nav" aria-label="Menu principal">
+          <span class="nav-title">Principal</span>
+          <a href="index.html" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Visão Geral</span>
+          </a>
+          <a href="equipamentos.html" class="nav-item">
+            <span class="nav-icon">📟</span>
+            <span>Equipamentos</span>
+          </a>
+
+          <span class="nav-title nav-title-dashboards">Dashboards</span>
+          <a href="dash_engenheiro.html" class="nav-item">
+            <span class="nav-icon">📈</span>
+            <span>Equipamentos por lote</span>
+          </a>
+
+          <a href="dash_geral.html" class="nav-item">
+            <span class="nav-icon">📉</span>
+            <span>Análise de lotes</span>
+          </a>
+          <a
+            href="analise_preditiva.html"
+            class="nav-item active"
+            aria-current="page"
+          >
+            <span class="nav-icon">🔬</span>
+            <span>Análise preditiva</span>
+          </a>
+
+          <span class="nav-title nav-title-spacing">Cadastros</span>
+          <a href="hospitais.html" class="nav-item">
+            <span class="nav-icon">🏥</span>
+            <span>Cadastrar hospital</span>
+          </a>
+          <a href="cadastrar-usuario.html" class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span>Cadastrar usuário</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="sidebar-user">
+            <div id="usuario_avatar" class="usuario-avatar">BT</div>
+            <div class="user-info">
+              <strong id="nome_cliente">Usuário BioTrace</strong>
+              <span id="email_cliente">perfil@biotrace.com</span>
+            </div>
+          </div>
+          <button
+            class="sidebar-logout"
+            id="btnSair"
+            type="button"
+            aria-label="Sair da conta"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M9 5H5v14h4M10 12h10m-4-4 4 4-4 4"></path>
+            </svg>
+          </button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="mobile-header">
+          <button
+            class="menu-button"
+            id="menuButton"
+            type="button"
+            aria-label="Abrir menu"
+            aria-controls="sidebar"
+            aria-expanded="false"
+          >
+            ☰
+          </button>
+          <img
+            src="../assets/icons/BioTrace (4).png"
+            alt="BioTrace"
+            class="mobile-logo"
+          />
+        </header>
+
+        <div class="page-content">
+          <noscript
+            ><p class="aviso-sem-js">
+              Ative o JavaScript para explorar os filtros e os gráficos desta
+              demonstração.
+            </p></noscript
+          >
+          <button
+            id="voltarAnalise"
+            class="botao-texto voltar-analise"
+            type="button"
+            hidden
+          >
+            ← Voltar à análise
+          </button>
+          <div class="cabecalho-preditivo">
+            <div class="page-heading">
+              <div class="eyebrow">
+                <span class="eyebrow-dot"></span>HARDWARE / ANÁLISE PREDITIVA
+              </div>
+              <h1 id="tituloAnalise">Análise preditiva</h1>
+              <p id="descricaoAnalise">
+                Antecipe desvios térmicos e compare o comportamento dos seus
+                componentes.
+              </p>
+            </div>
+            <span class="selo-demonstracao">DADOS DEMONSTRATIVOS</span>
+          </div>
+
+          <div class="dashboard-preditiva">
+            <p class="nota-grafico">
+              Todos os indicadores, gráficos e exportações consideram somente
+              equipamentos alocados em hospitais.
+            </p>
+            <section class="filtros-preditivos" aria-label="Filtros da análise">
+              <div class="campo-preditivo">
+                <label for="filtroComponente">Componente</label>
+                <select id="filtroComponente">
+                  <option value="cpu">CPU</option>
+                  <option value="ram">Memória RAM</option>
+                  <option value="disco">Disco</option>
+                  <option value="rede">Rede</option>
+                </select>
+              </div>
+              <div class="campo-preditivo">
+                <label for="filtroModelo">Modelo do componente</label>
+                <select id="filtroModelo">
+                  <option value="i5">Intel Core i5-13450HX</option>
+                  <option value="i7">Intel Core i7-12700</option>
+                  <option value="ryzen">AMD Ryzen 5 5600G</option>
+                </select>
+              </div>
+              <div class="campo-preditivo">
+                <label for="filtroLote">Lote / equipamento</label>
+                <select id="filtroLote">
+                  <option value="todos">Todos os lotes</option>
+                  <option value="0">LT-2026-001 · ECG-12</option>
+                  <option value="1">LT-2026-002 · BPAP</option>
+                  <option value="2">LT-2026-003 · Osteomax</option>
+                </select>
+              </div>
+              <div class="campo-preditivo">
+                <label for="filtroPeriodo">Período</label>
+                <select id="filtroPeriodo">
+                  <option value="7">Últimos 7 dias</option>
+                  <option value="14">Últimos 14 dias</option>
+                  <option value="30" selected>Últimos 30 dias</option>
+                </select>
+              </div>
+              <button id="limparFiltros" class="botao-texto" type="button">
+                Limpar filtros
+              </button>
+            </section>
+
+            <div
+              class="escopo-preditivo"
+              id="escopoAnalise"
+              aria-live="polite"
+            ></div>
+
+            <p id="semEquipamentosAlocados" class="painel-preditivo" hidden>
+              Não há equipamentos alocados em hospitais para analisar neste
+              recorte. Ajuste os filtros para consultar outra seleção.
+            </p>
+            <div id="conteudoAnalise" class="dashboard-preditiva">
+              <section
+                class="aviso-preditivo"
+                id="avisoPreditivo"
+                aria-labelledby="tituloAviso"
+              >
+                <div class="icone-aviso" aria-hidden="true">↗</div>
+                <div class="texto-aviso">
+                  <span class="rotulo-preditivo" id="rotuloAviso"
+                    >ATENÇÃO PREVENTIVA</span
+                  >
+                  <h2 id="tituloAviso">Analisando a tendência térmica…</h2>
+                  <p id="descricaoAviso"></p>
+                </div>
+                <button
+                  class="botao-preditivo"
+                  id="investigarModelo"
+                  type="button"
+                >
+                  Inspecionar lote <span aria-hidden="true">→</span>
+                </button>
+              </section>
+
+              <section
+                class="indicadores-preditivos"
+                aria-label="Indicadores do recorte selecionado"
+              >
+                <article class="card-preditivo">
+                  <div class="topo-indicador">
+                    <h2>Unidades analisadas</h2>
+                    <span class="icone-indicador" aria-hidden="true">▦</span>
+                  </div>
+                  <strong id="kpiUnidades">—</strong>
+                  <p id="detalheUnidades">Aguardando análise</p>
+                </article>
+                <article class="card-preditivo">
+                  <div class="topo-indicador">
+                    <h2>Em atenção</h2>
+                    <span class="icone-indicador" aria-hidden="true">!</span>
+                  </div>
+                  <strong class="valor-alerta" id="kpiAtencao">—</strong>
+                  <p id="detalheAtencao">Aguardando análise</p>
+                </article>
+                <article class="card-preditivo">
+                  <div class="topo-indicador">
+                    <h2>Menor margem térmica</h2>
+                    <span class="icone-indicador" aria-hidden="true">↕</span>
+                  </div>
+                  <strong id="kpiMargem">—</strong>
+                  <p>Limite de projeto − maior temperatura na última coleta</p>
+                </article>
+                <article class="card-preditivo">
+                  <div class="topo-indicador">
+                    <h2>Projeção até o limite</h2>
+                    <span class="icone-indicador" aria-hidden="true">◷</span>
+                  </div>
+                  <strong class="valor-destaque" id="kpiTempo">—</strong>
+                  <p id="detalheTempo">Projeção na janela de 72 horas</p>
+                </article>
+              </section>
+
+              <section
+                class="grade-preditiva"
+                aria-label="Gráficos de regressão linear"
+              >
+                <article class="grafico-preditivo">
+                  <div class="cabecalho-grafico">
+                    <div>
+                      <h2>Temperatura × uptime contínuo</h2>
+                      <p id="subtituloTermico">
+                        Comparação entre lotes do mesmo modelo de CPU
+                      </p>
+                    </div>
+                    <span class="etiqueta-grafico">REGRESSÃO LINEAR</span>
+                  </div>
+                  <div class="area-regressao" id="areaTermica">
+                    <canvas
+                      id="graficoTermico"
+                      role="img"
+                      aria-label="Dispersão de temperatura da CPU em graus Celsius por uptime em horas, com reta de regressão por lote. Os resultados também estão na tabela de lotes abaixo."
+                    ></canvas>
+                  </div>
+                  <div class="legenda-regressao" id="legendaTermica"></div>
+                  <div class="resumo-regressao">
+                    <div>
+                      <span id="rotuloAjuste">R² do lote prioritário</span
+                      ><strong class="valor-destaque" id="resumoAjuste"
+                        >—</strong
+                      >
+                    </div>
+                    <div>
+                      <span>Erro médio (MAE)</span
+                      ><strong id="resumoErro">—</strong>
+                    </div>
+                    <div>
+                      <span>Limite de projeto</span
+                      ><strong id="resumoLimite">—</strong>
+                    </div>
+                  </div>
+                  <p class="nota-grafico">
+                    Pontos: médias por lote e faixa de 24 h de uptime · reta
+                    contínua: ajuste · tracejado: projeção de até 72 h. Cada
+                    lote tem seu próprio ajuste; R² na legenda.
+                  </p>
+                </article>
+                <article class="grafico-preditivo">
+                  <div class="cabecalho-grafico">
+                    <div>
+                      <h2>Temperatura × uso da CPU</h2>
+                      <p id="subtituloCarga">
+                        Como a temperatura varia com a carga de trabalho
+                      </p>
+                    </div>
+                  </div>
+                  <div class="area-regressao" id="areaCarga">
+                    <canvas
+                      id="graficoCarga"
+                      role="img"
+                      aria-label="Dispersão de temperatura por percentual de uso da CPU, com regressão linear única dos lotes selecionados."
+                    ></canvas>
+                  </div>
+
+                  <div class="resumo-regressao">
+                    <div>
+                      <span>Erro médio (MAE)</span
+                      ><strong class="valor-destaque" id="cargaErro">—</strong>
+                    </div>
+                    <div>
+                      <span>Ajuste (R²)</span
+                      ><strong id="cargaAjuste">—</strong>
+                    </div>
+                    <div>
+                      <span>Pontos (n)</span
+                      ><strong id="cargaAmostras">—</strong>
+                    </div>
+                  </div>
+                  <p class="nota-grafico">
+                    Pontos por lote e ajuste único do recorte. Misturar
+                    condições de operação pode alterar a associação; correlação
+                    não demonstra causalidade.
+                  </p>
+                </article>
+              </section>
+
+              <section class="painel-preditivo" id="painelLotes">
+                <div class="titulo-secao">
+                  <div>
+                    <h2>Lotes para acompanhamento</h2>
+                    <p>
+                      Compare as tendências e escolha onde aprofundar a
+                      investigação.
+                    </p>
+                  </div>
+                  <button
+                    id="exportarAnalise"
+                    class="botao-preditivo secundario"
+                    type="button"
+                  >
+                    ↓ Exportar análise
+                  </button>
+                </div>
+                <div class="rolagem-preditiva">
+                  <table class="tabela-preditiva">
+                    <caption class="somente-leitor-preditivo">
+                      Resultados da regressão por lote no período selecionado
+                    </caption>
+                    <thead>
+                      <tr>
+                        <th scope="col">Lote / equipamento</th>
+                        <th scope="col">Unidades</th>
+                        <th scope="col">Tendência</th>
+                        <th scope="col">R²</th>
+                        <th scope="col">Projeção até o limite</th>
+                        <th scope="col">Margem atual</th>
+                        <th scope="col">Situação</th>
+                        <th scope="col">Investigação</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tabelaLotes"></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section
+                class="grade-investigacao"
+                id="investigacaoModelo"
+                aria-label="Investigação do modelo"
+                hidden
+              >
+                <article class="painel-preditivo">
+                  <span class="rotulo-preditivo">COMPORTAMENTO OBSERVADO</span>
+                  <h2 id="tituloTendencia">Tendência do lote</h2>
+                  <strong class="tendencia-valor" id="valorTendencia">—</strong>
+                  <p id="descricaoTendencia"></p>
+                  <div class="recomendacao-preditiva">
+                    <h3>Avaliação sugerida</h3>
+                    <p id="avaliacaoSugerida"></p>
+                  </div>
+                </article>
+                <article class="painel-preditivo">
+                  <span class="rotulo-preditivo"
+                    >IDENTIFICAÇÃO DO COMPONENTE</span
+                  >
+                  <h2 id="nomeFicha">Modelo da CPU</h2>
+                  <dl class="ficha-componente">
+                    <div>
+                      <dt>Fabricante</dt>
+                      <dd id="fabricanteFicha">—</dd>
+                    </div>
+                    <div>
+                      <dt>Componente</dt>
+                      <dd>CPU</dd>
+                    </div>
+                    <div>
+                      <dt>Limite de projeto</dt>
+                      <dd id="limiteFicha">—</dd>
+                    </div>
+                    <div>
+                      <dt>Origem da referência</dt>
+                      <dd>Cenário demonstrativo</dd>
+                    </div>
+                  </dl>
+                  <p class="nota-grafico">
+                    Identificação e limite simulados. O limite exibido
+                    representa uma configuração de projeto para esta
+                    demonstração.
+                  </p>
+                </article>
+              </section>
+
+              <section class="painel-preditivo" id="painelUnidades" hidden>
+                <div class="titulo-secao">
+                  <div>
+                    <h2>Unidades para inspeção</h2>
+                    <p id="resumoInspecao">
+                      Ordenadas pela maior temperatura atual.
+                    </p>
+                  </div>
+                  <label
+                    ><span class="somente-leitor-preditivo"
+                      >Buscar número de série ou hospital</span
+                    ><input
+                      type="search"
+                      class="busca-unidades"
+                      id="buscarUnidade"
+                      placeholder="Buscar série ou hospital…"
+                  /></label>
+                </div>
+                <div class="rolagem-preditiva">
+                  <table class="tabela-preditiva">
+                    <caption class="somente-leitor-preditivo">
+                      Última leitura por unidade no período selecionado
+                    </caption>
+                    <thead>
+                      <tr>
+                        <th scope="col">Equipamento</th>
+                        <th scope="col">Hospital</th>
+                        <th scope="col">Lote</th>
+                        <th scope="col">Temperatura</th>
+                        <th scope="col">Uso da CPU</th>
+                        <th scope="col">Margem</th>
+                        <th scope="col">Situação</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tabelaUnidades"></tbody>
+                  </table>
+                </div>
+                <p id="unidadesVazias" class="vazio-preditivo" hidden>
+                  Nenhuma unidade encontrada. Tente outro número de série ou
+                  hospital.
+                </p>
+              </section>
+
+              <details class="aprofundamento-preditivo" id="detalhesContexto">
+                <summary>
+                  Carga de trabalho e ambiente
+                  <span>Explore processos, clima e margem térmica</span>
+                </summary>
+                <div class="dashboard-preditiva conteudo-aprofundamento">
+                  <article class="grafico-preditivo">
+                    <div class="cabecalho-grafico">
+                      <div>
+                        <h2>Processos ativos × uso da CPU</h2>
+                        <p>
+                          A carga de processamento acompanha o número de
+                          processos?
+                        </p>
+                      </div>
+                      <span class="etiqueta-grafico">REGRESSÃO</span>
+                    </div>
+                    <div class="area-regressao">
+                      <canvas
+                        id="graficoProcessosCpu"
+                        role="img"
+                        aria-label="Dispersão de quantidade de processos ativos e uso da CPU em percentual, com reta de regressão."
+                      ></canvas>
+                      <p
+                        id="vazioProcessosCpu"
+                        class="mensagem-contexto"
+                        hidden
+                      ></p>
+                    </div>
+                    <p class="leitura-contexto" id="insightProcessos"></p>
+                    <p class="nota-grafico">
+                      A quantidade de processos não identifica o processo
+                      responsável. Use a relação para direcionar uma inspeção da
+                      carga de trabalho.
+                    </p>
+                  </article>
+
+                  <section
+                    class="contexto-preditivo"
+                    aria-labelledby="tituloContexto"
+                  >
+                    <div class="titulo-secao">
+                      <div>
+                        <span class="rotulo-preditivo"
+                          >AMBIENTE DE INSTALAÇÃO</span
+                        >
+                        <h2 id="tituloContexto">Clima e temperatura</h2>
+                        <p id="escopoComplementar">
+                          Aprofundamento do lote prioritário no recorte
+                          selecionado.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div id="painelAmbiente">
+                      <p class="nota-grafico" id="hospitaisClima">
+                        Clima vinculado aos hospitais de instalação dos
+                        equipamentos alocados.
+                      </p>
+                      <div class="estado-clima">
+                        <p id="statusClima" role="status">
+                          Consultando o histórico meteorológico…
+                        </p>
+                        <button
+                          class="botao-texto"
+                          id="atualizarClima"
+                          type="button"
+                        >
+                          ↻ Atualizar clima
+                        </button>
+                      </div>
+                      <div
+                        class="indicadores-contexto"
+                        aria-label="Resumo do clima pareado por lote, hospital e hora"
+                      >
+                        <article>
+                          <span>Temperatura externa média</span
+                          ><strong id="climaTemperatura">—</strong
+                          ><small>Nos horários pareados com a coleta</small>
+                        </article>
+                        <article>
+                          <span>Umidade externa média</span
+                          ><strong id="climaUmidade">—</strong
+                          ><small>Contexto meteorológico da cidade</small>
+                        </article>
+                        <article>
+                          <span>Ajuste clima × CPU (R²)</span
+                          ><strong id="climaR2">—</strong
+                          ><small>Associação no cenário demonstrativo</small>
+                        </article>
+                        <article>
+                          <span>Pares lote / hospital / hora</span
+                          ><strong id="climaPares">—</strong
+                          ><small id="climaCobertura"
+                            >Aguardando dados da API</small
+                          >
+                        </article>
+                      </div>
+                      <div class="grade-contexto">
+                        <article class="grafico-preditivo">
+                          <div class="cabecalho-grafico">
+                            <div>
+                              <h2>Clima externo × temperatura da CPU</h2>
+                              <p>
+                                Média por lote, hospital e horário × clima do
+                                local de instalação
+                              </p>
+                            </div>
+                            <span class="etiqueta-grafico">REGRESSÃO</span>
+                          </div>
+                          <div class="area-regressao">
+                            <canvas
+                              id="graficoClimaCpu"
+                              role="img"
+                              aria-label="Dispersão entre temperatura externa da cidade e temperatura média da CPU do lote, cruzadas pelo horário UTC."
+                            ></canvas>
+                            <p
+                              id="vazioClimaCpu"
+                              class="mensagem-contexto"
+                              hidden
+                            ></p>
+                          </div>
+                          <p class="leitura-contexto" id="insightClima">
+                            Aguardando horários em comum entre a API e a
+                            telemetria.
+                          </p>
+                          <p class="nota-grafico">
+                            Clima externo da API + hardware simulado. A
+                            temperatura da cidade não mede a sala ou o gabinete;
+                            esta associação não isola carga, ventilação ou
+                            climatização.
+                          </p>
+                        </article>
+                        <article class="grafico-preditivo">
+                          <div class="cabecalho-grafico">
+                            <div>
+                              <h2>Margem térmica por lote e clima</h2>
+                              <p id="subtituloMargemClima">
+                                Quais lotes têm menor folga em horários mais
+                                quentes?
+                              </p>
+                            </div>
+                            <span class="etiqueta-grafico"
+                              >COMPARAÇÃO DE LOTES</span
+                            >
+                          </div>
+                          <div class="area-regressao">
+                            <canvas
+                              id="graficoMargemClima"
+                              role="img"
+                              aria-label="Barras com a margem térmica média de cada lote em horários com temperatura externa abaixo de 28 graus Celsius e a partir de 28 graus Celsius."
+                            ></canvas>
+                            <p
+                              id="vazioMargemClima"
+                              class="mensagem-contexto"
+                              hidden
+                            ></p>
+                          </div>
+                          <p class="leitura-contexto" id="resumoMargemClima">
+                            Aguardando horários em comum entre clima e coleta.
+                          </p>
+                          <p class="nota-grafico">
+                            Margem média = limite de projeto − temperatura média
+                            da CPU. Quanto menor, mais próximo do limite;
+                            valores negativos indicam média acima dele. O corte
+                            de 28 °C é exploratório. Faixas sem dados ficam sem
+                            barra. Clima externo:
+                            <a
+                              href="https://open-meteo.com/"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              >Open-Meteo</a
+                            >
+                            · hardware simulado. Carga e uptime também podem
+                            explicar diferenças.
+                          </p>
+                        </article>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              </details>
+              <details class="painel-preditivo">
+                <summary class="botao-texto">
+                  Como interpretar esta análise
+                </summary>
+                <p class="nota-grafico">
+                  A regressão térmica usa médias por faixa de 24 h de uptime de
+                  cada lote, posicionadas no uptime médio observado. As demais
+                  dispersões usam um ajuste único do recorte. R² descreve o
+                  ajuste aos dados observados, e MAE é o erro médio absoluto
+                  desse ajuste; não representam certeza da previsão. A projeção
+                  mantém a tendência observada por até 72 horas de uptime
+                  adicional e exige pelo menos quatro faixas de 24 h, R² ≥ 0,50
+                  e inclinação positiva. Um ajuste indisponível não permite
+                  concluir que o limite não será atingido. MAE usa a unidade do
+                  eixo vertical e n indica os pontos válidos do ajuste. Uptime é
+                  o tempo desde a inicialização, não a idade do componente. As
+                  comparações não controlam diferenças de carga e ambiente. Esta
+                  demonstração não estima vida útil nem tempo até falha. Os
+                  dados de campo ajudam a priorizar inspeções, mas a validação
+                  de componentes e layouts exige ensaios sob condições
+                  controladas.
+                </p>
+              </details>
+            </div>
+            <section
+              id="analiseOutrosComponentes"
+              class="dashboard-preditiva"
+              hidden
+            >
+              <div class="painel-preditivo">
+                <span class="rotulo-preditivo"> MODELO DO COMPONENTE </span>
+                <h2 id="tituloModeloComponente"></h2>
+                <p id="origemModeloComponente" class="nota-grafico"></p>
+                <p id="regraComponente" class="nota-grafico"></p>
+              </div>
+              <section
+                class="indicadores-preditivos"
+                aria-label="Indicadores do componente"
+              >
+                <article class="card-preditivo">
+                  <div class="topo-indicador">
+                    <h2>Unidades analisadas</h2>
+                  </div>
+                  <strong id="totalUnidadesComponente"> — </strong>
+                  <p>Equipamentos alocados em hospitais</p>
+                </article>
+                <article class="card-preditivo">
+                  <div class="topo-indicador">
+                    <h2 id="rotuloValorComponente"></h2>
+                  </div>
+                  <strong id="valorAtualComponente"> — </strong>
+                  <p id="detalheValorComponente"></p>
+                </article>
+                <article class="card-preditivo">
+                  <div class="topo-indicador">
+                    <h2>Em atenção</h2>
+                  </div>
+                  <strong id="alertasComponente" class="valor-alerta">
+                    —
+                  </strong>
+                  <p id="limiarComponente"></p>
+                </article>
+                <article class="card-preditivo">
+                  <div class="topo-indicador">
+                    <h2 id="rotuloAjusteComponente"></h2>
+                  </div>
+                  <strong id="ajusteComponente"> — </strong>
+                  <p id="detalheAjusteComponente"></p>
+                </article>
+              </section>
+              <div class="grade-contexto">
+                <article class="grafico-preditivo">
+                  <div class="cabecalho-grafico">
+                    <div>
+                      <h2 id="tituloGraficoComponente1"></h2>
+                      <p id="descricaoGraficoComponente1"></p>
+                    </div>
+                  </div>
+                  <div class="area-regressao">
+                    <canvas
+                      id="graficoComponente1"
+                      role="img"
+                      aria-label="Gráfico principal do componente selecionado"
+                    >
+                    </canvas>
+                    <p
+                      id="vazioComponente1"
+                      class="mensagem-contexto"
+                      hidden
+                    ></p>
+                  </div>
+                  <p class="leitura-contexto" id="resumoGraficoComponente1"></p>
+                </article>
+                <article class="grafico-preditivo">
+                  <div class="cabecalho-grafico">
+                    <div>
+                      <h2 id="tituloGraficoComponente2"></h2>
+                      <p id="descricaoGraficoComponente2"></p>
+                    </div>
+                  </div>
+                  <div class="area-regressao">
+                    <canvas
+                      id="graficoComponente2"
+                      role="img"
+                      aria-label="Gráfico complementar do componente selecionado"
+                    >
+                    </canvas>
+                    <p
+                      id="vazioComponente2"
+                      class="mensagem-contexto"
+                      hidden
+                    ></p>
+                  </div>
+                  <p class="leitura-contexto" id="resumoGraficoComponente2"></p>
+                </article>
+              </div>
+              <section class="painel-preditivo">
+                <div class="titulo-secao">
+                  <div>
+                    <h2>Unidades do modelo selecionado</h2>
+                    <p>Última leitura válida por unidade alocada</p>
+                  </div>
+                  <button
+                    type="button"
+                    id="exportarComponente"
+                    class="botao-preditivo secundario"
+                  >
+                    ↓ Exportar componente
+                  </button>
+                </div>
+                <div class="rolagem-preditiva">
+                  <table class="tabela-preditiva">
+                    <thead>
+                      <tr>
+                        <th scope="col">Equipamento</th>
+                        <th scope="col">Hospital</th>
+                        <th scope="col">Lote</th>
+                        <th scope="col">Modelo</th>
+                        <th scope="col" id="colunaValorComponente"></th>
+                        <th scope="col" id="colunaAuxiliarComponente"></th>
+                        <th scope="col">Situação</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tabelaComponente"></tbody>
+                  </table>
+                </div>
+              </section>
+            </section>
+            <footer class="rodape-preditivo">
+              <span>BioTrace Hardware Intelligence © 2026</span
+              ><span
+                >Hardware simulado · Clima via API · Referência: 03/11/2026, 12h
+                (Brasília)</span
+              >
+            </footer>
+          </div>
+        </div>
+      </main>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <script src="./js/dashboard.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script src="./js/analise_preditiva.js"></script>
+    <script src="./js/contexto_preditivo.js"></script>
+    <script src="./js/componentes_preditivos.js"></script>
+  </body>
 </html>
