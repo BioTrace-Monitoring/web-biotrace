@@ -1,0 +1,136 @@
+.aviso-demo {
+  padding: 16px 20px;
+  background: var(--primary-light);
+  border: 1px solid #dfd3f2;
+  border-radius: 9px;
+  font-size: 12px;
+  color: var(--primary);
+}
+.fluxo-cadastro {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.fluxo-cadastro strong {
+  color: var(--text);
+  font-size: 13px;
+}
+.abas-ensaios,
+.acoes-form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.toolbar-ensaios {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  align-items: end;
+  gap: 16px;
+  margin: 24px 0 14px;
+}
+.ensaios-page label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+.ensaios-page input,
+.ensaios-page select,
+.ensaios-page textarea {
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 11px;
+  color: var(--text);
+  background: white;
+  width: 100%;
+  font-size: 12px;
+}
+.ensaios-page input:focus-visible,
+.ensaios-page select:focus-visible,
+.ensaios-page textarea:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.registro-ensaio {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+.registro-ensaio h3 {
+  margin: 0 0 8px;
+}
+.registro-ensaio .acoes-form {
+  flex-shrink: 0;
+}
+.ensaios-page dialog {
+  margin: auto;
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  width: min(800px, 94vw);
+  max-height: 90vh;
+  overflow: auto;
+}
+.ensaios-page dialog::backdrop {
+  background: #21152f80;
+}
+.form-ensaios {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin: 24px 0;
+}
+.form-ensaios .linha-inteira {
+  grid-column: 1/-1;
+}
+.form-ensaios fieldset {
+  grid-column: 1/-1;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form-ensaios legend {
+  font-size: 13px;
+  color: var(--primary);
+  padding: 0 6px;
+}
+.acoes-form {
+  margin-top: 18px;
+}
+.detalhes-lista {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin: 24px 0;
+}
+.detalhes-lista dt {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.detalhes-lista dd {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 700px) {
+  .toolbar-ensaios,
+  .form-ensaios,
+  .fluxo-cadastro,
+  .detalhes-lista {
+    grid-template-columns: 1fr;
+  }
+  .form-ensaios fieldset {
+    grid-template-columns: 1fr;
+  }
+  .registro-ensaio {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

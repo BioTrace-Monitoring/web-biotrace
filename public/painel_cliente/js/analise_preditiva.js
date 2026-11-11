@@ -1,996 +1,1001 @@
-var modelosPreditivos = {
-  i5: {
-    nome: "Intel Core i5-13450HX",
-    fabricante: "Intel",
-    limite: 85,
-    bases: [46, 49, 43],
-    inclinacoes: [0.06, 0.026, 0.018],
-  },
-  i7: {
-    nome: "Intel Core i7-12700",
-    fabricante: "Intel",
-    limite: 85,
-    bases: [44, 45, 42],
-    inclinacoes: [0.035, 0.045, 0.023],
-  },
-  ryzen: {
-    nome: "AMD Ryzen 5 5600G",
-    fabricante: "AMD",
-    limite: 80,
-    bases: [48, 46, 44],
-    inclinacoes: [0.004, 0.015, 0.012],
-  },
-};
-var lotesPreditivos = [
+// Cenários de apresentação. Relatórios técnicos e custos são fontes planejadas.
+var referenciaEngenharia = new Date("2026-11-11T12:00:00-03:00").getTime();
+var criteriosEngenharia = [
   {
-    numero: "LT-2026-001",
-    equipamento: "ECG-12",
-    prefixo: "ECG12",
-    cor: "#dc535e",
+    id: "termico",
+    nome: "Temperatura",
+    origem: "Python · sensor interno da CPU",
+    regra:
+      "Nenhuma leitura do ensaio acima do limite térmico configurado para o equipamento.",
   },
   {
-    numero: "LT-2026-002",
-    equipamento: "BPAP",
-    prefixo: "BPAP",
-    cor: "#6d3fc0",
+    id: "recursos",
+    nome: "Recursos",
+    origem: "Python · CPU, RAM e disco",
+    regra:
+      "CPU abaixo de 95%, RAM abaixo de 90% e pelo menos 20% de espaço livre durante o protocolo.",
   },
   {
-    numero: "LT-2026-003",
-    equipamento: "Osteomax",
-    prefixo: "OST",
-    cor: "#169b80",
+    id: "estabilidade",
+    nome: "Estabilidade",
+    origem: "Python · uptime e contadores de rede",
+    regra:
+      "Sem reinício inesperado registrado no ensaio e sem aumento de erros de rede entre coletas.",
+  },
+  {
+    id: "layout",
+    nome: "Layout",
+    origem: "Relatório de revisão técnica da placa",
+    regra:
+      "Checklist de revisão da placa concluído, com evidência e responsável.",
+  },
+  {
+    id: "compatibilidade",
+    nome: "Compatibilidade",
+    origem: "Relatório de teste de integração",
+    regra:
+      "Combinações previstas de hardware, firmware e periféricos aprovadas no protocolo.",
+  },
+  {
+    id: "funcionamento",
+    nome: "Funcionamento",
+    origem: "Relatório de ensaio funcional",
+    regra: "Cenários funcionais previstos no protocolo executados e aprovados.",
   },
 ];
-var hospitaisPreditivos = {
-  1: {
-    nome: "Hospital São Lucas",
-    cidade: "São Paulo · SP",
-    latitude: -23.5505,
-    longitude: -46.6333,
+var lotesEngenharia = [
+  {
+    id: "LT-001",
+    projeto: "ECG-12",
+    revisao: "A",
+    protocolo: "VAL-ECG-01",
+    cor: "#dc535e",
+    limite: 85,
+    base: 61,
+    inclinacao: 0.72,
+    unidades: 6,
+    semColeta: 0,
+    relatorios: {
+      layout: {
+        estado: "falha",
+        evidencia:
+          "REV-014 · espaçamento e posicionamento do dissipador precisam de revisão.",
+        acao: "Revisar o posicionamento do dissipador e anexar o novo checklist de layout.",
+        responsavel: "Engenharia de hardware",
+        prazo: "14/11/2026",
+        custo: 12000,
+        dias: 5,
+      },
+      compatibilidade: {
+        estado: "falha",
+        evidencia:
+          "INT-021 · falha de reconhecimento do periférico no firmware de teste.",
+        acao: "Reexecutar a integração após ajuste do firmware e registrar o resultado.",
+        responsavel: "Equipe de integração",
+        prazo: "13/11/2026",
+        custo: 3000,
+        dias: 2,
+      },
+      funcionamento: {
+        estado: "ok",
+        evidencia: "FUN-011 · cenários funcionais executados sem reprovação.",
+      },
+    },
   },
-  2: {
-    nome: "Hospital Vida",
-    cidade: "Campinas · SP",
-    latitude: -22.9056,
-    longitude: -47.0608,
+  {
+    id: "LT-002",
+    projeto: "ECG-12",
+    revisao: "B",
+    protocolo: "VAL-ECG-01",
+    cor: "#169b80",
+    limite: 85,
+    base: 53,
+    inclinacao: 0.15,
+    unidades: 6,
+    semColeta: 0,
+    relatorios: {
+      layout: {
+        estado: "ok",
+        evidencia:
+          "REV-019 · checklist da placa com dissipador reposicionado concluído.",
+      },
+      compatibilidade: {
+        estado: "ok",
+        evidencia:
+          "INT-026 · combinações de firmware e periféricos previstas no protocolo aprovadas.",
+      },
+      funcionamento: {
+        estado: "ok",
+        evidencia: "FUN-018 · cenários funcionais executados e aprovados.",
+      },
+    },
   },
-  3: {
-    nome: "Santa Clara",
-    cidade: "Curitiba · PR",
-    latitude: -25.4284,
-    longitude: -49.2733,
+  {
+    id: "LT-003",
+    projeto: "BPAP",
+    revisao: "A",
+    protocolo: "VAL-BPAP-02",
+    cor: "#6d3fc0",
+    limite: 80,
+    base: 48,
+    inclinacao: 0.21,
+    unidades: 6,
+    semColeta: 2,
+    relatorios: {
+      layout: {
+        estado: "ok",
+        evidencia: "REV-022 · checklist da revisão da placa concluído.",
+      },
+      compatibilidade: {
+        estado: "pendente",
+        evidencia: "INT-029 · teste com periféricos ainda sem conclusão.",
+        acao: "Concluir o protocolo de integração e anexar o parecer.",
+        responsavel: "Equipe de integração",
+        prazo: "16/11/2026",
+        custo: null,
+        dias: null,
+      },
+      funcionamento: {
+        estado: "pendente",
+        evidencia: "FUN-020 · cenários de operação contínua aguardam registro.",
+        acao: "Executar os cenários funcionais pendentes e registrar o resultado.",
+        responsavel: "Equipe de validação",
+        prazo: "17/11/2026",
+        custo: null,
+        dias: null,
+      },
+    },
   },
-};
-var referenciaPreditiva = new Date("2026-11-03T12:00:00-03:00").getTime();
-var leiturasPreditivas = criarLeiturasDemonstrativas();
-var resultadosPreditivos = [];
-var unidadesPreditivas = [];
-var graficoTermico = null;
-var graficoCarga = null;
-var investigandoModelo = false;
+];
+var leiturasEngenharia = criarTelemetriaEngenharia();
+var resultadosEngenharia = [];
+var graficosEngenharia = {};
 
-function criarLeiturasDemonstrativas() {
-  var leituras = [];
-  var variacoes = [
-    -0.6, 0.8, -0.4, 1.1, -0.9, 0.3, -0.7, 0.6, -0.3, 0.9, -0.8, 0.5, 0.1,
-  ];
-  var picosMemoria = [0, 6, 1, 8, 2, 12, 5, 9, 3, 11, 4, 10, 2];
-  var limpezasDisco = [0, -8, -16, 6, -4, -18, 12, 2, -10, 15, 5, -8, 18];
-  var tarefasProcessos = [4, -12, 18, -4, 10, -18, 8, 22, -10, 14, -6, 16, 0];
-  var modelos = Object.keys(modelosPreditivos);
-  for (var m = 0; m < modelos.length; m++) {
-    var modelo = modelosPreditivos[modelos[m]];
-    for (var l = 0; l < lotesPreditivos.length; l++) {
-      for (var u = 0; u < 3; u++) {
-        for (var i = 0; i < variacoes.length; i++) {
-          var usoCpu = 18 + ((i * 17 + u * 9 + l * 13) % 72);
-          var oscilacaoTermica = variacoes[i] * (6 + l * 2 + m);
-          var oscilacaoMemoria = picosMemoria[i] * (1 + l * 0.5);
-          var oscilacaoDisco = limpezasDisco[i] * (l === 0 ? 0.4 : 1.5);
-          var espacoLivre = Number(
-            (
-              160 -
-              l * 18 -
-              m * 4 -
-              i * (l === 0 ? 7 : 3) -
-              u * 2 +
-              oscilacaoDisco
-            ).toFixed(2),
-          );
-          var capacidadeDisco = u === 0 ? 512 : 256;
-          var tarefas = tarefasProcessos[(i + u + l) % tarefasProcessos.length];
-          var usoMemoria = Number(
-            (
-              34 +
-              l * 4 +
-              m * 2 +
-              i * (l === 0 ? 3.1 : 1.2) +
-              u * 1.4 +
-              oscilacaoMemoria
-            ).toFixed(2),
-          );
-          leituras.push({
-            modelo: modelos[m],
-            lote: l,
-            modelo_ram: "ram_" + m,
-            modelo_disco: "disco_" + m,
-            modelo_rede: "rede_" + m,
-            numero_serie:
-              lotesPreditivos[l].prefixo +
-              "-" +
-              String(m * 100 + l * 10 + u + 1).padStart(4, "0"),
-            fk_hospital: l === 2 && u === 2 ? null : u + 1,
-            hospital: l === 2 && u === 2 ? "" : hospitaisPreditivos[u + 1].nome,
-            data_hora_br: new Date(
-              referenciaPreditiva - (12 - i) * 50 * 3600000,
-            ).toISOString(),
-            uptime_horas: i * 50,
-            temperatura_cpu: Number(
-              (
-                modelo.bases[l] +
-                modelo.inclinacoes[l] * i * 50 +
-                oscilacaoTermica +
-                (u - 1) * 1.2
-              ).toFixed(2),
-            ),
-            cpu_percent: usoCpu,
-            memoria_disponivel_gb: Number(
-              ((1 - usoMemoria / 100) * [32, 16, 8][m]).toFixed(2),
-            ),
-            memoria_percent: usoMemoria,
-            disco_livre_gb: espacoLivre,
-            disco_percent: Number(
-              (100 - (espacoLivre / capacidadeDisco) * 100).toFixed(2),
-            ),
-            processos_ativos: 90 + Math.round(usoCpu * 0.6) + tarefas,
-            rede_bytes_enviados:
-              ((i * (1 + u * 0.3 + m * 0.2) + i * i * 0.08) *
-                50 *
-                3600 *
-                1000000) /
-              8,
-            rede_bytes_recebidos:
-              ((i * (2 + l * 0.4) + i * i * 0.12) * 50 * 3600 * 1000000) / 8,
-            rede_erros_entrada: i * (l + 2) + Math.floor((i * i) / 3),
-            rede_erros_saida: i * (l + 1) + Math.floor((i * i) / 6),
+function criarTelemetriaEngenharia() {
+  var dados = [];
+  var oscilacoes = [0, 3, -2, 4, -3, 2, -1];
+  lotesEngenharia.forEach(function (lote, indice) {
+    [28, 21, 14, 7, 0].forEach(function (dias) {
+      for (var unidade = 0; unidade < lote.unidades; unidade++) {
+        if (dias === 0 && unidade >= lote.unidades - lote.semColeta) continue;
+        for (var ponto = 0; ponto <= 6; ponto++) {
+          var uptime = ponto * 4;
+          var temperatura =
+            lote.base +
+            lote.inclinacao * uptime +
+            oscilacoes[(ponto + indice) % 7] * (1 + indice * 0.6) +
+            unidade * 0.3;
+          dados.push({
+            ambiente: "ensaio",
+            lote: lote.id,
+            serie: lote.id + "-" + (unidade + 1),
+            instante:
+              referenciaEngenharia - dias * 86400000 - (24 - uptime) * 3600000,
+            uptime: uptime,
+            temperatura: temperatura,
+            cpu: 40 + ponto * 5 + unidade,
+            ram: 48 + ponto * (indice === 0 ? 7 : 3) + unidade,
+            discoLivre: 42 - ponto - unidade,
+            erros: indice === 0 && ponto > 3 ? 2 : 0,
+            reinicio: indice === 0 && unidade === 0 && ponto === 3,
+            hospital:
+              unidade < 3
+                ? ["São Lucas", "Vida", "Santa Clara"][unidade]
+                : null,
           });
         }
       }
-    }
-  }
-  return leituras;
+    });
+  });
+  var campo = dados
+    .filter(function (l) {
+      return l.hospital;
+    })
+    .map(function (l) {
+      return Object.assign({}, l, {
+        ambiente: "campo",
+        temperatura: l.temperatura + (l.lote === "LT-001" ? 3 : 1),
+        ram: l.ram + 2,
+      });
+    });
+  return dados.concat(campo);
 }
-
-function formatarPreditivo(valor, casas) {
+function numeroEngenharia(valor, casas) {
   return Number(valor).toLocaleString("pt-BR", {
-    minimumFractionDigits: casas,
-    maximumFractionDigits: casas,
+    minimumFractionDigits: casas || 0,
+    maximumFractionDigits: casas || 0,
   });
 }
-
-function calcularRegressao(pontos) {
-  pontos = pontos.filter(function (ponto) {
-    return Number.isFinite(ponto.x) && Number.isFinite(ponto.y);
+function regressaoEngenharia(pontos) {
+  if (pontos.length < 4) return null;
+  var x =
+    pontos.reduce(function (s, p) {
+      return s + p.x;
+    }, 0) / pontos.length;
+  var y =
+    pontos.reduce(function (s, p) {
+      return s + p.y;
+    }, 0) / pontos.length;
+  var xx = 0,
+    yy = 0,
+    xy = 0;
+  pontos.forEach(function (p) {
+    xx += Math.pow(p.x - x, 2);
+    yy += Math.pow(p.y - y, 2);
+    xy += (p.x - x) * (p.y - y);
   });
-  if (pontos.length < 3) return null;
-  var mediaX = 0;
-  var mediaY = 0;
-  for (var i = 0; i < pontos.length; i++) {
-    mediaX += pontos[i].x / pontos.length;
-    mediaY += pontos[i].y / pontos.length;
-  }
-  var somaXX = 0;
-  var somaYY = 0;
-  var somaXY = 0;
-  for (var i = 0; i < pontos.length; i++) {
-    somaXX += Math.pow(pontos[i].x - mediaX, 2);
-    somaYY += Math.pow(pontos[i].y - mediaY, 2);
-    somaXY += (pontos[i].x - mediaX) * (pontos[i].y - mediaY);
-  }
-  if (somaXX === 0) return null;
-  var inclinacao = somaXY / somaXX;
-  var intercepto = mediaY - inclinacao * mediaX;
-  var erroAbsoluto = 0;
-  var erroQuadrado = 0;
-  for (var i = 0; i < pontos.length; i++) {
-    var erro = pontos[i].y - (intercepto + inclinacao * pontos[i].x);
-    erroAbsoluto += Math.abs(erro);
-    erroQuadrado += erro * erro;
-  }
-  return {
-    inclinacao: inclinacao,
-    intercepto: intercepto,
-    r2: somaYY > 0 ? Math.max(0, Math.min(1, 1 - erroQuadrado / somaYY)) : null,
-    pearson:
-      somaYY > 0
-        ? Math.max(-1, Math.min(1, somaXY / Math.sqrt(somaXX * somaYY)))
-        : null,
-    mae: erroAbsoluto / pontos.length,
-  };
+  if (!xx || !yy) return null;
+  var a = xy / xx;
+  return { a: a, b: y - a * x, r2: Math.min(1, (xy * xy) / (xx * yy)) };
 }
-
-function preverTemperatura(ajuste, uptime) {
-  return ajuste.intercepto + ajuste.inclinacao * uptime;
-}
-
-function obterSituacao(temperatura, limite) {
-  if (temperatura >= limite)
-    return { nome: "Limite atingido", classe: "alerta" };
-  if (temperatura >= limite - 5)
-    return { nome: "Em atenção", classe: "atencao" };
-  return { nome: "Sem alertas", classe: "" };
-}
-
-function agruparPorUptime(leituras) {
-  var faixas = {};
-  for (var i = 0; i < leituras.length; i++) {
-    var leitura = leituras[i];
-    var uptime = Math.floor(leitura.uptime_horas / 24) * 24;
-    var faixa = faixas[uptime];
-    if (!faixa) faixa = faixas[uptime] = { total: 0, quantidade: 0, uptime: 0 };
-    faixa.total += leitura.temperatura_cpu;
-    faixa.uptime += leitura.uptime_horas;
-    faixa.quantidade++;
-  }
-  return Object.keys(faixas)
+function analisarEngenharia(lote, dias) {
+  var leituras = leiturasEngenharia.filter(function (leitura) {
+    return (
+      leitura.ambiente === "ensaio" &&
+      leitura.lote === lote.id &&
+      leitura.instante >= referenciaEngenharia - dias * 86400000 &&
+      leitura.instante <= referenciaEngenharia
+    );
+  });
+  var ultimas = {};
+  leituras.forEach(function (leitura) {
+    if (
+      !ultimas[leitura.serie] ||
+      ultimas[leitura.serie].instante < leitura.instante
+    )
+      ultimas[leitura.serie] = leitura;
+  });
+  var recentes = Object.values(ultimas).filter(function (l) {
+    return l.instante >= referenciaEngenharia - 24 * 3600000;
+  });
+  var completa = recentes.length === lote.unidades;
+  var estados = {};
+  estados.termico = leituras.some(function (l) {
+    return l.temperatura >= lote.limite;
+  })
+    ? "falha"
+    : completa
+      ? "ok"
+      : "sem-dados";
+  estados.recursos = leituras.some(function (l) {
+    return l.cpu >= 95 || l.ram >= 90 || l.discoLivre < 20;
+  })
+    ? "falha"
+    : completa
+      ? "ok"
+      : "sem-dados";
+  estados.estabilidade = leituras.some(function (l) {
+    return l.reinicio || l.erros > 0;
+  })
+    ? "falha"
+    : completa
+      ? "ok"
+      : "sem-dados";
+  Object.keys(lote.relatorios).forEach(function (id) {
+    estados[id] = lote.relatorios[id].estado;
+  });
+  var porUptime = {};
+  leituras.forEach(function (l) {
+    if (!porUptime[l.uptime]) porUptime[l.uptime] = [];
+    porUptime[l.uptime].push(l.temperatura);
+  });
+  var pontos = Object.keys(porUptime)
     .map(function (uptime) {
+      var valores = porUptime[uptime];
       return {
-        x: faixas[uptime].uptime / faixas[uptime].quantidade,
-        y: faixas[uptime].total / faixas[uptime].quantidade,
+        x: Number(uptime),
+        y:
+          valores.reduce(function (a, b) {
+            return a + b;
+          }, 0) / valores.length,
       };
     })
     .sort(function (a, b) {
       return a.x - b.x;
     });
-}
-
-function podeProjetar(resultado) {
-  return Boolean(
-    resultado.ajuste &&
-    resultado.pontos.length >= 4 &&
-    resultado.ajuste.r2 !== null &&
-    resultado.ajuste.r2 >= 0.5 &&
-    resultado.ajuste.inclinacao > 0,
-  );
-}
-
-function obterLeiturasSelecionadas() {
-  var leituras = [];
-  for (var i = 0; i < resultadosPreditivos.length; i++) {
-    leituras = leituras.concat(resultadosPreditivos[i].leituras);
+  var ajuste = regressaoEngenharia(pontos);
+  var fim = pontos.length ? pontos[pontos.length - 1].x : 0;
+  var projecao = null;
+  if (completa && ajuste && ajuste.a > 0 && ajuste.r2 >= 0.5) {
+    var horas = (lote.limite - ajuste.b) / ajuste.a - fim;
+    if (horas >= 0 && horas <= 24) projecao = horas;
   }
-  return leituras;
-}
-
-function analisarLote(indice, leituras, limite) {
-  var pontos = agruparPorUptime(leituras);
-  var ajuste = calcularRegressao(pontos);
-  var ultimas = {};
-  for (var i = 0; i < leituras.length; i++) {
-    var leitura = leituras[i];
-    if (
-      !ultimas[leitura.numero_serie] ||
-      leitura.data_hora_br > ultimas[leitura.numero_serie].data_hora_br
-    ) {
-      ultimas[leitura.numero_serie] = leitura;
-    }
-  }
-  var unidades = Object.values(ultimas);
-  var maiorTemperatura = Math.max.apply(
-    null,
-    unidades.map(function (u) {
-      return u.temperatura_cpu;
-    }),
-  );
-  var ultimoUptime = pontos[pontos.length - 1].x;
-  var horasLimite = null;
-  if (
-    ajuste &&
-    pontos.length >= 4 &&
-    ajuste.r2 >= 0.5 &&
-    ajuste.inclinacao > 0
-  ) {
-    var cruzamento =
-      (limite - ajuste.intercepto) / ajuste.inclinacao - ultimoUptime;
-    if (cruzamento >= 0 && cruzamento <= 72) horasLimite = cruzamento;
-  }
+  var falhas = Object.values(estados).filter(function (e) {
+    return e === "falha";
+  }).length;
+  var pendentes = Object.values(estados).filter(function (e) {
+    return e === "pendente" || e === "sem-dados";
+  }).length;
+  var campo = {};
+  leiturasEngenharia
+    .filter(function (l) {
+      return (
+        l.ambiente === "campo" &&
+        l.lote === lote.id &&
+        Boolean(l.hospital) &&
+        l.instante >= referenciaEngenharia - dias * 86400000 &&
+        l.instante <= referenciaEngenharia
+      );
+    })
+    .forEach(function (l) {
+      if (!campo[l.serie]) campo[l.serie] = { primeira: l, ultima: l };
+      if (l.instante < campo[l.serie].primeira.instante)
+        campo[l.serie].primeira = l;
+      if (l.instante > campo[l.serie].ultima.instante)
+        campo[l.serie].ultima = l;
+    });
   return {
-    indice: indice,
+    lote: lote,
     leituras: leituras,
+    recentes: recentes,
+    estados: estados,
+    falhas: falhas,
+    pendentes: pendentes,
     pontos: pontos,
     ajuste: ajuste,
-    unidades: unidades,
-    ultimoUptime: ultimoUptime,
-    maiorTemperatura: maiorTemperatura,
-    margem: limite - maiorTemperatura,
-    horasLimite: horasLimite,
-    situacao: obterSituacao(maiorTemperatura, limite),
+    fim: fim,
+    projecao: projecao,
+    campo: Object.values(campo),
   };
 }
-
-function atualizarAnalise() {
-  var componente = document.getElementById("filtroComponente").value;
-  var cpu = componente === "cpu";
-  document.getElementById("conteudoAnalise").hidden = !cpu;
-  document.getElementById("analiseOutrosComponentes").hidden = cpu;
-  if (!cpu) {
-    atualizarAnaliseComponente(componente);
-    return;
-  }
-  var modeloId = document.getElementById("filtroModelo").value;
-  var loteId = document.getElementById("filtroLote").value;
-  var periodo = Number(document.getElementById("filtroPeriodo").value);
-  var modelo = modelosPreditivos[modeloId];
-  var inicio = referenciaPreditiva - periodo * 24 * 3600000;
-  var leituras = leiturasPreditivas.filter(function (leitura) {
-    return (
-      Boolean(hospitaisPreditivos[leitura.fk_hospital]) &&
-      leitura.modelo === modeloId &&
-      (loteId === "todos" || leitura.lote === Number(loteId)) &&
-      new Date(leitura.data_hora_br).getTime() >= inicio &&
-      new Date(leitura.data_hora_br).getTime() <= referenciaPreditiva &&
-      Number.isFinite(leitura.temperatura_cpu) &&
-      Number.isFinite(leitura.uptime_horas) &&
-      leitura.uptime_horas >= 0
-    );
-  });
-  resultadosPreditivos = [];
-  unidadesPreditivas = [];
-  for (var l = 0; l < lotesPreditivos.length; l++) {
-    var doLote = leituras.filter(function (leitura) {
-      return leitura.lote === l;
+function seloEngenharia(estado) {
+  var textos = {
+    ok: "✓ Atendido",
+    falha: "! Corrigir",
+    pendente: "◷ Pendente",
+    "sem-dados": "— Sem coleta",
+  };
+  return '<span class="estado ' + estado + '">' + textos[estado] + "</span>";
+}
+function decisaoEngenharia(r) {
+  if (r.falhas) return "Corrigir antes de avançar";
+  if (r.pendentes) return "Concluir evidências";
+  if (r.projecao !== null) return "Investigar tendência térmica";
+  return "Pronto para revisão técnica";
+}
+function preencherLotesEngenharia() {
+  var projeto = document.getElementById("filtroProjeto").value;
+  var select = document.getElementById("filtroLoteEngenharia");
+  select.replaceChildren(new Option("Todos os lotes", "todos"));
+  lotesEngenharia
+    .filter(function (l) {
+      return projeto === "todos" || l.projeto === projeto;
+    })
+    .forEach(function (l) {
+      select.add(new Option(l.id + " · revisão " + l.revisao, l.id));
     });
-    if (!doLote.length) continue;
-    var resultado = analisarLote(l, doLote, modelo.limite);
-    resultadosPreditivos.push(resultado);
-    unidadesPreditivas = unidadesPreditivas.concat(resultado.unidades);
-  }
-  resultadosPreditivos.sort(function (a, b) {
-    return a.margem - b.margem;
-  });
-  unidadesPreditivas.sort(function (a, b) {
-    return b.temperatura_cpu - a.temperatura_cpu;
-  });
-  var principal = resultadosPreditivos[0];
-  document.getElementById("conteudoAnalise").hidden = !principal;
-  document.getElementById("semEquipamentosAlocados").hidden =
-    Boolean(principal);
-  document.getElementById("exportarAnalise").disabled = !principal;
-  if (!principal) {
-    document.getElementById("escopoAnalise").textContent =
-      "Nenhum equipamento alocado em hospital no recorte selecionado.";
-    atualizarEnderecoAnalise();
-    if (typeof atualizarAnalisesComplementares === "function")
-      atualizarAnalisesComplementares(null);
-    return;
-  }
-  var atencao = unidadesPreditivas.filter(function (unidade) {
-    return unidade.temperatura_cpu >= modelo.limite - 5;
-  }).length;
-  var projecoes = resultadosPreditivos.filter(function (resultado) {
-    return resultado.horasLimite !== null;
-  });
-  projecoes.sort(function (a, b) {
-    return a.horasLimite - b.horasLimite;
-  });
-  var proximo = projecoes[0];
-
-  document.getElementById("escopoAnalise").innerHTML =
-    "<strong>● Recorte demonstrativo</strong><span>" +
-    unidadesPreditivas.length +
-    " unidades alocadas em hospitais · " +
-    resultadosPreditivos.length +
-    " lote(s) · " +
-    leituras.length +
-    " leituras</span><span>" +
-    modelo.nome +
-    " · últimos " +
-    periodo +
-    " dias</span>";
-  document.getElementById("kpiUnidades").textContent =
-    unidadesPreditivas.length;
-  document.getElementById("detalheUnidades").textContent =
-    resultadosPreditivos.length +
-    " lote(s) · " +
-    leituras.length +
-    " leituras válidas";
-  document.getElementById("kpiAtencao").textContent = atencao;
-  document.getElementById("detalheAtencao").textContent =
-    formatarPreditivo((atencao / unidadesPreditivas.length) * 100, 0) +
-    "% a até 5 °C do limite ou acima";
-  document.getElementById("kpiMargem").textContent =
-    formatarPreditivo(principal.margem, 1) + " °C";
-  document.getElementById("kpiTempo").textContent =
-    principal.margem <= 0
-      ? "Atingido"
-      : proximo
-        ? "≈ " + Math.round(proximo.horasLimite) + " h"
-        : "—";
-  document.getElementById("detalheTempo").textContent =
-    principal.margem <= 0
-      ? "Há unidades no limite de projeto"
-      : proximo
-        ? "Uptime adicional · " + lotesPreditivos[proximo.indice].numero
-        : resultadosPreditivos.every(podeProjetar)
-          ? "Sem cruzamento estimado em até 72 h"
-          : "Projeção indisponível para parte ou todo o recorte";
-  document.getElementById("investigarModelo").value =
-    principal.margem <= 0 || !proximo ? principal.indice : proximo.indice;
-  atualizarAviso(principal, proximo, modelo);
-  atualizarTabelas();
-  atualizarInvestigacao(principal, modelo);
-  atualizarGraficosPreditivos(principal, modelo);
-  atualizarEnderecoAnalise();
-  if (typeof atualizarAnalisesComplementares === "function")
-    atualizarAnalisesComplementares(principal);
 }
-
-function atualizarAviso(principal, proximo, modelo) {
-  var emAlerta = principal.margem <= 5 || Boolean(proximo);
-  document
-    .getElementById("avisoPreditivo")
-    .classList.toggle("sem-alerta", !emAlerta);
-  document.getElementById("rotuloAviso").textContent = emAlerta
-    ? "ATENÇÃO PREVENTIVA"
-    : "ACOMPANHAMENTO TÉRMICO";
-  var titulo;
-  var descricao;
-  if (principal.margem <= 0) {
-    titulo = "Há unidades que atingiram o limite de projeto";
-    descricao =
-      lotesPreditivos[principal.indice].numero +
-      ": confira as unidades e as condições de operação antes de continuar a avaliação.";
-  } else if (proximo) {
-    titulo =
-      "O lote pode atingir o limite térmico em ≈ " +
-      Math.round(proximo.horasLimite) +
-      " h adicionais de uptime";
-    descricao =
-      lotesPreditivos[proximo.indice].numero +
-      " · " +
-      modelo.nome +
-      ". Projeção da temperatura média, mantida a tendência observada. Priorize a inspeção das unidades.";
-  } else if (emAlerta) {
-    titulo = "O lote prioritário está próximo do limite de projeto";
-    descricao =
-      lotesPreditivos[principal.indice].numero +
-      ": menor margem atual de " +
-      formatarPreditivo(principal.margem, 1) +
-      " °C. Confira a refrigeração e a carga de trabalho.";
-  } else {
-    titulo = "Leituras atuais abaixo da faixa de atenção";
-    descricao =
-      "A ausência de cruzamento estimado não garante estabilidade. Confira o R² e a disponibilidade da projeção de cada lote antes de planejar a inspeção.";
-  }
-  document.getElementById("tituloAviso").textContent = titulo;
-  document.getElementById("descricaoAviso").textContent = descricao;
-}
-
-function atualizarTabelas() {
-  var html = "";
-  for (var i = 0; i < resultadosPreditivos.length; i++) {
-    var resultado = resultadosPreditivos[i];
-    var lote = lotesPreditivos[resultado.indice];
-    var ajuste = resultado.ajuste;
-    var tendencia = ajuste
-      ? (ajuste.inclinacao >= 0 ? "+" : "") +
-        formatarPreditivo(ajuste.inclinacao, 3) +
-        " °C/h"
-      : "Dados insuficientes";
-    html +=
-      '<tr><td><strong><span class="ponto-legenda cor-lote-' +
-      resultado.indice +
-      '"></span>' +
-      lote.numero +
-      "</strong><small>" +
-      lote.equipamento +
-      "</small></td><td>" +
-      resultado.unidades.length +
-      "</td><td>" +
-      tendencia +
-      "</td><td>" +
-      (ajuste && ajuste.r2 !== null ? formatarPreditivo(ajuste.r2, 2) : "—") +
-      "</td><td>" +
-      (resultado.margem <= 0
-        ? "Limite atingido"
-        : resultado.horasLimite !== null
-          ? "≈ " + Math.round(resultado.horasLimite) + " h"
-          : podeProjetar(resultado)
-            ? "Sem cruzamento ≤ 72 h"
-            : "Indisponível") +
-      "</td><td>" +
-      formatarPreditivo(resultado.margem, 1) +
-      ' °C</td><td><span class="situacao-preditiva ' +
-      resultado.situacao.classe +
-      '">' +
-      resultado.situacao.nome +
-      '</span></td><td><button class="botao-texto investigar-lote" type="button" value="' +
-      resultado.indice +
-      '" aria-label="Investigar ' +
-      lote.numero +
-      '">Investigar →</button></td></tr>';
-  }
-  document.getElementById("tabelaLotes").innerHTML = html;
-  var botoes = document.querySelectorAll(".investigar-lote");
-  for (var i = 0; i < botoes.length; i++) {
-    botoes[i].onclick = function () {
-      document.getElementById("filtroLote").value = this.value;
-      mostrarInvestigacao(true);
-    };
-  }
-  filtrarUnidades();
-}
-
-function filtrarUnidades() {
-  var busca = document
-    .getElementById("buscarUnidade")
-    .value.trim()
-    .toLocaleLowerCase("pt-BR");
-  var modelo = modelosPreditivos[document.getElementById("filtroModelo").value];
-  var html = "";
-  var quantidade = 0;
-  for (var i = 0; i < unidadesPreditivas.length; i++) {
-    var unidade = unidadesPreditivas[i];
-    if (
-      !(unidade.numero_serie + " " + unidade.hospital)
-        .toLocaleLowerCase("pt-BR")
-        .includes(busca)
-    )
-      continue;
-    var situacao = obterSituacao(unidade.temperatura_cpu, modelo.limite);
-    quantidade++;
-    html +=
-      "<tr><td><strong>" +
-      unidade.numero_serie +
-      "</strong><small>" +
-      lotesPreditivos[unidade.lote].equipamento +
-      "</small></td><td>" +
-      unidade.hospital +
-      "</td><td>" +
-      lotesPreditivos[unidade.lote].numero +
-      "</td><td>" +
-      formatarPreditivo(unidade.temperatura_cpu, 1) +
-      " °C</td><td>" +
-      unidade.cpu_percent +
-      "%</td><td>" +
-      formatarPreditivo(modelo.limite - unidade.temperatura_cpu, 1) +
-      ' °C</td><td><span class="situacao-preditiva ' +
-      situacao.classe +
-      '">' +
-      situacao.nome +
-      "</span></td></tr>";
-  }
-  document.getElementById("tabelaUnidades").innerHTML = html;
-  document.getElementById("unidadesVazias").hidden = quantidade > 0;
-  document.getElementById("resumoInspecao").textContent =
-    quantidade +
+function atualizarEngenharia() {
+  var projeto = document.getElementById("filtroProjeto").value;
+  var lote = document.getElementById("filtroLoteEngenharia").value;
+  var dias = Number(document.getElementById("filtroJanela").value);
+  resultadosEngenharia = lotesEngenharia
+    .filter(function (l) {
+      return (
+        (projeto === "todos" || l.projeto === projeto) &&
+        (lote === "todos" || l.id === lote)
+      );
+    })
+    .map(function (l) {
+      return analisarEngenharia(l, dias);
+    })
+    .sort(function (a, b) {
+      return b.falhas - a.falhas || b.pendentes - a.pendentes;
+    });
+  var total = resultadosEngenharia.reduce(function (s, r) {
+    return s + r.lote.unidades;
+  }, 0);
+  var recentes = resultadosEngenharia.reduce(function (s, r) {
+    return s + r.recentes.length;
+  }, 0);
+  document.getElementById("escopoEngenharia").textContent =
+    resultadosEngenharia.length +
+    " lotes · " +
+    total +
+    " equipamentos de ensaio · histórico de " +
+    dias +
+    " dias. Relatórios técnicos mostram a situação registrada de cada revisão.";
+  document.getElementById("kpiValidados").textContent =
+    resultadosEngenharia.filter(function (r) {
+      return !r.falhas && !r.pendentes && r.projecao === null;
+    }).length +
     " de " +
-    unidadesPreditivas.length +
-    " unidades · Ordenadas pela maior temperatura atual.";
+    resultadosEngenharia.length;
+  document.getElementById("kpiCorrecoes").textContent =
+    resultadosEngenharia.reduce(function (s, r) {
+      return s + r.falhas;
+    }, 0);
+  document.getElementById("detalheCorrecoes").textContent =
+    "Critérios reprovados em " +
+    resultadosEngenharia.filter(function (r) {
+      return r.falhas;
+    }).length +
+    " lotes";
+  document.getElementById("kpiPendentes").textContent =
+    resultadosEngenharia.reduce(function (s, r) {
+      return s + r.pendentes;
+    }, 0);
+  document.getElementById("kpiCobertura").textContent =
+    recentes + " de " + total;
+  document.getElementById("detalheCobertura").textContent =
+    "Coleta nas últimas 24 h · " +
+    (total ? numeroEngenharia((recentes / total) * 100) : "0") +
+    "% de cobertura";
+  var principal = resultadosEngenharia[0];
+  document.getElementById("tituloPrioridade").textContent = principal
+    ? principal.lote.projeto +
+      " · " +
+      principal.lote.id +
+      " · revisão " +
+      principal.lote.revisao
+    : "Nenhum lote neste recorte";
+  document.getElementById("acaoPrioridade").textContent = principal
+    ? decisaoEngenharia(principal) +
+      ". " +
+      (principal.falhas
+        ? "Confira as reprovações e seus responsáveis antes de fabricar o próximo lote."
+        : principal.pendentes
+          ? "Conclua os relatórios pendentes e recupere as coletas ausentes."
+          : "Revise as evidências e confirme os critérios antes de decidir sobre a próxima etapa.")
+    : "Ajuste os filtros para acompanhar os equipamentos.";
+  document.getElementById("abrirPrioridade").disabled = !principal;
+  document.getElementById("abrirPrioridade").onclick = function () {
+    if (principal) abrirEvidenciasEngenharia(principal.lote.id);
+  };
+  document.getElementById("matrizValidacao").innerHTML =
+    resultadosEngenharia
+      .map(function (r) {
+        return (
+          "<tr><td><strong>" +
+          r.lote.projeto +
+          "</strong><small>" +
+          r.lote.id +
+          " · revisão " +
+          r.lote.revisao +
+          "</small></td>" +
+          criteriosEngenharia
+            .map(function (c) {
+              return "<td>" + seloEngenharia(r.estados[c.id]) + "</td>";
+            })
+            .join("") +
+          "<td>" +
+          decisaoEngenharia(r) +
+          '</td><td><button class="botao secundario" data-evidencia="' +
+          r.lote.id +
+          '" type="button">Ver lote</button></td></tr>'
+        );
+      })
+      .join("") || '<tr><td colspan="9">Nenhum lote encontrado.</td></tr>';
+  document.querySelectorAll("[data-evidencia]").forEach(function (botao) {
+    botao.onclick = function () {
+      abrirEvidenciasEngenharia(this.dataset.evidencia);
+    };
+  });
+  atualizarGraficosEngenharia();
+  atualizarImpactoEngenharia();
 }
-
-function atualizarInvestigacao(principal, modelo) {
-  document.getElementById("tituloAnalise").textContent = investigandoModelo
-    ? modelo.nome
-    : "Análise preditiva";
-  document.getElementById("descricaoAnalise").textContent = investigandoModelo
-    ? "CPU · Evidências por lote e unidades para inspeção."
-    : "Antecipe desvios térmicos e compare o comportamento dos seus componentes.";
-  document.title =
-    (investigandoModelo ? modelo.nome : "Análise preditiva") + " | BioTrace";
-  document.getElementById("tituloTendencia").textContent =
-    "Tendência do lote " + lotesPreditivos[principal.indice].numero;
-  document.getElementById("valorTendencia").textContent = principal.ajuste
-    ? (principal.ajuste.inclinacao >= 0 ? "+" : "") +
-      formatarPreditivo(principal.ajuste.inclinacao, 3) +
-      " °C / hora"
-    : "Dados insuficientes";
-  document.getElementById("descricaoTendencia").textContent =
-    "Variação estimada da temperatura média por hora de uptime. Ajuste calculado em " +
-    principal.pontos.length +
-    " faixas, a partir de " +
-    principal.leituras.length +
-    " leituras de " +
-    principal.unidades.length +
-    " unidades.";
-  document.getElementById("avaliacaoSugerida").textContent =
-    principal.margem <= 5
-      ? "Confira ventilação, dissipação e carga das unidades mais quentes. Compare o comportamento antes e depois de uma intervenção sob condições semelhantes."
-      : "Mantenha o acompanhamento e compare os lotes sob cargas semelhantes. Investigue mudanças de tendência antes de ampliar a janela de projeção.";
-  document.getElementById("nomeFicha").textContent = modelo.nome;
-  document.getElementById("fabricanteFicha").textContent = modelo.fabricante;
-  document.getElementById("limiteFicha").textContent = modelo.limite + " °C";
+function emAtencaoCampo(l, limite) {
+  return (
+    l.temperatura >= limite - 5 ||
+    l.cpu >= 95 ||
+    l.ram >= 90 ||
+    l.discoLivre < 20 ||
+    l.erros > 0
+  );
 }
-
-function mostrarInvestigacao(exibir, focar) {
-  investigandoModelo = exibir;
-  document.getElementById("voltarAnalise").hidden = !exibir;
-  document.getElementById("investigarModelo").hidden = exibir;
-  document.getElementById("investigacaoModelo").hidden = !exibir;
-  document.getElementById("painelUnidades").hidden = !exibir;
-  document.getElementById("buscarUnidade").value = "";
-  atualizarAnalise();
-  if (focar !== false) {
-    var titulo = document.getElementById("tituloAnalise");
-    titulo.setAttribute("tabindex", "-1");
-    titulo.focus();
-  }
+function criarGraficoEngenharia(id, configuracao, erroId) {
+  if (graficosEngenharia[id]) graficosEngenharia[id].destroy();
+  var disponivel =
+    typeof Chart !== "undefined" &&
+    resultadosEngenharia.some(function (r) {
+      return r.leituras.length;
+    });
+  document.getElementById(id).hidden = !disponivel;
+  document.getElementById(erroId).hidden = disponivel;
+  document.getElementById(erroId).textContent =
+    "Gráfico indisponível. Consulte os resultados nos resumos e nas evidências de cada lote.";
+  if (disponivel)
+    graficosEngenharia[id] = new Chart(
+      document.getElementById(id),
+      configuracao,
+    );
 }
-
-function criarReta(ajuste, inicio, fim) {
-  return [
-    { x: inicio, y: preverTemperatura(ajuste, inicio) },
-    { x: fim, y: preverTemperatura(ajuste, fim) },
-  ];
-}
-
-function opcoesRegressao(tituloX, inicioX, fimX) {
-  return {
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        filter: function (item) {
-          return !item.dataset.semTooltip;
+function atualizarGraficosEngenharia() {
+  var series = [];
+  resultadosEngenharia.forEach(function (r) {
+    var nome = r.lote.id + " · " + r.lote.projeto + " rev. " + r.lote.revisao;
+    series.push({
+      label: nome,
+      data: r.pontos,
+      backgroundColor: r.lote.cor,
+      borderColor: r.lote.cor,
+      pointRadius: 3,
+    });
+    if (!r.ajuste || !r.pontos.length) return;
+    var inicio = r.pontos[0].x;
+    series.push({
+      label: "Ajuste · " + nome,
+      data: [
+        { x: inicio, y: r.ajuste.b + r.ajuste.a * inicio },
+        { x: r.fim, y: r.ajuste.b + r.ajuste.a * r.fim },
+      ],
+      borderColor: r.lote.cor,
+      pointRadius: 0,
+      showLine: true,
+      auxiliar: true,
+    });
+    if (r.projecao !== null)
+      series.push({
+        label: "Projeção · " + nome,
+        data: [
+          { x: r.fim, y: r.ajuste.b + r.ajuste.a * r.fim },
+          { x: r.fim + 24, y: r.ajuste.b + r.ajuste.a * (r.fim + 24) },
+        ],
+        borderColor: r.lote.cor,
+        pointRadius: 0,
+        showLine: true,
+        borderDash: [5, 5],
+        auxiliar: true,
+      });
+  });
+  Array.from(
+    new Set(
+      resultadosEngenharia.map(function (r) {
+        return r.lote.limite;
+      }),
+    ),
+  ).forEach(function (limite) {
+    series.push({
+      label: "Limite " + limite + " °C",
+      data: [
+        { x: 0, y: limite },
+        { x: 48, y: limite },
+      ],
+      borderColor: "#9d919f",
+      borderWidth: 1,
+      borderDash: [2, 4],
+      pointRadius: 0,
+      showLine: true,
+      auxiliar: true,
+    });
+  });
+  criarGraficoEngenharia(
+    "graficoEngenhariaTermico",
+    {
+      type: "scatter",
+      data: { datasets: series },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: {
+          legend: {
+            labels: {
+              boxWidth: 8,
+              font: { size: 10 },
+              filter: function (item, dados) {
+                return !dados.datasets[item.datasetIndex].auxiliar;
+              },
+            },
+          },
+          tooltip: {
+            callbacks: {
+              label: function (item) {
+                return (
+                  item.dataset.label +
+                  " · " +
+                  numeroEngenharia(item.parsed.x, 1) +
+                  " h · " +
+                  numeroEngenharia(item.parsed.y, 1) +
+                  " °C"
+                );
+              },
+            },
+          },
         },
-        callbacks: {
-          label: function (item) {
-            return (
-              item.dataset.label +
-              ": " +
-              formatarPreditivo(item.parsed.x, 0) +
-              (tituloX.includes("CPU") ? "%" : " h") +
-              " · " +
-              formatarPreditivo(item.parsed.y, 1) +
-              " °C"
-            );
+        scales: {
+          x: {
+            type: "linear",
+            min: 0,
+            title: { display: true, text: "Operação contínua (h)" },
+          },
+          y: { title: { display: true, text: "Temperatura da CPU (°C)" } },
+        },
+      },
+    },
+    "erroTermico",
+  );
+  document.getElementById("resumoProjecoes").innerHTML = resultadosEngenharia
+    .map(function (r) {
+      var estado =
+        r.projecao !== null
+          ? "Limite estimado em ≈ " +
+            numeroEngenharia(r.projecao, 1) +
+            " h adicionais"
+          : "Projeção sem cruzamento elegível nesta janela";
+      if (
+        !r.ajuste ||
+        !r.recentes.length ||
+        r.recentes.length < r.lote.unidades ||
+        (r.ajuste && r.ajuste.r2 < 0.5)
+      )
+        estado = "Projeção indisponível · confira cobertura e ajuste";
+      return (
+        '<div class="projecao"><strong>' +
+        r.lote.id +
+        " · " +
+        estado +
+        "</strong><p>Limite " +
+        r.lote.limite +
+        " °C · R² " +
+        (r.ajuste ? numeroEngenharia(r.ajuste.r2, 2) : "—") +
+        " · " +
+        r.pontos.length +
+        " faixas observadas · " +
+        r.leituras.length +
+        " leituras</p></div>"
+      );
+    })
+    .join("");
+  var campo = resultadosEngenharia.map(function (r) {
+    var total = r.campo.length;
+    return {
+      nome: r.lote.id,
+      total: total,
+      inicio: total
+        ? (r.campo.filter(function (u) {
+            return emAtencaoCampo(u.primeira, r.lote.limite);
+          }).length /
+            total) *
+          100
+        : null,
+      fim: total
+        ? (r.campo.filter(function (u) {
+            return emAtencaoCampo(u.ultima, r.lote.limite);
+          }).length /
+            total) *
+          100
+        : null,
+    };
+  });
+  criarGraficoEngenharia(
+    "graficoEngenhariaCampo",
+    {
+      type: "bar",
+      data: {
+        labels: campo.map(function (c) {
+          return c.nome;
+        }),
+        datasets: [
+          {
+            label: "Início do período",
+            data: campo.map(function (c) {
+              return c.inicio;
+            }),
+            backgroundColor: "#bba5df",
+            borderRadius: 3,
+          },
+          {
+            label: "Final do período",
+            data: campo.map(function (c) {
+              return c.fim;
+            }),
+            backgroundColor: "#6d3fc0",
+            borderRadius: 3,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: { legend: { labels: { boxWidth: 8, font: { size: 10 } } } },
+        scales: {
+          y: {
+            min: 0,
+            max: 100,
+            title: { display: true, text: "Equipamentos em atenção (%)" },
           },
         },
       },
     },
-    scales: {
-      x: {
-        type: "linear",
-        min: inicioX,
-        max: fimX,
-        title: {
-          display: true,
-          text: tituloX,
-          color: "#77717d",
-          font: { size: 10 },
-        },
-        grid: { color: "#eeebf3" },
-        ticks: { maxTicksLimit: 7, color: "#77717d", font: { size: 10 } },
-      },
-      y: {
-        suggestedMin: 35,
-        suggestedMax: 100,
-        title: {
-          display: true,
-          text: "Temperatura da CPU (°C)",
-          color: "#77717d",
-          font: { size: 10 },
-        },
-        grid: { color: "#eeebf3" },
-        ticks: { stepSize: 10, color: "#77717d", font: { size: 10 } },
-      },
-    },
-  };
-}
-
-function atualizarGraficosPreditivos(principal, modelo) {
-  if (graficoTermico) graficoTermico.destroy();
-  if (graficoCarga) graficoCarga.destroy();
-  var datasets = [];
-  var legenda = "";
-  var inicio = Math.min.apply(
-    null,
-    resultadosPreditivos.map(function (r) {
-      return r.pontos[0].x;
-    }),
+    "erroCampo",
   );
-  var fim =
-    Math.max.apply(
-      null,
-      resultadosPreditivos.map(function (r) {
-        return r.ultimoUptime;
-      }),
-    ) + 72;
-  for (var i = 0; i < resultadosPreditivos.length; i++) {
-    var resultado = resultadosPreditivos[i];
-    var lote = lotesPreditivos[resultado.indice];
-    datasets.push({
-      label: lote.numero,
-      data: resultado.pontos,
-      backgroundColor: lote.cor,
-      borderColor: lote.cor,
-      pointRadius: 4,
-      pointHoverRadius: 6,
-    });
-    if (resultado.ajuste) {
-      datasets.push({
-        label: "Ajuste · " + lote.numero,
-        data: criarReta(
-          resultado.ajuste,
-          resultado.pontos[0].x,
-          resultado.ultimoUptime,
-        ),
-        borderColor: lote.cor,
-        borderWidth: 1.8,
-        pointRadius: 0,
-        showLine: true,
-        semTooltip: true,
-      });
-      if (
-        resultado.pontos.length >= 4 &&
-        resultado.ajuste.r2 >= 0.5 &&
-        resultado.ajuste.inclinacao > 0
-      ) {
-        datasets.push({
-          label: "Projeção · " + lote.numero,
-          data: criarReta(
-            resultado.ajuste,
-            resultado.ultimoUptime,
-            resultado.ultimoUptime + 72,
-          ),
-          borderColor: lote.cor,
-          borderWidth: 1.8,
-          borderDash: [4, 4],
-          pointRadius: 0,
-          showLine: true,
-          semTooltip: true,
-        });
-      }
-    }
-    legenda +=
-      '<span class="item-legenda"><span class="ponto-legenda cor-lote-' +
-      resultado.indice +
-      '"></span>' +
-      lote.numero +
-      " (" +
-      lote.equipamento +
-      ") · R² " +
-      (resultado.ajuste && resultado.ajuste.r2 !== null
-        ? formatarPreditivo(resultado.ajuste.r2, 2)
-        : "—") +
-      "</span>";
-  }
-  datasets.push({
-    label: "Limite de projeto",
-    data: [
-      { x: inicio, y: modelo.limite },
-      { x: fim, y: modelo.limite },
-    ],
-    borderColor: "#b98a91",
-    borderDash: [7, 5],
-    borderWidth: 1,
-    pointRadius: 0,
-    showLine: true,
-    semTooltip: true,
-  });
-  document.getElementById("legendaTermica").innerHTML =
-    legenda +
-    '<span class="item-legenda"><span class="linha-legenda"></span>Limite: ' +
-    modelo.limite +
-    " °C</span>";
-  document.getElementById("subtituloTermico").textContent =
-    modelo.nome + " · médias por faixa de uptime e lote";
-  document.getElementById("rotuloAjuste").textContent =
-    "R² · " + lotesPreditivos[principal.indice].numero;
-  document.getElementById("resumoAjuste").textContent =
-    principal.ajuste && principal.ajuste.r2 !== null
-      ? formatarPreditivo(principal.ajuste.r2, 2)
-      : "—";
-  document.getElementById("resumoErro").textContent = principal.ajuste
-    ? formatarPreditivo(principal.ajuste.mae, 2) + " °C"
-    : "—";
-  document.getElementById("resumoLimite").textContent = modelo.limite + " °C";
-
-  var carga = obterLeiturasSelecionadas()
-    .map(function (leitura) {
-      return {
-        x: leitura.cpu_percent,
-        y: leitura.temperatura_cpu,
-        lote: leitura.lote,
-      };
+  document.getElementById("resumoCampo").textContent = campo
+    .map(function (c) {
+      return (
+        c.nome +
+        " · " +
+        (c.total
+          ? numeroEngenharia(c.inicio) +
+            "% no início e " +
+            numeroEngenharia(c.fim) +
+            "% no final (" +
+            c.total +
+            " equipamentos)"
+          : "sem unidades alocadas com dados")
+      );
     })
-    .filter(function (ponto) {
-      return Number.isFinite(ponto.x);
-    });
-  var ajusteCarga = calcularRegressao(carga);
-  document.getElementById("subtituloCarga").textContent =
-    "Medições dos lotes selecionados · ajuste único do recorte";
-  document.getElementById("cargaErro").textContent = ajusteCarga
-    ? formatarPreditivo(ajusteCarga.mae, 2) + " °C"
-    : "—";
-  document.getElementById("cargaAjuste").textContent =
-    ajusteCarga && ajusteCarga.r2 !== null
-      ? formatarPreditivo(ajusteCarga.r2, 2)
-      : "—";
-  document.getElementById("cargaAmostras").textContent = carga.length;
-
-  if (typeof Chart === "undefined") {
-    document.getElementById("areaTermica").innerHTML =
-      '<p class="erro-grafico">Não foi possível carregar os gráficos. Verifique sua conexão e recarregue a página. Os resultados estão disponíveis na tabela abaixo.</p>';
-    document.getElementById("areaCarga").innerHTML =
-      '<p class="erro-grafico">Gráfico indisponível. MAE: ' +
-      document.getElementById("cargaErro").textContent +
-      " · R²: " +
-      document.getElementById("cargaAjuste").textContent +
-      ".</p>";
-    return;
-  }
-  graficoTermico = new Chart(document.getElementById("graficoTermico"), {
-    type: "scatter",
-    data: { datasets: datasets },
-    options: opcoesRegressao("Uptime contínuo (horas)", inicio, fim),
-  });
-  var dadosCarga = criarPontosPorLote(carga);
-  atualizarLegendaLotes("graficoCarga", carga, true);
-  if (ajusteCarga) {
-    var menorCarga = Math.min.apply(
-      null,
-      carga.map(function (p) {
-        return p.x;
-      }),
-    );
-    var maiorCarga = Math.max.apply(
-      null,
-      carga.map(function (p) {
-        return p.x;
-      }),
-    );
-    dadosCarga.push({
-      label: "Regressão",
-      data: criarReta(ajusteCarga, menorCarga, maiorCarga),
-      borderColor: "#686171",
-      borderWidth: 1.8,
-      borderDash: [4, 4],
-      pointRadius: 0,
-      showLine: true,
-      semTooltip: true,
-    });
-  }
-  graficoCarga = new Chart(document.getElementById("graficoCarga"), {
-    type: "scatter",
-    data: { datasets: dadosCarga },
-    options: opcoesRegressao("Uso da CPU (%)", 0, 100),
-  });
+    .join(". ");
 }
-
-function atualizarEnderecoAnalise() {
-  var parametros = new URLSearchParams();
-  parametros.set(
-    "componente",
-    document.getElementById("filtroComponente").value,
+function atualizarImpactoEngenharia() {
+  var pendencias = [];
+  resultadosEngenharia.forEach(function (r) {
+    criteriosEngenharia.forEach(function (c) {
+      var estado = r.estados[c.id];
+      if (estado === "ok") return;
+      var relatorio = r.lote.relatorios[c.id];
+      pendencias.push({
+        lote: r.lote.id,
+        criterio: c.nome,
+        acao: relatorio
+          ? relatorio.acao
+          : estado === "sem-dados"
+            ? "Recuperar as coletas e repetir a avaliação do protocolo."
+            : "Investigar o desvio e repetir o ensaio após a correção.",
+        responsavel: relatorio ? relatorio.responsavel : "Equipe de validação",
+        prazo: relatorio ? relatorio.prazo : "A definir",
+        custo: relatorio ? relatorio.custo : null,
+        dias: relatorio ? relatorio.dias : null,
+      });
+    });
+  });
+  var orcadas = pendencias.filter(function (p) {
+    return Number.isFinite(p.custo);
+  });
+  document.getElementById("custoRetrabalho").textContent = orcadas.length
+    ? orcadas
+        .reduce(function (s, p) {
+          return s + p.custo;
+        }, 0)
+        .toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+    : "Sem orçamento";
+  document.getElementById("prazoRetrabalho").textContent = orcadas.length
+    ? Math.max.apply(
+        null,
+        orcadas.map(function (p) {
+          return p.dias;
+        }),
+      ) + " dias úteis"
+    : "A estimar";
+  document.getElementById("detalheImpacto").textContent =
+    orcadas.length +
+    " de " +
+    pendencias.length +
+    " pendências possuem estimativa. " +
+    (pendencias.length - orcadas.length) +
+    " aguardam avaliação de custo e prazo.";
+  document.getElementById("pendenciasEngenharia").innerHTML =
+    pendencias
+      .map(function (p) {
+        return (
+          '<div class="pendencia"><div><strong>' +
+          p.lote +
+          " · " +
+          p.criterio +
+          "</strong><p>" +
+          p.acao +
+          '</p></div><div class="prazo">' +
+          p.responsavel +
+          "<p>Prazo " +
+          p.prazo +
+          "</p></div></div>"
+        );
+      })
+      .join("") ||
+    "<p>Todos os critérios possuem evidências. O próximo passo é a revisão do engenheiro.</p>";
+  var projetos = Array.from(
+    new Set(
+      resultadosEngenharia.map(function (r) {
+        return r.lote.projeto;
+      }),
+    ),
   );
-  parametros.set("modelo", document.getElementById("filtroModelo").value);
-  parametros.set("lote", document.getElementById("filtroLote").value);
-  parametros.set("periodo", document.getElementById("filtroPeriodo").value);
-  if (investigandoModelo) parametros.set("visao", "investigacao");
-  history.replaceState(null, "", "?" + parametros.toString());
+  document.getElementById("comparacaoRevisoes").innerHTML = projetos
+    .map(function (projeto) {
+      var revisoes = resultadosEngenharia.filter(function (r) {
+        return r.lote.projeto === projeto;
+      });
+      if (revisoes.length < 2)
+        return (
+          "<p>" +
+          projeto +
+          " · selecione todos os lotes do equipamento para comparar revisões.</p>"
+        );
+      return (
+        "<h3>" +
+        projeto +
+        "</h3>" +
+        revisoes
+          .map(function (r) {
+            var pico = r.leituras.length
+              ? numeroEngenharia(
+                  Math.max.apply(
+                    null,
+                    r.leituras.map(function (l) {
+                      return l.temperatura;
+                    }),
+                  ),
+                  1,
+                ) + " °C"
+              : "Sem dados";
+            return (
+              '<div class="comparacao-linha"><span>Revisão ' +
+              r.lote.revisao +
+              "<p>" +
+              r.lote.protocolo +
+              " · " +
+              r.lote.unidades +
+              " unidades</p></span><strong>" +
+              pico +
+              " de pico<p>" +
+              r.falhas +
+              " critérios reprovados</p></strong></div>"
+            );
+          })
+          .join("")
+      );
+    })
+    .join("");
 }
-
-function exportarAnalisePreditiva() {
-  if (document.getElementById("filtroComponente").value !== "cpu") {
-    exportarComponente();
-    return;
-  }
-  var modelo = modelosPreditivos[document.getElementById("filtroModelo").value];
+function abrirEvidenciasEngenharia(id) {
+  var r = resultadosEngenharia.find(function (resultado) {
+    return resultado.lote.id === id;
+  });
+  if (!r) return;
+  document.getElementById("tituloEvidencias").textContent =
+    r.lote.projeto + " · " + id + " · revisão " + r.lote.revisao;
+  document.getElementById("conteudoEvidencias").innerHTML =
+    "<p>Protocolo " +
+    r.lote.protocolo +
+    " · evidências simuladas · " +
+    decisaoEngenharia(r) +
+    "</p>" +
+    criteriosEngenharia
+      .map(function (c) {
+        var relatorio = r.lote.relatorios[c.id];
+        var resultado = relatorio
+          ? relatorio.evidencia
+          : c.id === "termico"
+            ? "Maior temperatura registrada " +
+              (r.leituras.length
+                ? numeroEngenharia(
+                    Math.max.apply(
+                      null,
+                      r.leituras.map(function (l) {
+                        return l.temperatura;
+                      }),
+                    ),
+                    1,
+                  ) + " °C"
+                : "indisponível") +
+              ". Limite " +
+              r.lote.limite +
+              " °C."
+            : c.id === "recursos"
+              ? "Maior uso de RAM " +
+                (r.leituras.length
+                  ? numeroEngenharia(
+                      Math.max.apply(
+                        null,
+                        r.leituras.map(function (l) {
+                          return l.ram;
+                        }),
+                      ),
+                    ) + "%"
+                  : "indisponível") +
+                ". Confira também CPU e espaço livre no protocolo."
+              : "Registros de reinício inesperado e erros de rede conferidos no histórico do ensaio.";
+        return (
+          '<div class="evidencia-item"><strong>' +
+          c.nome +
+          "</strong> " +
+          seloEngenharia(r.estados[c.id]) +
+          "<p>" +
+          c.regra +
+          "</p><p>" +
+          resultado +
+          "</p><p>Origem " +
+          c.origem +
+          "</p></div>"
+        );
+      })
+      .join("") +
+    "<h3>Cobertura da telemetria</h3><p>" +
+    r.recentes.length +
+    " de " +
+    r.lote.unidades +
+    " equipamentos com coleta nas últimas 24 h. Equipamentos sem coleta recente impedem concluir os critérios automáticos.</p><h3>Próximo passo</h3><p>O engenheiro confere os relatórios e as condições de ensaio antes de decidir sobre a fabricação. Os resultados desta demonstração são simulados.</p>";
+  document.getElementById("evidenciasEngenharia").showModal();
+}
+function exportarEngenharia() {
   var linhas = [
     [
       "Dados simulados",
-      "Modelo",
-      "Período (dias)",
-      "Lote",
       "Equipamento",
-      "Unidades",
-      "Leituras",
-      "Tendência (°C/h)",
-      "R² do ajuste",
-      "MAE do ajuste (°C)",
-      "Margem atual (°C)",
-      "Limite de projeto (°C)",
-      "Projeção até limite (h)",
-      "Situação",
-    ],
+      "Lote",
+      "Revisão",
+      "Histórico (dias)",
+      "Coletas recentes",
+      "Unidades previstas",
+    ].concat(
+      criteriosEngenharia.map(function (c) {
+        return c.nome;
+      }),
+      ["Decisão sugerida", "R²", "Projeção até limite (h)"],
+    ),
   ];
-  for (var i = 0; i < resultadosPreditivos.length; i++) {
-    var r = resultadosPreditivos[i];
-    var lote = lotesPreditivos[r.indice];
-    linhas.push([
-      "Sim",
-      modelo.nome,
-      document.getElementById("filtroPeriodo").value,
-      lote.numero,
-      lote.equipamento,
-      r.unidades.length,
-      r.leituras.length,
-      r.ajuste ? formatarPreditivo(r.ajuste.inclinacao, 4) : "",
-      r.ajuste && r.ajuste.r2 !== null ? formatarPreditivo(r.ajuste.r2, 4) : "",
-      r.ajuste ? formatarPreditivo(r.ajuste.mae, 4) : "",
-      formatarPreditivo(r.margem, 2),
-      modelo.limite,
-      r.horasLimite !== null
-        ? formatarPreditivo(r.horasLimite, 1)
-        : podeProjetar(r)
-          ? "Sem cruzamento em até 72 h"
-          : "Projeção indisponível",
-      r.situacao.nome,
-    ]);
-  }
-  baixarCsvAnalise(linhas);
-}
-
-function baixarCsvAnalise(linhas) {
+  resultadosEngenharia.forEach(function (r) {
+    linhas.push(
+      [
+        "Sim",
+        r.lote.projeto,
+        r.lote.id,
+        r.lote.revisao,
+        document.getElementById("filtroJanela").value,
+        r.recentes.length,
+        r.lote.unidades,
+      ].concat(
+        criteriosEngenharia.map(function (c) {
+          return r.estados[c.id];
+        }),
+        [
+          decisaoEngenharia(r),
+          r.ajuste ? numeroEngenharia(r.ajuste.r2, 3) : "",
+          r.projecao === null
+            ? "Indisponível ou sem cruzamento elegível"
+            : numeroEngenharia(r.projecao, 1),
+        ],
+      ),
+    );
+  });
   var csv =
     "\uFEFF" +
     linhas
       .map(function (linha) {
         return linha
-          .map(function (valor) {
-            return '"' + String(valor).replaceAll('"', '""') + '"';
+          .map(function (v) {
+            return '"' + String(v).replaceAll('"', '""') + '"';
           })
           .join(";");
       })
       .join("\r\n");
   var url = URL.createObjectURL(
-    new Blob([csv], { type: "text/csv;charset=utf-8;" }),
+    new Blob([csv], { type: "text/csv;charset=utf-8" }),
   );
   var link = document.createElement("a");
   link.href = url;
-  link.download =
-    "biotrace-analise-demonstrativa-" +
-    document.getElementById("filtroModelo").value +
-    ".csv";
-  document.body.appendChild(link);
+  link.download = "biotrace-validacao-demonstrativa.csv";
   link.click();
-  link.remove();
   setTimeout(function () {
     URL.revokeObjectURL(url);
   }, 1000);
 }
-
-function inicializarAnalisePreditiva() {
-  var parametros = new URLSearchParams(window.location.search);
-  var tipo = parametros.get("componente");
-  if (["ram", "disco", "rede"].includes(tipo))
-    document.getElementById("filtroComponente").value = tipo;
-  preencherModelosComponente();
-  document.getElementById("filtroComponente").onchange = function () {
-    preencherModelosComponente();
-    mostrarInvestigacao(false, false);
+document.addEventListener("DOMContentLoaded", function () {
+  preencherLotesEngenharia();
+  document.getElementById("filtroProjeto").onchange = function () {
+    preencherLotesEngenharia();
+    atualizarEngenharia();
   };
-  var filtros = ["Modelo", "Lote", "Periodo"];
-  for (var i = 0; i < filtros.length; i++) {
-    var campo = document.getElementById("filtro" + filtros[i]);
-    var valor = parametros.get(filtros[i].toLowerCase());
-    for (var o = 0; o < campo.options.length; o++) {
-      if (campo.options[o].value === valor) campo.value = valor;
-    }
-    campo.onchange = atualizarAnalise;
-  }
-  document.getElementById("limparFiltros").onclick = function () {
-    document.getElementById("filtroComponente").value = "cpu";
-    preencherModelosComponente();
-    document.getElementById("filtroModelo").value = "i5";
-    document.getElementById("filtroLote").value = "todos";
-    document.getElementById("filtroPeriodo").value = "30";
-    document.getElementById("buscarUnidade").value = "";
-    mostrarInvestigacao(false, false);
+  document.getElementById("filtroLoteEngenharia").onchange =
+    atualizarEngenharia;
+  document.getElementById("filtroJanela").onchange = atualizarEngenharia;
+  document.getElementById("limparEngenharia").onclick = function () {
+    document.getElementById("filtroProjeto").value = "todos";
+    document.getElementById("filtroJanela").value = "30";
+    preencherLotesEngenharia();
+    atualizarEngenharia();
   };
-  document.getElementById("investigarModelo").onclick = function () {
-    document.getElementById("filtroLote").value = this.value;
-    mostrarInvestigacao(true);
+  document.getElementById("fecharEvidencias").onclick = function () {
+    document.getElementById("evidenciasEngenharia").close();
   };
-  document.getElementById("voltarAnalise").onclick = function () {
-    mostrarInvestigacao(false);
-  };
-  document.getElementById("buscarUnidade").oninput = filtrarUnidades;
-  document.getElementById("exportarAnalise").onclick = exportarAnalisePreditiva;
-  mostrarInvestigacao(parametros.get("visao") === "investigacao", false);
-}
-
-document.addEventListener("DOMContentLoaded", inicializarAnalisePreditiva);
+  document.getElementById("exportarEngenharia").onclick = exportarEngenharia;
+  document.getElementById("criteriosEngenharia").innerHTML = criteriosEngenharia
+    .map(function (c) {
+      return (
+        "<h3>" + c.nome + "</h3><p>" + c.regra + " Origem " + c.origem + ".</p>"
+      );
+    })
+    .join("");
+  atualizarEngenharia();
+});

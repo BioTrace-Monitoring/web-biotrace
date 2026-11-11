@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ensaios e validações | BioTrace</title>
+    <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/analise_preditiva.css" />
+    <link rel="stylesheet" href="./css/ensaios_validacoes.css" />
+  </head>
+
+  <body>
+    <div class="app">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <a href="index.html" class="logo">
+            <img src="../assets/icons/BioTrace (4).png" alt="BioTrace Logo" />
+          </a>
+          <button
+            class="sidebar-close"
+            id="sidebarClose"
+            type="button"
+            aria-label="Fechar menu"
+          >
+            &times;
+          </button>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Menu principal">
+          <span class="nav-title">Principal</span>
+          <a href="index.html" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Visão Geral</span>
+          </a>
+          <a href="equipamentos.html" class="nav-item">
+            <span class="nav-icon">📟</span>
+            <span>Equipamentos</span>
+          </a>
+
+          <span class="nav-title nav-title-dashboards">Dashboards</span>
+          <a href="dash_engenheiro.html" class="nav-item">
+            <span class="nav-icon">📈</span>
+            <span>Equipamentos por lote</span>
+          </a>
+
+          <a href="dash_geral.html" class="nav-item">
+            <span class="nav-icon">📉</span>
+            <span>Análise de lotes</span>
+          </a>
+          <a href="analise_preditiva.html" class="nav-item">
+            <span class="nav-icon">🔬</span>
+            <span>Análise preditiva</span>
+          </a>
+
+          <a
+            href="ensaios_validacoes.html"
+            class="nav-item active"
+            aria-current="page"
+            ><span class="nav-icon">📋</span
+            ><span>Ensaios e validações</span></a
+          >
+          <span class="nav-title nav-title-spacing">Cadastros</span>
+          <a href="hospitais.html" class="nav-item">
+            <span class="nav-icon">🏥</span>
+            <span>Cadastrar hospital</span>
+          </a>
+          <a href="cadastrar-usuario.html" class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span>Cadastrar usuário</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="sidebar-user">
+            <div id="usuario_avatar" class="usuario-avatar">BT</div>
+            <div class="user-info">
+              <strong id="nome_cliente">Usuário BioTrace</strong>
+              <span id="email_cliente">perfil@biotrace.com</span>
+            </div>
+          </div>
+          <button
+            class="sidebar-logout"
+            id="btnSair"
+            type="button"
+            aria-label="Sair da conta"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M9 5H5v14h4M10 12h10m-4-4 4 4-4 4"></path>
+            </svg>
+          </button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="mobile-header">
+          <button
+            class="menu-button"
+            id="menuButton"
+            type="button"
+            aria-label="Abrir menu"
+            aria-controls="sidebar"
+            aria-expanded="false"
+          >
+            ☰
+          </button>
+          <img
+            src="../assets/icons/BioTrace (4).png"
+            alt="BioTrace"
+            class="mobile-logo"
+          />
+        </header>
+
+        <div class="page-content engenharia-dashboard ensaios-page">
+          <header class="engenharia-cabecalho">
+            <div>
+              <div class="eyebrow">ENGENHARIA / REGISTROS DE VALIDAÇÃO</div>
+              <h1>Ensaios e validações</h1>
+              <p>
+                Defina o teste, registre as evidências e acompanhe as correções.
+              </p>
+            </div>
+            <a class="botao secundario" href="analise_preditiva.html"
+              >← Análise preditiva</a
+            >
+          </header>
+          <div class="aviso-demo">
+            <strong>Ambiente demonstrativo</strong>
+            <p>
+              Todos os registros são fictícios. Você pode criar exemplos nesta
+              página. Ao recarregar, os dados voltam ao cenário inicial. A
+              dashboard mantém seu cenário próprio.
+            </p>
+          </div>
+          <noscript
+            >Ative o JavaScript para experimentar os cadastros.</noscript
+          >
+          <section class="engenharia-kpis" aria-label="Resumo dos registros">
+            <article class="painel">
+              <h2>Protocolos disponíveis</h2>
+              <strong id="totalProtocolos"></strong>
+              <p>Procedimentos e critérios versionados</p>
+            </article>
+            <article class="painel">
+              <h2>Ensaios registrados</h2>
+              <strong id="totalRelatorios"></strong>
+              <p>Resultados e evidências por lote</p>
+            </article>
+            <article class="painel">
+              <h2>Correções em aberto</h2>
+              <strong id="totalCorrecoes"></strong>
+              <p>Inclui itens aguardando novo ensaio</p>
+            </article>
+            <article class="painel">
+              <h2>Orçamento conhecido</h2>
+              <strong id="totalOrcamento"></strong>
+              <p id="coberturaOrcamento"></p>
+            </article>
+          </section>
+          <section class="painel">
+            <div class="fluxo-cadastro">
+              <p>
+                <strong>1. Protocolo</strong><br />Como testar e quais limites
+                usar.
+              </p>
+              <p>
+                <strong>2. Relatório</strong><br />O resultado do teste e suas
+                evidências.
+              </p>
+              <p>
+                <strong>3. Correção</strong><br />O que fazer, quem faz e quanto
+                custa.
+              </p>
+            </div>
+          </section>
+          <section class="painel">
+            <div
+              class="abas-ensaios"
+              role="group"
+              aria-label="Tipo de registro"
+            >
+              <button class="botao" data-aba="protocolos" aria-pressed="true">
+                Protocolos</button
+              ><button
+                class="botao secundario"
+                data-aba="relatorios"
+                aria-pressed="false"
+              >
+                Relatórios de ensaio</button
+              ><button
+                class="botao secundario"
+                data-aba="correcoes"
+                aria-pressed="false"
+              >
+                Ações de correção
+              </button>
+            </div>
+            <div class="toolbar-ensaios">
+              <label
+                >Buscar registro<input
+                  id="buscaRegistros"
+                  type="search"
+                  placeholder="Código, equipamento, lote ou responsável…" /></label
+              ><label
+                >Equipamento<select id="projetoRegistros">
+                  <option value="todos">Todos os equipamentos</option>
+                  <option>ECG-12</option>
+                  <option>BPAP</option>
+                </select></label
+              ><button id="novoRegistro" class="botao" type="button">
+                + Cadastrar protocolo
+              </button>
+            </div>
+            <p id="resumoRegistros" class="texto-apoio" aria-live="polite"></p>
+            <div id="listaRegistros"></div>
+          </section>
+          <p id="feedbackEnsaios" role="status" aria-live="polite"></p>
+          <dialog id="dialogCadastro" aria-labelledby="tituloCadastro">
+            <div class="titulo-painel">
+              <h2 id="tituloCadastro"></h2>
+              <button
+                class="botao secundario"
+                data-fechar="dialogCadastro"
+                type="button"
+              >
+                Fechar ×
+              </button>
+            </div>
+            <form id="formCadastro">
+<p id="erroCadastro" role="alert"></p>
+              <div id="camposCadastro" class="form-ensaios"></div>
+              <p id="resumoOrcamento" class="aviso-demo" hidden></p>
+              <p class="texto-apoio">
+                Ao salvar, o exemplo aparece na lista desta sessão.
+              </p>
+              <div class="acoes-form">
+                <button
+                  type="button"
+                  class="botao secundario"
+                  data-fechar="dialogCadastro"
+                >
+                  Cancelar</button
+                ><button class="botao" type="submit">Salvar exemplo</button>
+              </div>
+            </form>
+          </dialog>
+          <dialog id="dialogRegistro" aria-labelledby="tituloRegistro">
+            <div class="titulo-painel">
+              <h2 id="tituloRegistro"></h2>
+              <button
+                class="botao secundario"
+                data-fechar="dialogRegistro"
+                type="button"
+              >
+                Fechar ×
+              </button>
+            </div>
+            <div id="detalheRegistro"></div>
+            <div id="acoesRegistro" class="acoes-form"></div>
+          </dialog>
+          <footer class="texto-apoio">
+            BioTrace · Dados fictícios para explorar o fluxo de engenharia ·
+            Referência 11/11/2026
+          </footer>
+        </div>
+      </main>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <script src="./js/dashboard.js"></script>
+    <script src="./js/ensaios_validacoes.js"></script>
+  </body>
+</html>
