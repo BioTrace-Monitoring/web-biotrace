@@ -25,6 +25,7 @@ var usuarioRouter = require("./src/routes/usuario");
 var empresaRouter = require("./src/routes/empresa");
 var hospitalRouter = require("./src/routes/hospital");
 var equipamentoRouter = require("./src/routes/equipamento");
+var engenhariaRouter = require("./src/routes/engenharia");
 
 // Habilita CORS para permitir requisições de outros domínios/portas
 app.use(cors());
@@ -43,6 +44,7 @@ app.use("/usuario", usuarioRouter);
 app.use("/empresa", empresaRouter);
 app.use("/hospital", hospitalRouter)
 app.use("/equipamento", equipamentoRouter);
+app.use("/engenharia", engenhariaRouter);
 
 // Coloca o servidor para escutar na porta definida nas variáveis de ambiente
 app.listen(PORTA_APP, function ()
