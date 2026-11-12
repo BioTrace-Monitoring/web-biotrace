@@ -972,6 +972,7 @@ function exportarEngenharia() {
   }, 1000);
 }
 document.addEventListener("DOMContentLoaded", function () {
+    if (!exigirCargo(["Administrador", "Gestor"])) return;
   preencherLotesEngenharia();
   document.getElementById("filtroProjeto").onchange = function () {
     preencherLotesEngenharia();

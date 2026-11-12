@@ -9,15 +9,14 @@ router.use(function (req, res, next) {
         req.method === "POST" &&
         (!req.body || typeof req.body !== "object" || Array.isArray(req.body))
     ) {
-        return res
-            .status(400)
-            .json({
-                sucesso: false,
-                mensagem: "Envie os campos em um objeto JSON.",
-            });
+        return res.status(400).json({
+            sucesso: false,
+            mensagem: "Envie os campos em um objeto JSON.",
+        });
     }
     next();
 });
+router.get("/catalogos", controller.listarCatalogos);
 router.get("/protocolos", controller.listarProtocolos);
 router.get("/protocolos/:id", controller.buscarProtocolo);
 router.post("/protocolos", controller.cadastrarProtocolo);

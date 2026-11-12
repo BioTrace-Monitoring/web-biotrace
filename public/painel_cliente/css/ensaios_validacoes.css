@@ -134,3 +134,16 @@
     flex-direction: column;
   }
 }
+.ensaios-page .participante-opcao {
+  flex-direction: row;
+  align-items: center;
+  color: var(--text);
+}
+.ensaios-page .participante-opcao input {
+  width: auto;
+}
+#erroCadastro,
+#feedbackEnsaios {
+  color: #b53547;
+  font-size: 12px;
+}

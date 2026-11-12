@@ -133,53 +133,37 @@
             >
           </header>
           <div class="aviso-demo">
-            <strong>Ambiente demonstrativo</strong>
+            <strong>Protocolos e ensaios conectados ao banco</strong>
             <p>
-              Todos os registros são fictícios. Você pode criar exemplos nesta
-              página. Ao recarregar, os dados voltam ao cenário inicial. A
-              dashboard mantém seu cenário próprio.
+              Inicie a captura Python nos notebooks antes de iniciar o ensaio.
+              Os relatórios automáticos e as correções serão conectados na
+              próxima etapa.
             </p>
           </div>
           <noscript
-            >Ative o JavaScript para experimentar os cadastros.</noscript
+            >Ative o JavaScript para gerenciar protocolos e ensaios.</noscript
           >
-          <section class="engenharia-kpis" aria-label="Resumo dos registros">
+          <section class="engenharia-kpis" aria-label="Resumo dos ensaios">
             <article class="painel">
-              <h2>Protocolos disponíveis</h2>
-              <strong id="totalProtocolos"></strong>
-              <p>Procedimentos e critérios versionados</p>
+              <h2>Protocolos cadastrados</h2>
+              <strong id="totalProtocolos">—</strong>
+              <p>Versões preservadas no banco</p>
             </article>
             <article class="painel">
-              <h2>Ensaios registrados</h2>
-              <strong id="totalRelatorios"></strong>
-              <p>Resultados e evidências por lote</p>
+              <h2>Ensaios planejados</h2>
+              <strong id="totalPlanejados">—</strong>
+              <p>Prontos para iniciar a avaliação</p>
             </article>
             <article class="painel">
-              <h2>Correções em aberto</h2>
-              <strong id="totalCorrecoes"></strong>
-              <p>Inclui itens aguardando novo ensaio</p>
+              <h2>Em execução</h2>
+              <strong id="totalExecucao">—</strong>
+              <p>Dentro da duração prevista</p>
             </article>
             <article class="painel">
-              <h2>Orçamento conhecido</h2>
-              <strong id="totalOrcamento"></strong>
-              <p id="coberturaOrcamento"></p>
+              <h2>Período encerrado</h2>
+              <strong id="totalAguardando">—</strong>
+              <p>Aguardando avaliação dos dados recebidos</p>
             </article>
-          </section>
-          <section class="painel">
-            <div class="fluxo-cadastro">
-              <p>
-                <strong>1. Protocolo</strong><br />Como testar e quais limites
-                usar.
-              </p>
-              <p>
-                <strong>2. Relatório</strong><br />O resultado do teste e suas
-                evidências.
-              </p>
-              <p>
-                <strong>3. Correção</strong><br />O que fazer, quem faz e quanto
-                custa.
-              </p>
-            </div>
           </section>
           <section class="painel">
             <div
@@ -188,19 +172,14 @@
               aria-label="Tipo de registro"
             >
               <button class="botao" data-aba="protocolos" aria-pressed="true">
-                Protocolos</button
-              ><button
+                Protocolos
+              </button>
+              <button
                 class="botao secundario"
-                data-aba="relatorios"
+                data-aba="ensaios"
                 aria-pressed="false"
               >
-                Relatórios de ensaio</button
-              ><button
-                class="botao secundario"
-                data-aba="correcoes"
-                aria-pressed="false"
-              >
-                Ações de correção
+                Ensaios
               </button>
             </div>
             <div class="toolbar-ensaios">
@@ -208,18 +187,25 @@
                 >Buscar registro<input
                   id="buscaRegistros"
                   type="search"
-                  placeholder="Código, equipamento, lote ou responsável…" /></label
+                  placeholder="Nome, equipamento ou responsável…" /></label
               ><label
                 >Equipamento<select id="projetoRegistros">
                   <option value="todos">Todos os equipamentos</option>
-                  <option>ECG-12</option>
-                  <option>BPAP</option>
                 </select></label
-              ><button id="novoRegistro" class="botao" type="button">
+              ><button id="novoRegistro" class="botao" type="button" disabled>
                 + Cadastrar protocolo
               </button>
             </div>
-            <p id="resumoRegistros" class="texto-apoio" aria-live="polite"></p>
+            <p id="resumoRegistros" class="texto-apoio" aria-live="polite">
+              Carregando registros…
+            </p>
+            <button
+              id="atualizarRegistros"
+              class="botao secundario"
+              type="button"
+            >
+              Atualizar dados
+            </button>
             <div id="listaRegistros"></div>
           </section>
           <p id="feedbackEnsaios" role="status" aria-live="polite"></p>
@@ -235,11 +221,11 @@
               </button>
             </div>
             <form id="formCadastro">
-<p id="erroCadastro" role="alert"></p>
+              <p id="erroCadastro" role="alert"></p>
               <div id="camposCadastro" class="form-ensaios"></div>
               <p id="resumoOrcamento" class="aviso-demo" hidden></p>
               <p class="texto-apoio">
-                Ao salvar, o exemplo aparece na lista desta sessão.
+                Os dados são salvos no banco da sua empresa.
               </p>
               <div class="acoes-form">
                 <button
@@ -248,7 +234,7 @@
                   data-fechar="dialogCadastro"
                 >
                   Cancelar</button
-                ><button class="botao" type="submit">Salvar exemplo</button>
+                ><button class="botao" type="submit">Salvar</button>
               </div>
             </form>
           </dialog>
@@ -267,13 +253,13 @@
             <div id="acoesRegistro" class="acoes-form"></div>
           </dialog>
           <footer class="texto-apoio">
-            BioTrace · Dados fictícios para explorar o fluxo de engenharia ·
-            Referência 11/11/2026
+            BioTrace · Protocolos e execução de ensaios
           </footer>
         </div>
       </main>
     </div>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <script src="../js/sessao.js"></script>
     <script src="./js/dashboard.js"></script>
     <script src="./js/ensaios_validacoes.js"></script>
   </body>

@@ -130,7 +130,16 @@ async function cadastrarProtocolo(empresa, dados, origem) {
         await conexao.end();
     }
 }
-function listarEnsaios(empresa) {
+async function listarEnsaios(empresa) {
+    await database.executar(
+        `UPDATE ensaio e
+        JOIN protocolo_ensaio p ON p.id_protocolo = e.fk_protocolo
+        JOIN modelo_equipamento m ON m.id_modelo_equipamento = p.fk_modelo_equipamento
+        SET e.situacao = 'aguardando_processamento'
+        WHERE m.fk_empresa = ? AND e.situacao = 'em_execucao'
+        AND e.termino_previsto <= UTC_TIMESTAMP()`,
+        [empresa],
+    );
     return database.executar(
         `SELECT e.*, DATE_FORMAT(e.criado_em, '%Y-%m-%dT%H:%i:%sZ') AS criado_em,
         DATE_FORMAT(e.inicio, '%Y-%m-%dT%H:%i:%sZ') AS inicio,
@@ -353,3 +362,20 @@ module.exports = {
     iniciarEnsaio,
     cancelarEnsaio,
 };
+
+async function listarCatalogos(empresa) {
+    var modelos = await database.executar(
+        `SELECT id_modelo_equipamento, nome_modelo
+        FROM modelo_equipamento WHERE fk_empresa = ? ORDER BY nome_modelo`,
+        [empresa],
+    );
+    var unidades = await database.executar(
+        `SELECT e.id_equipamento, e.numero_serie, e.fk_hospital,
+        e.fk_lote, l.numero_lote, l.fk_modelo_equipamento FROM equipamento e
+        JOIN lote_equipamento l ON l.id_lote_equipamento = e.fk_lote
+        WHERE l.fk_empresa = ? ORDER BY e.numero_serie`,
+        [empresa],
+    );
+    return { modelos: modelos, unidades: unidades };
+}
+module.exports.listarCatalogos = listarCatalogos;

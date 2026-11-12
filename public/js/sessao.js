@@ -3,7 +3,8 @@ function obterUsuarioLogado() {
     if (!token) return null;
 
     try {
-        const payloadBase64 = token.split('.')[1];
+        const parte = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+        const payloadBase64 = parte.padEnd(Math.ceil(parte.length / 4) * 4, '=');
         const payloadJson = decodeURIComponent(atob(payloadBase64).split('').map(function(c) {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));

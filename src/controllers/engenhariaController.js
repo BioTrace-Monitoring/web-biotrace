@@ -284,3 +284,17 @@ module.exports = {
     iniciarEnsaio,
     cancelarEnsaio,
 };
+
+async function listarCatalogos(req, res) {
+    try {
+        var catalogos = await model.listarCatalogos(req.usuario.fk_empresa);
+        res.json({
+            sucesso: true,
+            modelos: catalogos.modelos,
+            unidades: catalogos.unidades,
+        });
+    } catch (erro) {
+        responderErro(res, erro);
+    }
+}
+module.exports.listarCatalogos = listarCatalogos;
