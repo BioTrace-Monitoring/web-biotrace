@@ -6,7 +6,7 @@
         <title>Proporção de alertas | BioTrace</title>
         <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
         <link rel="stylesheet" href="./css/style.css">
-        <link rel="stylesheet" href="./css/style_dash_geral.css">
+        <link rel="stylesheet" href="./css/dash_proporcao_alertas.css">
     </head>
 
     <body>
@@ -73,9 +73,52 @@
 
                 <div class="page-content">
                     <div class="page-heading">
-                        <div class="eyebrow"><span class="eyebrow-dot"></span>MONITORAMENTO DE ALERTAS</div>
+                        <div class="eyebrow"><span class="eyebrow-dot"></span>MONITORAMENTO DA BASE</div>
                         <h1>Proporção de alertas</h1>
-                        <p>Consulte a proporção de componentes em alerta e a integridade de cada lote.</p>
+                        <p>Entenda onde os episódios se concentram e quantos equipamentos foram afetados.</p>
+                    </div>
+
+                    <div class="filters">
+                        <label>
+                            PERÍODO
+                            <select id="period">
+                                <option value="7">Últimos 7 dias</option>
+                                <option value="30" selected>Últimos 30 dias</option>
+                                <option value="90">Últimos 90 dias</option>
+                            </select>
+                        </label>
+                        <label>
+                            MÉTRICA
+                            <select id="metric">
+                                <option value="all">Todas as métricas</option>
+                                <option>CPU</option>
+                                <option>Memória</option>
+                                <option>Disco</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="kpis">
+                        <div class="card kpi"></div>
+                        <div class="card kpi"></div>
+                        <div class="card kpi"></div>
+                        <div class="card kpi"></div>
+                    </div>
+
+                    <div class="ia-analysis">
+                        <div class="assistant-badge">NOVO</div>
+                        <div class="card assistant">
+                            <span class="sparkle">✦</span>
+                            <div>
+                                <div class="assistant-heading">
+                                    <small>ANÁLISE ASSISTIDA</small>
+                                </div>
+                                <h2>Investigue os resultados deste período</h2>
+                                <p>Gere um resumo com os padrões observados nos indicadores selecionados.</p>
+                            </div>    
+                            <button id="analyze">Analisar este período <b>→</b></button>
+                            <p class="analysis-result" id="result" hidden></p>
+                        </div>
                     </div>
                 </div>
             </main>
@@ -84,6 +127,5 @@
 
         <script src="./js/dashboard.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="./js/dash_geral.js"></script>
     </body>
 </html>
