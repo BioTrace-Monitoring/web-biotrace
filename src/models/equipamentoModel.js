@@ -125,15 +125,21 @@ function cadastrarParametros(idEquipamento) {
         INSERT INTO parametro_metrica (limite_uso, limite_ociosidade, habilitado, fk_metrica)
         SELECT
             CASE tm.tipo_metrica
-                WHEN 'cpu_percent' THEN 90.00
-                WHEN 'memoria_percent' THEN 90.00
-                WHEN 'disco_percent' THEN 90.00
+                WHEN 'cpu_percent' THEN 75.00
+                WHEN 'cpu_por_nucleo' THEN 90.00
+                WHEN 'temperatura_cpu' THEN 75.00
+                WHEN 'memoria_percent' THEN 60.00
+                WHEN 'disco_percent' THEN 75.00
+                WHEN 'processos_ativos' THEN 5.00
                 ELSE NULL
             END,
             CASE tm.tipo_metrica
-                WHEN 'cpu_percent' THEN 5.00
-                WHEN 'memoria_percent' THEN 10.00
+                WHEN 'cpu_percent' THEN 15.00
+                WHEN 'cpu_por_nucleo' THEN 0.00
+                WHEN 'memoria_disponivel_gb' THEN 2.00
                 WHEN 'disco_percent' THEN 10.00
+                WHEN 'disco_livre_gb' THEN 10.00
+                WHEN 'processos_ativos' THEN 2.00
                 ELSE NULL
             END,
             TRUE,
