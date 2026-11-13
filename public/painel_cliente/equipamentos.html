@@ -21,35 +21,28 @@
                     </button>
                 </div>
 
-                <nav class="sidebar-nav">
-                    <span class="nav-title">Principal</span>
+                <nav class="sidebar-nav" aria-label="Menu principal">
+                    <span class="nav-title">Acompanhamento</span>
                     <a href="index.html" class="nav-item">
-                        <span class="nav-icon">📊</span>
-                        <span>Visão Geral</span>
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                        <span>Visão geral</span>
                     </a>
-                    <a href="equipamentos.html" class="nav-item active">
-                        <span class="nav-icon">📟</span>
+                    <a href="equipamentos.html" class="nav-item active" aria-current="page">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8m-4-4v4M7 10h3l2-3 2 6 2-3h2"/></svg>
                         <span>Equipamentos</span>
                     </a>
-
-                    <span class="nav-title nav-title-dashboards">Dashboards</span>
-                    <a href="dash_engenheiro.html" class="nav-item">
-                        <span class="nav-icon">📈</span>
-                        <span>Equipamentos por lote</span>
+                    <a href="dash_proporcao_alertas.html" class="nav-item">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v9h9A9 9 0 1 1 12 3Z"/><path d="M16 3.9a9 9 0 0 1 4.1 4.1H16Z"/></svg>
+                        <span>Proporção de alertas</span>
                     </a>
 
-                    <a href="dash_geral.html" class="nav-item">
-                        <span class="nav-icon">📉</span>
-                        <span>Análise de lotes</span>
-                    </a>
-
-                    <span class="nav-title nav-title-spacing">Cadastros</span>
+                    <span class="nav-title nav-title-spacing">Administração</span>
                     <a href="hospitais.html" class="nav-item">
-                        <span class="nav-icon">🏥</span>
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 21v-5h6v5M10 8h4m-2-2v4M9 13h.01M15 13h.01"/></svg>
                         <span>Cadastrar hospital</span>
                     </a>
                     <a href="cadastrar-usuario.html" class="nav-item">
-                        <span class="nav-icon">👤</span>
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3"/><path d="M3 21v-2a6 6 0 0 1 12 0v2m2-17a3 3 0 0 1 0 6m2 5a5 5 0 0 1 2 4v2"/></svg>
                         <span>Cadastrar usuário</span>
                     </a>
                 </nav>
@@ -134,7 +127,7 @@
                                 aria-controls="painelParametros"
                                 tabindex="-1"
                             >
-                                Limites e parâmetros
+                                Ajuste de limites
                             </button>
                         </div>
                         <section id="painelLotes" role="tabpanel" aria-labelledby="abaLotes">
@@ -194,116 +187,146 @@
                             </div>
                         </section>
                         <section id="painelParametros" role="tabpanel" aria-labelledby="abaParametros" hidden>
-                            <div id="visaoParametros">
-                                <section data-cartao>
-                                    <div data-filtros>
-                                        <label for="filtroLote" data-somente-leitor>Lote</label>
-                                        <select id="filtroLote">
-                                            <option value="">Todos os lotes</option>
+                            <section id="selecaoLimites" data-cartao aria-labelledby="tituloDestino">
+                                <h2 id="tituloDestino">1. Escolha o destino da alteração</h2>
+                                <p data-ajuda>Defina quem receberá os limites antes de escolher a métrica.</p>
+                                <fieldset id="selecaoDestino">
+                                    <div data-campo-destino>
+                                        <label for="escopo">O que deseja alterar?</label>
+                                        <select id="escopo" aria-describedby="descricaoEscopo">
+                                            <optgroup label="Lote ou equipamento">
+                                                <option value="lote">Um lote inteiro</option>
+                                                <option value="equipamento">Um equipamento específico</option>
+                                            </optgroup>
+                                            <optgroup label="Aplicação em vários lotes">
+                                                <option value="modelo">Todos os lotes de um modelo</option>
+                                                <option value="empresa">Todos os equipamentos da empresa</option>
+                                            </optgroup>
                                         </select>
-                                        <label for="filtroComponente" data-somente-leitor>Componente</label>
+                                    </div>
+                                    <div id="campoLote" data-campo-destino>
+                                        <label for="filtroLote">Qual lote?</label>
+                                        <select id="filtroLote"><option value="">Selecione um lote</option></select>
+                                    </div>
+                                    <div id="campoEquipamento" data-campo-destino hidden>
+                                        <label for="filtroEquipamento">Qual equipamento?</label>
+                                        <select id="filtroEquipamento"><option value="">Selecione um equipamento</option></select>
+                                    </div>
+                                    <div id="campoModelo" data-campo-destino hidden>
+                                        <label for="filtroModelo">Qual modelo?</label>
+                                        <select id="filtroModelo"><option value="">Selecione um modelo</option></select>
+                                    </div>
+                                </fieldset>
+                                <p id="descricaoEscopo" data-ajuda></p>
+                                <p id="resumoDestino" role="status" aria-live="polite"></p>
+                            </section>
+                            <div id="visaoParametros" hidden>
+                                <section data-cartao>
+                                    <div data-cabecalho-metricas>
+                                        <h2>2. Selecione a métrica</h2>
+                                        <p data-ajuda>Cada linha mostra os valores atuais no destino escolhido.</p>
+                                        <label for="filtroComponente">Filtrar por componente</label>
                                         <select id="filtroComponente">
                                             <option value="">Todos os componentes</option>
                                         </select>
-                                        <label for="filtroEquipamento" data-somente-leitor>Equipamento</label>
-                                        <select id="filtroEquipamento">
-                                            <option value="">Todos os equipamentos</option>
-                                        </select>
                                     </div>
                                     <div data-rolagem>
-                                        <table aria-label="Limites e parâmetros">
+                                        <table aria-label="Métricas do destino selecionado">
                                             <thead>
                                                 <tr>
-                                                    <th>Lote</th>
-                                                    <th>Componente</th>
-                                                    <th>Limite de uso</th>
-                                                    <th>Ociosidade</th>
-                                                    <th>Habilitada</th>
-                                                    <th>Padronização</th>
+                                                    <th>Métrica</th>
+                                                    <th>Abrangência</th>
+                                                    <th>Máximo</th>
+                                                    <th>Mínimo</th>
+                                                    <th>Monitoramento</th>
+                                                    <th>Valores atuais</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="listaParametros"></tbody>
                                         </table>
                                     </div>
                                 </section>
-                                <aside id="editor" data-cartao aria-label="Configuração de parâmetros">
+                                <aside id="editor" data-cartao aria-label="Editor de limites">
                                     <p id="editorVazio" data-vazio>
-                                        Selecione uma linha da tabela para ajustar os limites.
+                                        Selecione uma métrica na etapa 2 para editar os limites do destino escolhido.
                                     </p>
                                     <form id="formParametros" hidden>
-                                        <small data-sobretitulo>Configuração de parâmetros</small>
+                                        <div id="acoesParametros">
+                                            <small data-sobretitulo>3. Defina os limites</small>
+                                            <button type="submit" id="aplicarParametros" disabled>
+                                                Salvar limites
+                                            </button>
+                                            <p id="impacto" role="status"></p>
+                                            <p id="erroParametros" role="alert" hidden></p>
+                                        </div>
+                                        <div id="destinoParametro">
+                                            <strong id="tituloDestinoParametro"></strong>
+                                            <p id="descricaoDestinoParametro"></p>
+                                        </div>
                                         <h2 id="tituloParametro"></h2>
                                         <p id="subtituloParametro"></p>
-                                        <div id="avisoDivergencia" hidden>
-                                            Os valores deste grupo são diferentes. Os campos mostram a métrica
-                                            de referência; aplicar substituirá os valores no destino
-                                            escolhido.
-                                        </div>
-                                        <div data-limite>
-                                            <label for="limiteUso">Limite de uso (máximo)</label>
-                                            <div>
+                                        <fieldset id="camposLimites">
+                                            <div id="avisoDivergencia" hidden>
+                                                Há valores diferentes entre os equipamentos deste destino.
+                                                Preencha os campos indicados ou marque “Sem limite”.
+                                                Os valores salvos serão iguais para a métrica selecionada em todos eles.
+                                            </div>
+                                            <div data-limite>
+                                                <label for="limiteUso">Limite de uso (máximo)</label>
+                                                <div>
+                                                    <input
+                                                        id="limiteUso"
+                                                        type="number"
+                                                        min="0"
+                                                        max="100"
+                                                        step="0.01"
+                                                    />
+                                                    <span id="unidadeUso"></span>
+                                                </div>
                                                 <input
-                                                    id="limiteUso"
-                                                    type="number"
+                                                    id="sliderUso"
+                                                    type="range"
                                                     min="0"
                                                     max="100"
                                                     step="0.01"
+                                                    aria-label="Ajustar limite de uso"
                                                 />
-                                                <span id="unidadeUso"></span>
+                                                <label data-sem-limite><input id="semLimiteUso" type="checkbox" /> Sem limite máximo</label>
                                             </div>
-                                            <input
-                                                id="sliderUso"
-                                                type="range"
-                                                min="0"
-                                                max="100"
-                                                step="0.01"
-                                                aria-label="Ajustar limite de uso"
-                                            />
-                                        </div>
-                                        <div data-limite>
-                                            <label for="limiteOciosidade">
-                                                Limite de ociosidade (mínimo)
+                                            <div data-limite>
+                                                <label for="limiteOciosidade">
+                                                    Limite de ociosidade (mínimo)
+                                                </label>
+                                                <div>
+                                                    <input
+                                                        id="limiteOciosidade"
+                                                        type="number"
+                                                        min="0"
+                                                        max="100"
+                                                        step="0.01"
+                                                    />
+                                                    <span id="unidadeOciosidade"></span>
+                                                </div>
+                                                <input
+                                                    id="sliderOciosidade"
+                                                    type="range"
+                                                    min="0"
+                                                    max="100"
+                                                    step="0.01"
+                                                    aria-label="Ajustar limite de ociosidade"
+                                                />
+                                                <label data-sem-limite><input id="semLimiteOciosidade" type="checkbox" /> Sem limite mínimo</label>
+                                            </div>
+                                            <p data-ajuda>O máximo define o limite de uso; o mínimo, o de ociosidade. “Sem limite” remove a restrição correspondente.</p>
+                                            <label id="habilitar">
+                                                <span>Métrica habilitada</span>
+                                                <input id="metricaHabilitada" type="checkbox" />
                                             </label>
-                                            <div>
-                                                <input
-                                                    id="limiteOciosidade"
-                                                    type="number"
-                                                    min="0"
-                                                    max="100"
-                                                    step="0.01"
-                                                />
-                                                <span id="unidadeOciosidade"></span>
-                                            </div>
-                                            <input
-                                                id="sliderOciosidade"
-                                                type="range"
-                                                min="0"
-                                                max="100"
-                                                step="0.01"
-                                                aria-label="Ajustar limite de ociosidade"
-                                            />
-                                        </div>
-                                        <p data-ajuda>Deixe um campo vazio para não definir esse limite.</p>
-                                        <label id="habilitar">
-                                            <span>Métrica habilitada</span>
-                                            <input id="metricaHabilitada" type="checkbox" />
-                                        </label>
-                                        <label for="escopo">Aplicar a</label>
-                                        <select id="escopo">
-                                            <option value="equipamento">Somente este equipamento</option>
-                                            <option value="lote">Somente este lote</option>
-                                            <option value="modelo">Todos os lotes deste modelo</option>
-                                            <option value="empresa">Todos os lotes da empresa</option>
-                                        </select>
+                                            <p id="ajudaHabilitada" data-ajuda hidden>O monitoramento está diferente entre os equipamentos. Escolha se ficará habilitado para todos.</p>
+                                        </fieldset>
                                         <p id="avisoEscopo" data-ajuda>
-                                            Apenas métricas do mesmo tipo e componente serão alteradas.
-                                            Nenhuma métrica será criada em outros equipamentos.
+                                            A alteração vale apenas para esta métrica e este componente nos equipamentos do destino escolhido.
                                         </p>
-                                        <p id="impacto" role="status"></p>
-                                        <p id="erroParametros" role="alert" hidden></p>
-                                        <button type="submit" id="aplicarParametros" disabled>
-                                            Aplicar parâmetros
-                                        </button>
                                     </form>
                                 </aside>
                             </div>
@@ -644,7 +667,11 @@
                         dadosPainel.lotes,
                         "id_lote_equipamento",
                         "numero_lote",
-                        "Todos os lotes"
+                        "Selecione um lote"
+                    );
+                    preencherSelect(
+                        "filtroModelo", dadosPainel.modelos, "id_modelo_equipamento",
+                        "nome_modelo", "Selecione um modelo"
                     );
                     preencherSelect(
                         "filtroComponente",
@@ -807,7 +834,7 @@
                     hospital.textContent = equipamento.nome_hospital || "Sem hospital";
                     var acoes = document.createElement("nav");
                     acoes.setAttribute("aria-label", "Ações de " + equipamento.numero_serie);
-                    criarBotaoEquipamento(acoes, "Editar métricas", "metricas", equipamento.id_equipamento);
+                    criarBotaoEquipamento(acoes, "Limites deste equipamento", "metricas", equipamento.id_equipamento);
                     criarBotaoEquipamento(acoes, "Alocar hospital", "hospital", equipamento.id_equipamento);
                     cartao.append(topo, hospital, acoes);
                     lista.appendChild(cartao);
@@ -817,7 +844,7 @@
                 botao.type = "button";
                 botao.dataset.acao = "limites";
                 botao.dataset.acaoLote = "";
-                botao.textContent = "Ver limites deste lote";
+                botao.textContent = "Ajustar limites do lote inteiro";
                 painel.append(lista, botao);
             }
 
@@ -875,14 +902,61 @@
                     equipamentos,
                     "id_equipamento",
                     "numero_serie",
-                    "Todos os equipamentos"
+                    "Selecione um equipamento"
                 );
             }
 
+            function obterDestinoParametros() {
+                var escopo = document.getElementById("escopo").value;
+                var lote = dadosPainel.lotes.find(item => item.id_lote_equipamento === Number(document.getElementById("filtroLote").value));
+                var equipamento = dadosPainel.equipamentos.find(item => item.id_equipamento === Number(document.getElementById("filtroEquipamento").value));
+                var modelo = dadosPainel.modelos.find(item => item.id_modelo_equipamento === Number(document.getElementById("filtroModelo").value));
+                if (escopo === "empresa") {
+                    return { valido: true, escopo: escopo, titulo: "Toda a empresa", descricao: "Todos os equipamentos da empresa que possuem a métrica selecionada." };
+                }
+                if (escopo === "modelo" && modelo) {
+                    return { valido: true, escopo: escopo, titulo: "Modelo " + modelo.nome_modelo, descricao: "Todos os equipamentos dos lotes deste modelo que possuem a métrica selecionada." };
+                }
+                if (escopo === "lote" && lote) {
+                    return { valido: true, escopo: escopo, titulo: "Lote " + lote.numero_lote, descricao: "Todos os equipamentos deste lote que possuem a métrica selecionada." };
+                }
+                if (escopo === "equipamento" && lote && equipamento && equipamento.fk_lote === lote.id_lote_equipamento) {
+                    return { valido: true, escopo: escopo, titulo: "Equipamento " + equipamento.numero_serie, descricao: "Somente este equipamento · Lote " + lote.numero_lote + " · " + lote.nome_modelo };
+                }
+                return { valido: false, escopo: escopo };
+            }
+
+            function atualizarContextoParametros() {
+                var destino = obterDestinoParametros();
+                var descricoes = {
+                    lote: "Os limites serão aplicados aos equipamentos do lote selecionado, inclusive os que têm valores individuais diferentes.",
+                    equipamento: "Os limites serão aplicados somente ao número de série escolhido. Os demais equipamentos manterão seus valores.",
+                    modelo: "Os limites serão aplicados em todos os lotes do modelo escolhido, inclusive os que têm valores individuais diferentes.",
+                    empresa: "Os limites serão aplicados em todos os lotes da empresa, inclusive os que têm valores individuais diferentes."
+                };
+                document.getElementById("campoLote").hidden = !["lote", "equipamento"].includes(destino.escopo);
+                document.getElementById("campoEquipamento").hidden = destino.escopo !== "equipamento";
+                document.getElementById("campoModelo").hidden = destino.escopo !== "modelo";
+                document.getElementById("filtroEquipamento").disabled = !document.getElementById("filtroLote").value;
+                document.getElementById("descricaoEscopo").textContent = descricoes[destino.escopo];
+                document.getElementById("visaoParametros").hidden = !destino.valido;
+                document.getElementById("resumoDestino").textContent = destino.valido
+                    ? "Destino: " + destino.titulo
+                    : destino.escopo === "modelo" ? "Selecione um modelo para continuar."
+                    : destino.escopo === "equipamento" ? "Selecione o lote e o número de série do equipamento para continuar."
+                    : "Selecione um lote para continuar.";
+            }
+
             function alterarFiltroLote() {
+                document.getElementById("filtroEquipamento").value = "";
                 atualizarFiltroEquipamentos();
-                limparEditor();
-                listarParametros();
+                alterarFiltroParametro();
+            }
+
+            function alterarEscopoParametros() {
+                document.getElementById("filtroEquipamento").value = "";
+                document.getElementById("filtroComponente").value = "";
+                alterarFiltroParametro();
             }
 
             function alterarFiltroParametro() {
@@ -891,45 +965,37 @@
             }
 
             function agruparMetricas() {
+                var destino = obterDestinoParametros();
+                if (!destino.valido) return [];
                 var idLote = Number(document.getElementById("filtroLote").value);
+                var idModelo = Number(document.getElementById("filtroModelo").value);
                 var idComponente = Number(document.getElementById("filtroComponente").value);
                 var idEquipamento = Number(document.getElementById("filtroEquipamento").value);
                 var grupos = {};
                 var lista = [];
 
                 for (var metrica of dadosPainel.metricas) {
-                    if (idLote && metrica.id_lote_equipamento !== idLote) continue;
+                    if (destino.escopo === "lote" && metrica.id_lote_equipamento !== idLote) continue;
+                    if (destino.escopo === "equipamento" && metrica.id_equipamento !== idEquipamento) continue;
+                    if (destino.escopo === "modelo" && metrica.fk_modelo_equipamento !== idModelo) continue;
                     if (idComponente && metrica.fk_tipo_componente !== idComponente) continue;
-                    if (idEquipamento && metrica.id_equipamento !== idEquipamento) continue;
-
-                    var chave =
-                        metrica.id_lote_equipamento +
-                        "-" +
-                        metrica.fk_tipo_componente +
-                        "-" +
-                        metrica.fk_tipo_metrica;
-
+                    var chave = metrica.fk_tipo_componente + "-" + metrica.fk_tipo_metrica;
                     if (!grupos[chave]) {
                         grupos[chave] = { chave: chave, referencia: metrica, metricas: [] };
                         lista.push(grupos[chave]);
                     }
-
                     grupos[chave].metricas.push(metrica);
                 }
-
                 return lista;
             }
 
+            function valoresDiferentes(grupo, campo) {
+                var valores = grupo.metricas.map(metrica => metrica[campo] == null ? null : Number(metrica[campo]));
+                return new Set(valores).size > 1;
+            }
+
             function parametrosDiferentes(grupo) {
-                var referencia = grupo.referencia;
-
-                for (var metrica of grupo.metricas) {
-                    if (metrica.limite_uso !== referencia.limite_uso) return true;
-                    if (metrica.limite_ociosidade !== referencia.limite_ociosidade) return true;
-                    if (metrica.habilitado !== referencia.habilitado) return true;
-                }
-
-                return false;
+                return ["limite_uso", "limite_ociosidade", "habilitado"].some(campo => valoresDiferentes(grupo, campo));
             }
 
             function formatarLimites(metricas, campo, simbolo) {
@@ -962,6 +1028,7 @@
             }
 
             function listarParametros() {
+                atualizarContextoParametros();
                 gruposExibidos = agruparMetricas();
                 var tabela = document.getElementById("listaParametros");
                 var grupoAtual = null;
@@ -982,17 +1049,9 @@
                     linha.dataset.selecionavel = "";
                     linha.tabIndex = 0;
                     linha.setAttribute("aria-selected", grupo.chave === grupoSelecionado);
-                    criarCelula(linha, referencia.numero_lote, referencia.nome_modelo).dataset.serie = "";
-                    criarCelula(
-                        linha,
-                        referencia.nome_componente,
-                        obterNomeMetrica(referencia.tipo_metrica) +
-                            " (" +
-                            (referencia.unidade || "sem unidade") +
-                            ") · " +
-                            equipamentos.size +
-                            " equip."
-                    );
+                    criarCelula(linha, referencia.nome_componente + " · " + obterNomeMetrica(referencia.tipo_metrica), referencia.unidade || "Sem unidade");
+                    var lotes = new Set(grupo.metricas.map(metrica => metrica.id_lote_equipamento));
+                    criarCelula(linha, equipamentos.size + (equipamentos.size === 1 ? " equipamento" : " equipamentos"), lotes.size + (lotes.size === 1 ? " lote" : " lotes"));
                     criarCelula(linha, formatarLimites(grupo.metricas, "limite_uso", "≤"));
                     criarCelula(linha, formatarLimites(grupo.metricas, "limite_ociosidade", "≥"));
                     var habilitadas = contarHabilitadas(grupo.metricas);
@@ -1004,14 +1063,14 @@
                             habilitadas ? "sucesso" : "neutro"
                         )
                     );
-                    var padronizacao = "Padronizado";
+                    var padronizacao = "Valores iguais";
                     var tipoSelo = "sucesso";
 
                     if (!configuradas) {
                         padronizacao = "Sem configuração";
                         tipoSelo = "neutro";
                     } else if (configuradas !== grupo.metricas.length || parametrosDiferentes(grupo)) {
-                        padronizacao = "Divergente";
+                        padronizacao = "Valores diferentes";
                         tipoSelo = "aviso";
                     }
 
@@ -1022,7 +1081,7 @@
 
                 if (!gruposExibidos.length)
                     mostrarTabelaVazia(tabela, "Nenhuma métrica encontrada para os filtros selecionados.");
-                if (grupoAtual) mostrarEditor(grupoAtual, true);
+                if (grupoAtual) mostrarEditor(grupoAtual);
                 else limparEditor();
             }
 
@@ -1043,7 +1102,7 @@
                 for (var grupo of gruposExibidos) {
                     if (grupo.chave === linha.dataset.grupo) {
                         grupoSelecionado = grupo.chave;
-                        mostrarEditor(grupo, false);
+                        mostrarEditor(grupo);
                     }
                 }
 
@@ -1064,66 +1123,79 @@
                 return null;
             }
 
-            function mostrarEditor(grupo, manterEscopo) {
+            function configurarCampoLimite(grupo, campo, inputId, sliderId, checkboxId, maximo) {
+                var input = document.getElementById(inputId);
+                var slider = document.getElementById(sliderId);
+                var semLimite = document.getElementById(checkboxId);
+                var diferentes = valoresDiferentes(grupo, campo);
+                var valor = grupo.referencia[campo];
+                input.max = slider.max = maximo;
+                input.value = diferentes || valor == null ? "" : valor;
+                input.placeholder = diferentes ? "Defina o valor" : "Sem limite";
+                semLimite.checked = !diferentes && valor == null;
+                slider.value = input.value || 0;
+                atualizarCampoSemLimite(inputId, sliderId, checkboxId);
+            }
+
+            function atualizarCampoSemLimite(inputId, sliderId, checkboxId) {
+                var semLimite = document.getElementById(checkboxId).checked;
+                var input = document.getElementById(inputId);
+                input.disabled = semLimite;
+                input.required = !semLimite;
+                document.getElementById(sliderId).disabled = semLimite;
+            }
+
+            function mostrarEditor(grupo) {
                 var referencia = grupo.referencia;
+                var destino = obterDestinoParametros();
                 var unidade = referencia.unidade || "";
                 var maximo = unidade.trim() === "%" ? 100 : 999.99;
                 document.getElementById("editorVazio").hidden = true;
                 document.getElementById("formParametros").hidden = false;
-                document.getElementById("tituloParametro").textContent =
-                    referencia.nome_componente + " · " + obterNomeMetrica(referencia.tipo_metrica);
-                document.getElementById("subtituloParametro").textContent =
-                    referencia.numero_lote +
-                    " · " +
-                    referencia.nome_modelo +
-                    " · Referência: " +
-                    referencia.numero_serie;
+                document.getElementById("tituloDestinoParametro").textContent = destino.titulo;
+                document.getElementById("descricaoDestinoParametro").textContent = destino.descricao;
+                document.getElementById("tituloParametro").textContent = referencia.nome_componente + " · " + obterNomeMetrica(referencia.tipo_metrica);
+                document.getElementById("subtituloParametro").textContent = "Unidade: " + (unidade || "sem unidade");
                 document.getElementById("avisoDivergencia").hidden = !parametrosDiferentes(grupo);
-                document.getElementById("limiteUso").value =
-                    referencia.limite_uso === null ? "" : referencia.limite_uso;
-                document.getElementById("limiteOciosidade").value =
-                    referencia.limite_ociosidade === null ? "" : referencia.limite_ociosidade;
+                configurarCampoLimite(grupo, "limite_uso", "limiteUso", "sliderUso", "semLimiteUso", maximo);
+                configurarCampoLimite(grupo, "limite_ociosidade", "limiteOciosidade", "sliderOciosidade", "semLimiteOciosidade", maximo);
                 document.getElementById("unidadeUso").textContent = unidade;
                 document.getElementById("unidadeOciosidade").textContent = unidade;
-                document.getElementById("metricaHabilitada").checked = metricaHabilitada(referencia);
-
-                for (var id of ["limiteUso", "limiteOciosidade", "sliderUso", "sliderOciosidade"]) {
-                    document.getElementById(id).max = maximo;
-                }
-
-                document.getElementById("sliderUso").value =
-                    referencia.limite_uso === null ? 0 : referencia.limite_uso;
-                document.getElementById("sliderOciosidade").value =
-                    referencia.limite_ociosidade === null ? 0 : referencia.limite_ociosidade;
-
-                if (!manterEscopo) {
-                    document.getElementById("escopo").value = document.getElementById("filtroEquipamento")
-                        .value
-                        ? "equipamento"
-                        : "lote";
-                }
-
+                var habilitada = document.getElementById("metricaHabilitada");
+                habilitada.checked = metricaHabilitada(referencia);
+                habilitada.indeterminate = valoresDiferentes(grupo, "habilitado");
+                document.getElementById("ajudaHabilitada").hidden = !habilitada.indeterminate;
                 mostrarErroFormulario("erroParametros", "");
                 atualizarPrevia();
             }
 
             function sincronizarLimite(evento) {
                 var pares = {
-                    limiteUso: "sliderUso",
-                    sliderUso: "limiteUso",
-                    limiteOciosidade: "sliderOciosidade",
-                    sliderOciosidade: "limiteOciosidade"
+                    limiteUso: "sliderUso", sliderUso: "limiteUso",
+                    limiteOciosidade: "sliderOciosidade", sliderOciosidade: "limiteOciosidade"
                 };
                 var destino = pares[evento.target.id];
-                if (destino) {
-                    document.getElementById(destino).value = evento.target.value || "0";
-                }
+                if (destino) document.getElementById(destino).value = evento.target.value || "0";
+                if (evento.target.id === "semLimiteUso") atualizarCampoSemLimite("limiteUso", "sliderUso", "semLimiteUso");
+                if (evento.target.id === "semLimiteOciosidade") atualizarCampoSemLimite("limiteOciosidade", "sliderOciosidade", "semLimiteOciosidade");
+                if (evento.target.id === "metricaHabilitada") document.getElementById("ajudaHabilitada").hidden = true;
+            }
+
+            function textoBotaoLimites() {
+                var destino = obterDestinoParametros();
+                var textos = {
+                    lote: "Salvar limites no lote ", equipamento: "Salvar limites no equipamento ",
+                    modelo: "Salvar limites nos lotes do modelo ", empresa: "Salvar limites em toda a empresa"
+                };
+                if (destino.escopo === "empresa") return textos.empresa;
+                return textos[destino.escopo] + destino.titulo.replace(/^(Lote|Equipamento|Modelo) /, "");
             }
 
             async function atualizarPrevia() {
                 var grupo = obterGrupoSelecionado();
                 if (!grupo) return;
                 var versao = ++versaoPrevia;
+                document.getElementById("aplicarParametros").textContent = textoBotaoLimites();
                 document.getElementById("aplicarParametros").disabled = true;
                 document.getElementById("impacto").textContent = "Calculando os equipamentos afetados…";
 
@@ -1140,19 +1212,17 @@
                     if (versao !== versaoPrevia) return;
                     var impacto = resposta.impacto;
                     document.getElementById("impacto").textContent =
-                        "Afeta " +
-                        impacto.metricas +
-                        " métrica(s) em " +
+                        "Ao salvar, esta métrica será atualizada em " +
                         impacto.equipamentos +
-                        " equipamento(s) de " +
+                        (impacto.equipamentos === 1 ? " equipamento de " : " equipamentos de ") +
                         impacto.lotes +
-                        " lote(s).";
+                        (impacto.lotes === 1 ? " lote." : " lotes.");
                     document.getElementById("aplicarParametros").disabled =
                         salvandoParametros || impacto.metricas === 0;
                 } catch (erro) {
                     if (versao !== versaoPrevia) return;
                     document.getElementById("impacto").textContent =
-                        "Não foi possível calcular o impacto. Selecione o destino novamente para tentar.";
+                        "Não foi possível calcular o impacto. Selecione a métrica novamente para tentar.";
                     mostrarErroFormulario("erroParametros", erro.message);
                 }
             }
@@ -1171,32 +1241,45 @@
                 var grupo = obterGrupoSelecionado();
                 var botao = document.getElementById("aplicarParametros");
                 if (!grupo || botao.disabled || salvandoParametros) return;
-                var uso = document.getElementById("limiteUso").value;
-                var ociosidade = document.getElementById("limiteOciosidade").value;
+                if (!document.getElementById("formParametros").reportValidity()) return;
+                if (document.getElementById("metricaHabilitada").indeterminate) {
+                    mostrarErroFormulario("erroParametros", "Escolha se o monitoramento ficará habilitado ou desabilitado para os equipamentos deste destino.");
+                    document.getElementById("metricaHabilitada").focus();
+                    return;
+                }
+                var uso = document.getElementById("semLimiteUso").checked ? "" : document.getElementById("limiteUso").value;
+                var ociosidade = document.getElementById("semLimiteOciosidade").checked ? "" : document.getElementById("limiteOciosidade").value;
                 var erro = validarLimites(uso, ociosidade);
                 mostrarErroFormulario("erroParametros", erro);
                 if (erro) return;
                 salvandoParametros = true;
                 botao.disabled = true;
                 botao.textContent = "Aplicando…";
-                document.getElementById("escopo").disabled = true;
+                var destinoSalvo = obterDestinoParametros();
+                var escopoSalvo = destinoSalvo.escopo;
+                var habilitadoSalvo = document.getElementById("metricaHabilitada").checked;
+                document.getElementById("selecaoDestino").disabled = true;
+                document.getElementById("camposLimites").disabled = true;
+                document.getElementById("filtroComponente").disabled = true;
 
                 try {
                     var resultado = await consultarApi("/equipamento/parametro/" + idEmpresa, "PUT", {
                         idMetricaServer: grupo.referencia.id_metrica,
-                        escopoServer: document.getElementById("escopo").value,
+                        escopoServer: escopoSalvo,
                         limiteUsoServer: uso,
                         limiteOciosidadeServer: ociosidade,
-                        habilitadoServer: document.getElementById("metricaHabilitada").checked
+                        habilitadoServer: habilitadoSalvo
                     });
-                    mostrarMensagem(resultado.mensagem, "sucesso");
+                    mostrarMensagem("Limites atualizados. Destino: " + destinoSalvo.titulo + ". " + resultado.mensagem, "sucesso");
                     await carregarPainel();
                 } catch (falha) {
                     mostrarErroFormulario("erroParametros", falha.message);
                 } finally {
                     salvandoParametros = false;
-                    botao.textContent = "Aplicar parâmetros";
-                    document.getElementById("escopo").disabled = false;
+                    botao.textContent = textoBotaoLimites();
+                    document.getElementById("selecaoDestino").disabled = false;
+                    document.getElementById("camposLimites").disabled = false;
+                    document.getElementById("filtroComponente").disabled = false;
                     if (obterGrupoSelecionado()) atualizarPrevia();
                 }
             }
@@ -1212,6 +1295,7 @@
                     return;
                 }
 
+                document.getElementById("escopo").value = acao === "metricas" ? "equipamento" : "lote";
                 document.getElementById("filtroLote").value = loteSelecionado;
                 document.getElementById("filtroComponente").value = "";
                 atualizarFiltroEquipamentos();
@@ -1432,7 +1516,8 @@
             document.getElementById("listaParametros").addEventListener("click", selecionarParametro);
             document.getElementById("listaParametros").addEventListener("keydown", selecionarParametro);
             document.getElementById("formParametros").addEventListener("input", sincronizarLimite);
-            document.getElementById("escopo").addEventListener("change", atualizarPrevia);
+            document.getElementById("escopo").addEventListener("change", alterarEscopoParametros);
+            document.getElementById("filtroModelo").addEventListener("change", alterarFiltroParametro);
             document.getElementById("formParametros").addEventListener("submit", salvarParametros);
             document.getElementById("tipoCadastro").addEventListener("change", atualizarCamposCadastro);
             document.getElementById("modoEquipamento").addEventListener("change", atualizarCamposCadastro);

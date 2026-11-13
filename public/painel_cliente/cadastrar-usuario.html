@@ -8,9 +8,10 @@
     <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="../css/style_cadastro_usuario.css">
+    <link rel="stylesheet" href="./css/cadastros.css">
 </head>
 
-<body>
+<body class="cadastro-page">
     <div class="app">
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -20,38 +21,31 @@
                 <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Fechar menu">&times;</button>
             </div>
 
-            <nav class="sidebar-nav">
-                    <span class="nav-title">Principal</span>
-                    <a href="index.html" class="nav-item">
-                        <span class="nav-icon">📊</span>
-                        <span>Visão Geral</span>
-                    </a>
-                    <a href="equipamentos.html" class="nav-item">
-                        <span class="nav-icon">📟</span>
-                        <span>Equipamentos</span>
-                    </a>
+            <nav class="sidebar-nav" aria-label="Menu principal">
+                <span class="nav-title">Acompanhamento</span>
+                <a href="index.html" class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                    <span>Visão geral</span>
+                </a>
+                <a href="equipamentos.html" class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8m-4-4v4M7 10h3l2-3 2 6 2-3h2"/></svg>
+                    <span>Equipamentos</span>
+                </a>
+                <a href="dash_proporcao_alertas.html" class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v9h9A9 9 0 1 1 12 3Z"/><path d="M16 3.9a9 9 0 0 1 4.1 4.1H16Z"/></svg>
+                    <span>Proporção de alertas</span>
+                </a>
 
-                    <span class="nav-title nav-title-dashboards">Dashboards</span>
-                    <a href="dash_engenheiro.html" class="nav-item">
-                        <span class="nav-icon">📈</span>
-                        <span>Equipamentos por lote</span>
-                    </a>
-
-                    <a href="dash_geral.html" class="nav-item">
-                        <span class="nav-icon">📉</span>
-                        <span>Análise de lotes</span>
-                    </a>
-
-                    <span class="nav-title nav-title-spacing">Cadastros</span>
-                    <a href="hospitais.html" class="nav-item">
-                        <span class="nav-icon">🏥</span>
-                        <span>Cadastrar hospital</span>
-                    </a>
-                    <a href="cadastrar-usuario.html" class="nav-item active">
-                        <span class="nav-icon">👤</span>
-                        <span>Cadastrar usuário</span>
-                    </a>
-                </nav>
+                <span class="nav-title nav-title-spacing">Administração</span>
+                <a href="hospitais.html" class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 21v-5h6v5M10 8h4m-2-2v4M9 13h.01M15 13h.01"/></svg>
+                    <span>Cadastrar hospital</span>
+                </a>
+                <a href="cadastrar-usuario.html" class="nav-item active" aria-current="page">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3"/><path d="M3 21v-2a6 6 0 0 1 12 0v2m2-17a3 3 0 0 1 0 6m2 5a5 5 0 0 1 2 4v2"/></svg>
+                    <span>Cadastrar usuário</span>
+                </a>
+            </nav>
 
             <div class="sidebar-footer">
                 <div class="sidebar-user">
@@ -77,83 +71,93 @@
             </header>
 
             <div class="page-content">
-                <div class="page-heading">
-                    <div class="eyebrow"><span class="eyebrow-dot"></span>PAINEL DE OBSERVABILIDADE</div>
-                    <h1>Cadastrar usuário</h1>
-                    <p>Preencha os dados para adicionar um usuário à sua empresa.</p>
+                <div class="page-heading cadastro-heading">
+                    <div>
+                        <div class="cadastro-contexto">Administração / Usuários</div>
+                        <h1>Cadastrar usuário</h1>
+                        <p>Adicione um usuário à sua empresa e defina o perfil de acesso ao painel.</p>
+                    </div>
+                    <a href="listar-usuarios.html" class="button-secondary">Ver usuários cadastrados</a>
                 </div>
 
                 <section class="form-card" aria-labelledby="titulo-dados-usuario">
                     <div class="form-card-header">
-                        <div class="form-card-icon" aria-hidden="true">👤</div>
                         <div>
-                            <h2 id="titulo-dados-usuario">Dados do usuário</h2>
+                            <h2 id="titulo-dados-usuario">Novo usuário</h2>
                             <p>Os campos marcados com <span class="required-mark">*</span> são obrigatórios.</p>
                         </div>
                     </div>
 
                     <form id="formulario-cadastro" novalidate>
-                        <div class="form-grid">
-                            <div class="form-field field-wide">
-                                <label for="ipt_nome_user">Nome completo <span class="required-mark">*</span></label>
-                                <input type="text" id="ipt_nome_user" maxlength="100" autocomplete="name"
-                                    placeholder="Ex.: Maria da Silva" required>
-                            </div>
-                            <div class="form-field">
-                                <label for="ipt_email_user">E-mail <span class="required-mark">*</span></label>
-                                <input type="email" id="ipt_email_user" autocomplete="email"
-                                    placeholder="nome@empresa.com.br" required>
-                            </div>
-                            <div class="form-field">
-                                <label for="ipt_cargo_user">Cargo <span class="required-mark">*</span></label>
-                                <select id="ipt_cargo_user" required>
-                                    <option value="">Carregando cargos...</option>
-                                </select>
-                            </div>
-                            <div class="form-field">
-                                <label for="ipt_cpf_user">CPF <span class="required-mark">*</span></label>
-                                <input type="text" id="ipt_cpf_user" inputmode="numeric" maxlength="14"
-                                    autocomplete="off" placeholder="000.000.000-00" required>
-                                <p class="field-help">Informe os 11 dígitos do CPF.</p>
-                            </div>
-                            <div class="form-field">
-                                <label for="ipt_telefone_user">Telefone <span class="required-mark">*</span></label>
-                                <input type="tel" id="ipt_telefone_user" inputmode="numeric" maxlength="15"
-                                    autocomplete="tel" placeholder="(00) 00000-0000" required>
-                            </div>
-                            <div class="form-field">
-                                <label for="ipt_dt_nasc_user">Data de nascimento <span
-                                        class="required-mark">*</span></label>
-                                <input type="text" id="ipt_dt_nasc_user" inputmode="numeric" maxlength="10"
-                                    autocomplete="bday" placeholder="DD/MM/AAAA" required>
-                            </div>
-                            <div class="form-field">
-                                <label for="ipt_senha_user">Senha <span class="required-mark">*</span></label>
-                                <div class="password-input-wrap">
-                                    <input type="password" id="ipt_senha_user" minlength="8" autocomplete="new-password"
-                                        placeholder="Mínimo de 8 caracteres" required>
-                                    <button class="password-toggle" type="button" data-target="ipt_senha_user"
-                                        aria-label="Mostrar senha" aria-pressed="false">
-                                        <span class="password-toggle-icon" aria-hidden="true"></span>
-                                    </button>
+                        <fieldset class="cadastro-section">
+                            <legend>Identificação</legend>
+                            <div class="form-grid">
+                                <div class="form-field">
+                                    <label for="ipt_nome_user">Nome completo <span class="required-mark">*</span></label>
+                                    <input type="text" id="ipt_nome_user" maxlength="100" autocomplete="name"
+                                        placeholder="Ex.: Maria da Silva" required>
+                                </div>
+                                <div class="form-field">
+                                    <label for="ipt_cpf_user">CPF <span class="required-mark">*</span></label>
+                                    <input type="text" id="ipt_cpf_user" inputmode="numeric" maxlength="14"
+                                        autocomplete="off" placeholder="000.000.000-00" required>
+                                    <p class="field-help">Informe os 11 dígitos do CPF.</p>
+                                </div>
+                                <div class="form-field">
+                                    <label for="ipt_telefone_user">Telefone <span class="required-mark">*</span></label>
+                                    <input type="tel" id="ipt_telefone_user" inputmode="numeric" maxlength="15"
+                                        autocomplete="tel" placeholder="(00) 00000-0000" required>
+                                </div>
+                                <div class="form-field">
+                                    <label for="ipt_dt_nasc_user">Data de nascimento <span
+                                            class="required-mark">*</span></label>
+                                    <input type="text" id="ipt_dt_nasc_user" inputmode="numeric" maxlength="10"
+                                        autocomplete="bday" placeholder="DD/MM/AAAA" required>
                                 </div>
                             </div>
-                            <div class="form-field">
-                                <label for="ipt_conf_senha_user">Confirmar senha <span
-                                        class="required-mark">*</span></label>
-                                <div class="password-input-wrap">
-                                    <input type="password" id="ipt_conf_senha_user" minlength="8"
-                                        autocomplete="new-password" placeholder="Digite a senha novamente" required>
-                                    <button class="password-toggle" type="button" data-target="ipt_conf_senha_user"
-                                        aria-label="Mostrar senha" aria-pressed="false">
-                                        <span class="password-toggle-icon" aria-hidden="true"></span>
-                                    </button>
+                        </fieldset>
+
+                        <fieldset class="cadastro-section">
+                            <legend>Acesso ao painel</legend>
+                            <div class="form-grid">
+                                <div class="form-field">
+                                    <label for="ipt_email_user">E-mail <span class="required-mark">*</span></label>
+                                    <input type="email" id="ipt_email_user" autocomplete="email"
+                                        placeholder="nome@empresa.com.br" required>
+                                </div>
+                                <div class="form-field">
+                                    <label for="ipt_cargo_user">Cargo <span class="required-mark">*</span></label>
+                                    <select id="ipt_cargo_user" required>
+                                        <option value="">Carregando cargos...</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label for="ipt_senha_user">Senha <span class="required-mark">*</span></label>
+                                    <div class="password-input-wrap">
+                                        <input type="password" id="ipt_senha_user" minlength="8" autocomplete="new-password"
+                                            placeholder="Mínimo de 8 caracteres" required>
+                                        <button class="password-toggle" type="button" data-target="ipt_senha_user"
+                                            aria-label="Mostrar senha" aria-pressed="false">
+                                            <span class="password-toggle-icon" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label for="ipt_conf_senha_user">Confirmar senha <span
+                                            class="required-mark">*</span></label>
+                                    <div class="password-input-wrap">
+                                        <input type="password" id="ipt_conf_senha_user" minlength="8"
+                                            autocomplete="new-password" placeholder="Digite a senha novamente" required>
+                                        <button class="password-toggle" type="button" data-target="ipt_conf_senha_user"
+                                            aria-label="Mostrar senha" aria-pressed="false">
+                                            <span class="password-toggle-icon" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </fieldset>
 
                         <div class="form-actions">
-                            <a href="listar-usuarios.html" class="button-secondary">Ver usuários cadastrados</a>
                             <button class="button-primary" id="btn_cadastrar_usuario" type="submit">
                                 Cadastrar usuário
                             </button>
@@ -166,18 +170,6 @@
     </div>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <div id="cadastro-sucesso" class="login-sucesso" role="status" aria-live="polite">
-        <div class="sucesso-card">
-            <div class="sucesso-check">
-                <span>✓</span>
-            </div>
-            <h2>Cadastro realizado!</h2>
-            <p id="mensagem-sucesso-cadastro"></p>
-            <div class="sucesso-carregando">
-                <span></span>
-            </div>
-        </div>
-    </div>
     <script src="./js/dashboard.js"></script>
     <script src="https://unpkg.com/imask"></script>
     <script>
@@ -185,9 +177,6 @@
         const campoCargo = document.getElementById("ipt_cargo_user");
         const mensagemCadastro = document.getElementById("mensagem-cadastro");
         const botaoCadastro = document.getElementById("btn_cadastrar_usuario");
-        const telaSucessoCadastro = document.getElementById("cadastro-sucesso");
-        const textoSucessoCadastro = document.getElementById("mensagem-sucesso-cadastro");
-        let temporizadorSucesso;
 
         IMask(document.getElementById("ipt_cpf_user"), {
             mask: "000.000.000-00"
@@ -211,19 +200,12 @@
         function exibirMensagem(texto, sucesso = false) {
             mensagemCadastro.textContent = texto;
             mensagemCadastro.classList.toggle("sucesso", sucesso);
+            mensagemCadastro.setAttribute("role", sucesso ? "status" : "alert");
             mensagemCadastro.hidden = !texto;
         }
 
         function exibirSucessoCadastro(nome) {
-            textoSucessoCadastro.textContent = `O cadastro de ${nome} foi concluído com sucesso.`;
-            telaSucessoCadastro.classList.remove("ativo");
-            void telaSucessoCadastro.offsetWidth;
-            telaSucessoCadastro.classList.add("ativo");
-
-            window.clearTimeout(temporizadorSucesso);
-            temporizadorSucesso = window.setTimeout(function () {
-                telaSucessoCadastro.classList.remove("ativo");
-            }, 2200);
+            exibirMensagem(`Usuário ${nome} cadastrado com sucesso.`, true);
         }
 
         async function carregarCargos() {

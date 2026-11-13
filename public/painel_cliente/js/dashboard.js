@@ -74,27 +74,64 @@ function configurarSidebar() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebarOverlay');
     const menuButton = document.getElementById('menuButton');
+    const closeButton = document.getElementById('sidebarClose');
+    const mainContent = document.querySelector('.main-content');
+    const mobile = window.matchMedia('(max-width: 768px)');
 
-    const fechar = () => {
+    const fechar = (restaurarFoco = true) => {
+        const estavaAberta = sidebar.classList.contains('open');
         sidebar.classList.remove('open');
         overlay.classList.remove('active');
-        if (menuButton.hasAttribute('aria-expanded')) menuButton.setAttribute('aria-expanded', 'false');
-    }
+        document.body.classList.remove('sidebar-open');
+        mainContent.inert = false;
+        if (estavaAberta && restaurarFoco) menuButton.focus();
+        sidebar.inert = mobile.matches;
+        menuButton.setAttribute('aria-expanded', 'false');
+    };
 
     menuButton.addEventListener('click', () => {
+        sidebar.inert = false;
         sidebar.classList.add('open');
         overlay.classList.add('active');
-        if (menuButton.hasAttribute('aria-expanded')) menuButton.setAttribute('aria-expanded', 'true');
+        document.body.classList.add('sidebar-open');
+        menuButton.setAttribute('aria-expanded', 'true');
+        closeButton.focus();
+        mainContent.inert = true;
     });
-    
-    document.getElementById('sidebarClose').addEventListener('click', fechar);
 
-    overlay.addEventListener('click', fechar);
+    closeButton.addEventListener('click', () => fechar());
+    overlay.addEventListener('click', () => fechar());
     document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            fechar();
+        if (!sidebar.classList.contains('open')) return;
+        if (event.key === 'Escape') fechar();
+        if (event.key === 'Tab') {
+            const controles = Array.from(sidebar.querySelectorAll('a[href], button'))
+                .filter((controle) => controle.getClientRects().length > 0 && !controle.disabled);
+            const primeiro = controles[0];
+            const ultimo = controles[controles.length - 1];
+            if (event.shiftKey && document.activeElement === primeiro) {
+                event.preventDefault();
+                ultimo.focus();
+            } else if (!event.shiftKey && document.activeElement === ultimo) {
+                event.preventDefault();
+                primeiro.focus();
+            }
         }
     });
+    sidebar.querySelectorAll('a[href]').forEach((link) => {
+        link.addEventListener('click', () => {
+            if (mobile.matches) fechar();
+        });
+    });
+    mobile.addEventListener('change', () => {
+        if (mobile.matches && sidebar.contains(document.activeElement)) {
+            fechar();
+            menuButton.focus();
+        } else {
+            fechar(false);
+        }
+    });
+    fechar(false);
 }
 
 function configurarLogout() {

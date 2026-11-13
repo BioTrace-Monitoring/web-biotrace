@@ -1,0 +1,339 @@
+.cadastro-page {
+    --cadastro-border: #dfe3e9;
+    --cadastro-muted: #657080;
+    background: #f6f7f9;
+    color: #252c37;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.cadastro-page .page-content {
+    max-width: 1200px;
+    padding: 40px 40px 48px;
+}
+
+.cadastro-contexto {
+    margin-bottom: 12px;
+    color: var(--cadastro-muted);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.cadastro-page .page-heading {
+    margin-bottom: 28px;
+}
+
+.cadastro-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.cadastro-page .page-heading h1 {
+    font-size: clamp(24px, 2.5vw, 28px);
+    font-weight: 600;
+}
+
+.cadastro-page .page-heading p {
+    color: var(--cadastro-muted);
+    line-height: 1.6;
+}
+
+.cadastro-page .form-card,
+.cadastro-page #cadastro-recursos,
+.cadastro-page #lista-recursos {
+    max-width: none;
+    margin-bottom: 24px;
+    padding: 28px;
+    border: 1px solid var(--cadastro-border);
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: none;
+}
+
+.cadastro-page .form-card-header {
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+    border-color: var(--cadastro-border);
+}
+
+.cadastro-page .form-card-header h2,
+.cadastro-page #lista-recursos h2 {
+    margin-bottom: 6px;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.cadastro-page .form-card-header p,
+.cadastro-page .field-help,
+.cadastro-page .optional,
+.cadastro-page #quantidade-recursos,
+.cadastro-page #estado-lista {
+    color: var(--cadastro-muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.cadastro-page .required-mark {
+    color: var(--cadastro-muted);
+}
+
+.cadastro-section {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.cadastro-section + .cadastro-section {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--cadastro-border);
+}
+
+.cadastro-section legend {
+    float: left;
+    width: 100%;
+    margin-bottom: 18px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.cadastro-section .form-grid {
+    clear: both;
+    gap: 20px 24px;
+}
+
+.cadastro-page .form-field label,
+.cadastro-page #lista-recursos > label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.cadastro-page .form-field input,
+.cadastro-page .form-field select,
+.cadastro-page #buscar-recursos {
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 12px;
+    border: 1px solid #cfd5de;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #252c37;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.cadastro-page .form-field select {
+    padding-right: 40px;
+}
+
+.cadastro-page .form-field .password-input-wrap input {
+    padding-right: 46px;
+}
+
+.cadastro-page input::placeholder {
+    color: #838c99;
+    opacity: 1;
+}
+
+.cadastro-page .form-field input:focus,
+.cadastro-page .form-field select:focus,
+.cadastro-page #buscar-recursos:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.cadastro-page .form-actions {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-color: var(--cadastro-border);
+}
+
+.cadastro-page .button-primary,
+.cadastro-page .button-secondary,
+.cadastro-page .button-danger {
+    min-height: 42px;
+    padding: 10px 16px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.cadastro-page .button-primary {
+    background: #5f3b8d;
+    color: #fff;
+}
+
+.cadastro-page .button-primary:hover {
+    background: #4e2e77;
+}
+
+.cadastro-page .button-secondary {
+    border-color: #cfd5de;
+    background: #fff;
+    color: #444f5e;
+}
+
+.cadastro-page .button-secondary:hover {
+    background: #f3f5f7;
+}
+
+.cadastro-page .button-danger {
+    border-color: #e6c9c6;
+    background: #fff;
+    color: #a3332a;
+}
+
+.cadastro-page .button-danger:hover {
+    background: #fcf1f0;
+}
+
+.cadastro-page button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.cadastro-page #mensagem-cadastro,
+.cadastro-page #mensagem-recuperacao {
+    margin-top: 20px;
+    padding: 14px 16px;
+    border: 1px solid #e6c9c6;
+    border-radius: 6px;
+    background: #fdf6f5;
+    color: #98362d;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.cadastro-page #mensagem-cadastro.sucesso,
+.cadastro-page #mensagem-recuperacao[data-tipo="sucesso"] {
+    border-color: #c4dbce;
+    background: #f3f9f5;
+    color: #286443;
+}
+
+.cadastro-page #mensagem-recuperacao {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.cadastro-page #icone-mensagem {
+    flex-shrink: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.cadastro-page #titulo-mensagem {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.cadastro-page #ver-hospitais {
+    display: inline-block;
+    margin-top: 8px;
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.cadastro-page #mensagem-cep[data-tipo="erro"],
+.cadastro-page #estado-lista[data-tipo="erro"] {
+    color: #98362d;
+}
+
+.cadastro-page #mensagem-cep[data-tipo="sucesso"] {
+    color: #286443;
+}
+
+.cadastro-page #lista-recursos > header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.cadastro-page #buscar-recursos {
+    max-width: 440px;
+    margin-bottom: 20px;
+}
+
+.cadastro-page #rolagem-tabela {
+    overflow-x: auto;
+}
+
+.cadastro-page #rolagem-tabela table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 13px;
+}
+
+.cadastro-page #rolagem-tabela th,
+.cadastro-page #rolagem-tabela td {
+    padding: 14px 12px;
+    border-bottom: 1px solid var(--cadastro-border);
+}
+
+.cadastro-page #rolagem-tabela th {
+    background: #f6f7f9;
+    color: #566171;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.cadastro-page #rolagem-tabela td {
+    min-width: 125px;
+    overflow-wrap: anywhere;
+}
+
+.cadastro-page #rolagem-tabela td:first-child {
+    font-weight: 500;
+}
+
+.cadastro-page #rolagem-tabela .button-secondary,
+.cadastro-page #rolagem-tabela .button-danger {
+    min-height: 36px;
+    padding: 7px 12px;
+}
+
+.cadastro-page #estado-lista {
+    padding: 16px 0;
+}
+
+.cadastro-page #tentar-novamente {
+    margin-top: 12px;
+}
+
+@media (max-width: 768px) {
+    .cadastro-page .page-content {
+        padding: 28px 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .cadastro-page .form-card,
+    .cadastro-page #cadastro-recursos,
+    .cadastro-page #lista-recursos {
+        padding: 20px;
+    }
+
+    .cadastro-heading {
+        align-items: flex-start;
+    }
+
+    .cadastro-page .form-actions .button-primary {
+        width: 100%;
+    }
+}

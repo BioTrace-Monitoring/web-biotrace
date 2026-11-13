@@ -139,6 +139,25 @@
     font-size: 12px;
 }
 
+.dashboard-alertas {
+    max-width: 960px;
+}
+
+.dashboard-alertas .global-filter-card,
+.dashboard-alertas .dashboard-card {
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+.dashboard-alertas .dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.dashboard-alertas .chart-container-wrapper {
+    max-width: 520px;
+    margin: 0 auto;
+}
+
 @media (max-width: 1100px) {
     .dashboard-geral .dashboard-grid {
         grid-template-columns: minmax(0, 1fr);
