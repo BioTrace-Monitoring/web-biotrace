@@ -1,4 +1,5 @@
 var protocolosEnsaios = [];
+var relatoriosEnsaios = [];
 var ensaiosCadastrados = [];
 var modelosEnsaios = [];
 var unidadesEnsaios = [];
@@ -79,11 +80,13 @@ async function carregarRegistrosEnsaios() {
             consultarEngenharia("/protocolos"),
             consultarEngenharia("/ensaios"),
             consultarEngenharia("/catalogos"),
+            consultarEngenharia("/relatorios"),
         ]);
         protocolosEnsaios = respostas[0].protocolos;
         ensaiosCadastrados = respostas[1].ensaios;
         modelosEnsaios = respostas[2].modelos;
         unidadesEnsaios = respostas[2].unidades;
+        relatoriosEnsaios = respostas[3].relatorios;
         var filtro = document.getElementById("projetoRegistros");
         var escolhido = filtro.value;
         filtro.replaceChildren(new Option("Todos os equipamentos", "todos"));
@@ -101,6 +104,7 @@ async function carregarRegistrosEnsaios() {
     } catch (erro) {
         registrosCarregados = false;
         protocolosEnsaios = [];
+        relatoriosEnsaios = [];
         ensaiosCadastrados = [];
         modelosEnsaios = [];
         unidadesEnsaios = [];
@@ -134,6 +138,12 @@ function atualizarRegistrosEnsaios() {
                     Date.parse(e.termino_previsto) <= Date.now())
             );
         }).length;
+    document.getElementById("novoRegistro").hidden =
+        abaEnsaios === "relatorios";
+    if (abaEnsaios === "relatorios") {
+        mostrarRelatoriosEnsaios();
+        return;
+    }
     var busca = document
         .getElementById("buscaRegistros")
         .value.trim()
@@ -470,7 +480,7 @@ async function abrirRegistroEnsaio(id) {
                           );
                       })
                       .join("<br>") +
-                  '</p><p class="texto-apoio">Os horários são apresentados em Brasília. A captura Python deve permanecer rodando nos notebooks. O relatório automático depende da próxima etapa de integração com a ETL.</p>'
+                  '</p><p class="texto-apoio">Os horários são apresentados em Brasília. A captura Python deve permanecer rodando nos notebooks. Ao terminar o período, use Processar dados para avaliar a Gold. O relatório pedirá as verificações manuais.</p>'
                 : "");
         document.getElementById("acoesRegistro").innerHTML = protocolo
             ? '<button class="botao" id="novaVersao">Criar nova versão</button>'
@@ -480,6 +490,14 @@ async function abrirRegistroEnsaio(id) {
               (["planejado", "em_execucao"].includes(r.situacao)
                   ? '<button class="botao secundario" data-situacao="cancelar">Cancelar ensaio</button>'
                   : "");
+        if (
+            !protocolo &&
+            ["em_execucao", "aguardando_processamento"].includes(r.situacao) &&
+            Date.parse(r.termino_previsto) <= Date.now()
+        ) {
+            document.getElementById("acoesRegistro").innerHTML +=
+                '<button class="botao" data-situacao="processar">Processar dados da Gold</button>';
+        }
         if (protocolo)
             document.getElementById("novaVersao").onclick = function () {
                 document.getElementById("dialogRegistro").close();
@@ -546,3 +564,117 @@ document.addEventListener("DOMContentLoaded", function () {
             carregarRegistrosEnsaios();
     }, 60000);
 });
+
+function mostrarRelatoriosEnsaios() {
+    document.querySelectorAll("[data-aba]").forEach(function (b) {
+        b.setAttribute("aria-pressed", String(b.dataset.aba === "relatorios"));
+        b.classList.toggle("secundario", b.dataset.aba !== "relatorios");
+    });
+    var busca = document
+        .getElementById("buscaRegistros")
+        .value.trim()
+        .toLocaleLowerCase("pt-BR");
+    var modelo = document.getElementById("projetoRegistros").value;
+    var registros = relatoriosEnsaios.filter(function (r) {
+        var ensaio = ensaiosCadastrados.find(function (e) {
+            return e.id_ensaio === r.fk_ensaio;
+        });
+        var protocolo = protocolosEnsaios.find(function (p) {
+            return p.id_protocolo === ensaio?.fk_protocolo;
+        });
+        return (
+            (modelo === "todos" ||
+                String(protocolo?.fk_modelo_equipamento) === modelo) &&
+            Object.values(r)
+                .join(" ")
+                .toLocaleLowerCase("pt-BR")
+                .includes(busca)
+        );
+    });
+    document.getElementById("resumoRegistros").textContent =
+        registros.length + " relatórios neste recorte";
+    document.getElementById("listaRegistros").innerHTML =
+        registros
+            .map(function (r) {
+                return (
+                    '<article class="registro-ensaio"><div><h3>Relatório ' +
+                    r.id_relatorio +
+                    " · " +
+                    escaparEnsaio(r.equipamento) +
+                    "</h3><p>Ensaio " +
+                    r.fk_ensaio +
+                    " · " +
+                    escaparEnsaio(r.protocolo) +
+                    '</p><p class="aviso-demo">' +
+                    (r.situacao === "aguardando_dados"
+                        ? "Aguardando coletas atrasadas · ainda dentro da tolerância de envio"
+                        : r.situacao === "concluido"
+                          ? "Relatório revisado"
+                          : "Análise automática concluída — verificações manuais pendentes") +
+                    '</p></div><button class="botao secundario" data-relatorio="' +
+                    r.id_relatorio +
+                    '">Ver resultados</button></article>'
+                );
+            })
+            .join("") ||
+        "<p>Nenhum relatório disponível. Após terminar o período de um ensaio, abra seus detalhes e processe os dados da Gold.</p>";
+    document.querySelectorAll("[data-relatorio]").forEach(function (b) {
+        b.onclick = function () {
+            abrirRelatorioGold(Number(this.dataset.relatorio));
+        };
+    });
+}
+async function abrirRelatorioGold(id) {
+    try {
+        var resposta = await consultarEngenharia("/relatorios/" + id);
+        var r = resposta.relatorio;
+        document.getElementById("tituloRegistro").textContent =
+            "Relatório " + id + " · " + r.equipamento;
+        var campos = {
+            Temperatura: r.resultado_temperatura,
+            Recursos: r.resultado_recursos,
+            Estabilidade: r.resultado_estabilidade,
+            Layout: r.resultado_layout,
+            Compatibilidade: r.resultado_compatibilidade,
+            Funcionamento: r.resultado_funcionamento,
+            "Cobertura mínima entre participantes":
+                r.cobertura_percentual + "%",
+            "Pico térmico":
+                r.pico_temperatura === null
+                    ? "Sem dados"
+                    : r.pico_temperatura + " °C",
+            "Maior uso de CPU":
+                r.maior_uso_cpu === null ? "Sem dados" : r.maior_uso_cpu + "%",
+            "Maior uso de RAM":
+                r.maior_uso_ram === null ? "Sem dados" : r.maior_uso_ram + "%",
+            "Menor espaço livre":
+                r.menor_disco_livre === null
+                    ? "Sem dados"
+                    : r.menor_disco_livre + "%",
+        };
+        document.getElementById("detalheRegistro").innerHTML =
+            '<p class="aviso-demo">' +
+            (r.situacao === "aguardando_dados"
+                ? "Aguardando envio de mais dados. Processe novamente após a próxima atualização da Gold."
+                : "As verificações manuais ainda precisam ser preenchidas para concluir a avaliação.") +
+            '</p><dl class="detalhes-lista">' +
+            Object.entries(campos)
+                .map(function (c) {
+                    return (
+                        "<div><dt>" +
+                        escaparEnsaio(c[0]) +
+                        "</dt><dd>" +
+                        escaparEnsaio(c[1]) +
+                        "</dd></div>"
+                    );
+                })
+                .join("") +
+            '</dl><h3>Qualidade e observações</h3><p style="white-space:pre-wrap">' +
+            escaparEnsaio(r.observacoes_automaticas) +
+            "</p>";
+        document.getElementById("acoesRegistro").innerHTML = "";
+        document.getElementById("dialogRegistro").showModal();
+    } catch (erro) {
+        mostrarErroEnsaios(erro);
+    }
+}

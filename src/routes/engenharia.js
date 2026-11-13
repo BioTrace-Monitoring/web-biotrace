@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var controller = require("../controllers/engenhariaController");
+var relatorios = require("../controllers/relatorioEngenhariaController");
 var auth = require("../middlewares/authMiddleware");
 
 router.use(auth.verificarToken, controller.validarAcesso);
@@ -26,4 +27,7 @@ router.get("/ensaios/:id", controller.buscarEnsaio);
 router.post("/ensaios", controller.cadastrarEnsaio);
 router.post("/ensaios/:id/iniciar", controller.iniciarEnsaio);
 router.post("/ensaios/:id/cancelar", controller.cancelarEnsaio);
+router.get("/relatorios", relatorios.listarRelatorios);
+router.get("/relatorios/:id", relatorios.buscarRelatorio);
+router.post("/ensaios/:id/processar", relatorios.processarEnsaio);
 module.exports = router;
