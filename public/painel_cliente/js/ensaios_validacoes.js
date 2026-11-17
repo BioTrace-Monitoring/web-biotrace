@@ -316,7 +316,7 @@ function abrirCadastroEnsaio(origem) {
         ["layout", "compatibilidade", "funcionamento"].forEach(function (c) {
             campos += textoEnsaio(
                 "checklist_" + c,
-                "Checklist de " + c,
+                "Checklist de " + c + " (um item por linha)",
                 anterior["checklist_" + c],
             );
         });
@@ -609,7 +609,7 @@ function mostrarRelatoriosEnsaios() {
                     (r.situacao === "aguardando_dados"
                         ? "Aguardando coletas atrasadas · ainda dentro da tolerância de envio"
                         : r.situacao === "concluido"
-                          ? "Relatório revisado"
+                          ? "Relatório concluído · " + resultadoRelatorio(r.resultado_final)
                           : "Análise automática concluída — verificações manuais pendentes") +
                     '</p></div><button class="botao secundario" data-relatorio="' +
                     r.id_relatorio +
@@ -631,12 +631,13 @@ async function abrirRelatorioGold(id) {
         document.getElementById("tituloRegistro").textContent =
             "Relatório " + id + " · " + r.equipamento;
         var campos = {
-            Temperatura: r.resultado_temperatura,
-            Recursos: r.resultado_recursos,
-            Estabilidade: r.resultado_estabilidade,
-            Layout: r.resultado_layout,
-            Compatibilidade: r.resultado_compatibilidade,
-            Funcionamento: r.resultado_funcionamento,
+            "Resultado final": resultadoRelatorio(r.resultado_final),
+            Temperatura: resultadoRelatorio(r.resultado_temperatura),
+            Recursos: resultadoRelatorio(r.resultado_recursos),
+            Estabilidade: resultadoRelatorio(r.resultado_estabilidade),
+            Layout: resultadoRelatorio(r.resultado_layout),
+            Compatibilidade: resultadoRelatorio(r.resultado_compatibilidade),
+            Funcionamento: resultadoRelatorio(r.resultado_funcionamento),
             "Cobertura mínima entre participantes":
                 r.cobertura_percentual + "%",
             "Pico térmico":
@@ -656,7 +657,9 @@ async function abrirRelatorioGold(id) {
             '<p class="aviso-demo">' +
             (r.situacao === "aguardando_dados"
                 ? "Aguardando envio de mais dados. Processe novamente após a próxima atualização da Gold."
-                : "As verificações manuais ainda precisam ser preenchidas para concluir a avaliação.") +
+                : r.situacao === "concluido"
+                  ? "Revisado por " + escaparEnsaio(r.revisado_por) + " em " + escaparEnsaio(dataEnsaio(r.revisado_em))
+                  : "Preencha cada item dos checklists para concluir a avaliação. A aprovação depende também dos resultados automáticos e da cobertura da coleta.") +
             '</p><dl class="detalhes-lista">' +
             Object.entries(campos)
                 .map(function (c) {
@@ -673,8 +676,83 @@ async function abrirRelatorioGold(id) {
             escaparEnsaio(r.observacoes_automaticas) +
             "</p>";
         document.getElementById("acoesRegistro").innerHTML = "";
-        document.getElementById("dialogRegistro").showModal();
+        if (r.situacao === "verificacoes_manuais_pendentes") {
+            document.getElementById("detalheRegistro").innerHTML += formularioRevisaoRelatorio(r);
+            document.getElementById("acoesRegistro").innerHTML =
+                '<button type="submit" form="formRevisaoRelatorio" class="botao">Concluir relatório</button>';
+            document.getElementById("formRevisaoRelatorio").onsubmit = function (evento) {
+                salvarRevisaoRelatorio(evento, id);
+            };
+        } else if (r.situacao === "concluido") {
+            document.getElementById("detalheRegistro").innerHTML += resumoRevisaoRelatorio(r);
+        }
+        var dialog = document.getElementById("dialogRegistro");
+        if (!dialog.open) dialog.showModal();
     } catch (erro) {
         mostrarErroEnsaios(erro);
     }
+}
+
+function resultadoRelatorio(valor) {
+    return { aprovado: "Aprovado", reprovado: "Reprovado", inconclusivo: "Inconclusivo", pendente: "Pendente" }[valor] || valor;
+}
+function formularioRevisaoRelatorio(r) {
+    var html = '<h3>Verificações manuais</h3><p>Marque um resultado para cada item. Explique nas observações quando houver reprovação ou avaliação inconclusiva. Após concluir, o relatório fica disponível apenas para consulta.</p><form id="formRevisaoRelatorio" class="form-ensaios">';
+    ["layout", "compatibilidade", "funcionamento"].forEach(function (criterio) {
+        html += '<fieldset><legend>' + criterio[0].toUpperCase() + criterio.slice(1) + '</legend>';
+        r["checklist_" + criterio].split(/\r?\n/).map(function (item) { return item.trim(); }).filter(Boolean).forEach(function (item, i) {
+            html += '<label class="linha-inteira">' + escaparEnsaio(item) +
+                '<select required name="' + criterio + '_' + i + '"><option value="">Selecione o resultado</option><option value="aprovado">Aprovado</option><option value="reprovado">Reprovado</option><option value="inconclusivo">Inconclusivo</option></select></label>';
+        });
+        html += '<label class="linha-inteira">Observações de ' + criterio +
+            '<textarea name="observacoes_' + criterio + '" rows="3" maxlength="10000"></textarea></label></fieldset>';
+    });
+    return html + '<label class="linha-inteira">Observações gerais<textarea name="observacoes_revisao" rows="3" maxlength="10000"></textarea></label><p id="erroRevisao" class="linha-inteira" role="alert"></p></form>';
+}
+async function salvarRevisaoRelatorio(evento, id) {
+    evento.preventDefault();
+    if (cadastroEmAndamento) return;
+    var form = evento.currentTarget;
+    var campos = new FormData(form);
+    var dados = { observacoes_revisao: campos.get("observacoes_revisao") };
+    ["layout", "compatibilidade", "funcionamento"].forEach(function (criterio) {
+        dados[criterio] = {
+            resultados: Array.from(form.querySelectorAll('select[name^="' + criterio + '_"]')).map(function (campo) { return campo.value; }),
+            observacoes: campos.get("observacoes_" + criterio),
+        };
+    });
+    var botao = document.querySelector('[form="formRevisaoRelatorio"]');
+    cadastroEmAndamento = true;
+    botao.disabled = true;
+    document.getElementById("erroRevisao").textContent = "";
+    try {
+        await consultarEngenharia("/relatorios/" + id + "/concluir", "POST", dados);
+        await carregarRegistrosEnsaios();
+        await abrirRelatorioGold(id);
+        document.getElementById("feedbackEnsaios").textContent = "Relatório concluído. O resultado e o responsável pela revisão foram registrados.";
+    } catch (erro) {
+        document.getElementById("erroRevisao").textContent = erro.message;
+    } finally {
+        cadastroEmAndamento = false;
+        botao.disabled = false;
+    }
+}
+function resumoRevisaoRelatorio(r) {
+    var html = '<h3>Verificações manuais registradas</h3>';
+    ["layout", "compatibilidade", "funcionamento"].forEach(function (criterio) {
+        var salvo = r["observacoes_" + criterio];
+        var revisao;
+        try {
+            revisao = JSON.parse(salvo);
+        } catch (erro) {
+            revisao = null;
+        }
+        html += '<h4>' + criterio[0].toUpperCase() + criterio.slice(1) + '</h4>';
+        if (revisao && Array.isArray(revisao.itens)) {
+            html += '<ul>' + revisao.itens.map(function (item) {
+                return '<li>' + escaparEnsaio(item.texto) + ' · ' + escaparEnsaio(resultadoRelatorio(item.resultado)) + '</li>';
+            }).join('') + '</ul><p class="observacoes-revisao">' + escaparEnsaio(revisao.observacoes || "Sem observações.") + '</p>';
+        } else html += '<p class="observacoes-revisao">' + escaparEnsaio(salvo || "Sem observações.") + '</p>';
+    });
+    return html + '<h4>Observações gerais</h4><p class="observacoes-revisao">' + escaparEnsaio(r.observacoes_revisao || "Sem observações.") + '</p>';
 }

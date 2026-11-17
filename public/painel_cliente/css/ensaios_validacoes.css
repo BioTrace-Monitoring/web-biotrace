@@ -142,8 +142,14 @@
 .ensaios-page .participante-opcao input {
   width: auto;
 }
+#erroRevisao,
 #erroCadastro,
 #feedbackEnsaios {
   color: #b53547;
   font-size: 12px;
+}
+
+.observacoes-revisao {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }

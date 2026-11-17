@@ -30,4 +30,5 @@ router.post("/ensaios/:id/cancelar", controller.cancelarEnsaio);
 router.get("/relatorios", relatorios.listarRelatorios);
 router.get("/relatorios/:id", relatorios.buscarRelatorio);
 router.post("/ensaios/:id/processar", relatorios.processarEnsaio);
+router.post("/relatorios/:id/concluir", relatorios.concluirRelatorio);
 module.exports = router;

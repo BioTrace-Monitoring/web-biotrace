@@ -77,3 +77,29 @@ Este projeto está sendo construído pelos seguintes alunos:
 - Jonatas Pereira Teles
 - Miguel Pereira Soares
 - Pedro Ludovic Nascimento Lima
+## Acesso local aos históricos no S3
+
+O SDK já está instalado. O backend usa `src/services/goldService.js` para
+ler os JSONs da camada Gold; as credenciais não devem ser colocadas no frontend.
+
+1. Obtenha com o responsável o nome do bucket, a região, o caminho exato de
+   um JSON existente e o método de autenticação autorizado para seu usuário.
+2. Configure um perfil local AWS (por exemplo, `aws configure --profile biotrace`
+   quando receber chaves IAM, ou um perfil SSO quando esse for o acesso fornecido).
+   Senha do console não substitui credenciais do SDK. Não versione chaves.
+3. Preencha `S3_BUCKET` e `AWS_REGION` em `.env.dev`. Ajuste `S3_GOLD_PREFIX`
+   caso o prefixo seja diferente de `gold/`.
+4. Execute `AWS_PROFILE=biotrace npm run s3:check -- "CAMINHO_EXATO_DO_JSON"`.
+   Esse teste lê um objeto e mostra apenas informações de formato, sem imprimir
+   seu conteúdo e sem depender do MySQL.
+5. Após validar o acesso, deixe `GOLD_LOCAL_DIR=` vazio em `.env.dev` para
+   a aplicação consultar o S3 e inicie com `AWS_PROFILE=biotrace npm start`.
+   Com `GOLD_LOCAL_DIR` preenchido, a aplicação dá prioridade aos arquivos locais.
+
+O histórico esperado atualmente segue o caminho:
+`gold/historico/empresa_id=ID/numero_serie=SERIE/data=AAAA-MM-DD/leituras.json`.
+O JSON precisa ter `schema_version: 2`, `empresa_id`, `numero_serie` e uma lista
+`leituras` compatível com o serviço. Confirme esse contrato com a equipe da ETL.
+A permissão mínima de leitura é `s3:GetObject` nos objetos necessários;
+objetos criptografados com uma chave KMS podem exigir também `kms:Decrypt`.
+Na EC2, o serviço pode usar as credenciais da IAM Role associada à instância.

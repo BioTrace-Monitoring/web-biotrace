@@ -57,4 +57,15 @@ async function processarEnsaio(req, res) {
         tratarErro(res, erro);
     }
 }
-module.exports = { listarRelatorios, buscarRelatorio, processarEnsaio };
+async function concluirRelatorio(req, res) {
+    var id = Number(req.params.id);
+    if (!Number.isSafeInteger(id) || id <= 0)
+        return res.status(400).json({ sucesso: false, mensagem: "Relatório inválido." });
+    try {
+        await model.concluirRelatorio(req.usuario.fk_empresa, id, req.usuario.id, req.body);
+        res.json({ sucesso: true, relatorio: await model.buscarRelatorio(req.usuario.fk_empresa, id) });
+    } catch (erro) {
+        tratarErro(res, erro);
+    }
+}
+module.exports = { listarRelatorios, buscarRelatorio, processarEnsaio, concluirRelatorio };
