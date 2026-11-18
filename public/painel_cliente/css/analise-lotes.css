@@ -1,0 +1,705 @@
+:root {
+  --green: #10B981;
+  --green-text: #047857;
+  --green-light: #E1F8EF;
+  --red: #EF4444;
+  --red-text: #B91C1C;
+  --red-light: #FEE2E2;
+  --red-dark: #991B1B;
+  --orange: #F59E0B;
+  --orange-text: #B45309;
+  --orange-light: #FEF3C7;
+  --blue: #3B82F6;
+  --blue-light: #EFF6FF;
+  --shadow-card: 0 4px 20px rgba(40, 36, 45, 0.04);
+  --radius-card: 16px;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+.analise-lotes {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.analise-lotes .mono-val {
+  font-family: var(--mono);
+  font-weight: 700;
+}
+
+.analise-lotes .card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+  min-width: 0;
+}
+
+.analise-lotes .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.analise-lotes .card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.analise-lotes .card-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.analise-lotes .card-eyebrow {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary);
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Seletor de lote */
+.analise-lotes .select-wrapper {
+  margin-top: 12px;
+  position: relative;
+  max-width: 440px;
+}
+
+.analise-lotes .select-wrapper select {
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: var(--background);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  appearance: none;
+  transition: border-color 0.2s;
+}
+
+.analise-lotes .select-wrapper select:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.analise-lotes .select-wrapper::after {
+  content: '▾';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+/* Badges */
+.analise-lotes .badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.analise-lotes .badge.red {
+  background: var(--red-light);
+  color: var(--red-text);
+}
+
+.analise-lotes .badge.green {
+  background: var(--green-light);
+  color: var(--green-text);
+}
+
+.analise-lotes .badge.orange {
+  background: var(--orange-light);
+  color: var(--orange-text);
+}
+
+.analise-lotes .badge.neutral {
+  background: #F3F4F6;
+  color: var(--text-secondary);
+}
+
+/* Grids */
+.analise-lotes .grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.analise-lotes .grid-3 {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+/* Resumo */
+.analise-lotes .resumo {
+  border-left: 5px solid var(--primary);
+}
+
+.analise-lotes .resumo-texto {
+  font-size: 1.02rem;
+  line-height: 1.65;
+  margin-top: 6px;
+  color: var(--text);
+}
+
+.analise-lotes .chip {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary);
+  background: var(--primary-light);
+  padding: 5px 12px;
+  border-radius: 20px;
+  margin-top: 12px;
+}
+
+/* Rosca */
+.analise-lotes .chart-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.analise-lotes .chart-box {
+  position: relative;
+  height: 280px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.analise-lotes .legend {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.analise-lotes .legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: none;
+  border: none;
+  width: 100%;
+  color: var(--text);
+  transition: background 0.15s;
+}
+
+.analise-lotes .legend-item:hover {
+  background: var(--background);
+}
+
+.analise-lotes .dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.analise-lotes .legend-count {
+  font-family: var(--mono);
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.analise-lotes .link-text {
+  display: inline-block;
+  margin-top: 16px;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.analise-lotes .link-text:hover {
+  color: var(--primary-dark);
+}
+
+/* Formulário */
+.analise-lotes .form-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  margin-bottom: 8px;
+}
+
+.analise-lotes .slider-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.analise-lotes .slider-wrapper span {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.analise-lotes input[type=range] {
+  flex: 1;
+  height: 6px;
+  background: #E5E7EB;
+  border-radius: 3px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.analise-lotes input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.analise-lotes input[type=range]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  border: 2px solid #fff;
+}
+
+.analise-lotes .hint {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+
+.analise-lotes .toggles {
+  display: flex;
+  gap: 24px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.analise-lotes .toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+}
+
+.analise-lotes .toggle input {
+  opacity: 0;
+  position: absolute;
+  width: 38px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.analise-lotes .track {
+  position: relative;
+  display: inline-block;
+  width: 38px;
+  height: 20px;
+  background: #D1D5DB;
+  border-radius: 12px;
+  transition: background 0.2s;
+}
+
+.analise-lotes .track::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.analise-lotes .toggle input:checked + .track {
+  background: var(--primary);
+}
+
+.analise-lotes .toggle input:checked + .track::after {
+  transform: translateX(18px);
+}
+
+.analise-lotes .action-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.analise-lotes input[type=email] {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: var(--text);
+  background: var(--white);
+}
+
+.analise-lotes .btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 20px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.analise-lotes .btn:hover {
+  background: var(--primary-dark);
+}
+
+/* Tabela */
+.analise-lotes .table-wrap {
+  overflow-x: auto;
+}
+
+.analise-lotes table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.analise-lotes th {
+  padding: 12px 16px;
+  border-bottom: 2px solid var(--border);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.analise-lotes td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.analise-lotes tr:last-child td {
+  border-bottom: none;
+}
+
+.analise-lotes .info-footer {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 16px;
+  border-top: 1px dashed var(--border);
+  padding-top: 12px;
+}
+
+.analise-lotes .right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.analise-lotes .sim-box {
+  display: flex;
+  align-items: center;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+.analise-lotes .sim-num {
+  font-size: 2.25rem;
+  color: var(--primary);
+  background: var(--primary-light);
+  padding: 4px 16px;
+  border-radius: 12px;
+}
+
+/* ============ 1. DASHBOARD DE OCIOSIDADE ============ */
+.analise-lotes .idle-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 40px;
+  margin-top: 4px;
+}
+
+.analise-lotes .idle-row {
+  display: grid;
+  grid-template-columns: 112px 1fr 48px 118px;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.875rem;
+}
+
+.analise-lotes .idle-name {
+  font-size: 0.8125rem;
+  color: var(--text);
+}
+
+.analise-lotes .bar-track {
+  height: 9px;
+  background: #EEF0F4;
+  border-radius: 999px;
+  overflow: hidden;
+  display: block;
+}
+
+.analise-lotes .bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.analise-lotes .idle-pct {
+  text-align: right;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+/* ============ 2. DASHBOARD DE PERFIS (CLUSTERING) ============ */
+.analise-lotes .perfis-grid {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr;
+  gap: 24px;
+  margin-top: 4px;
+  align-items: start;
+}
+
+.analise-lotes .reg-box {
+  position: relative;
+  height: 320px;
+  width: 100%;
+}
+
+.analise-lotes .perfil-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.analise-lotes .perfil-item {
+  width: 100%;
+  text-align: left;
+  background: var(--background);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, opacity 0.2s, transform 0.15s;
+}
+
+.analise-lotes .perfil-item:hover {
+  border-color: var(--primary);
+  background: var(--white);
+}
+
+.analise-lotes .perfil-item.is-active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.analise-lotes .perfil-item.is-dimmed {
+  opacity: 0.48;
+}
+
+.analise-lotes .perfil-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+.analise-lotes .perfil-title {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+
+.analise-lotes .perfil-count {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.analise-lotes .perfil-acao {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  margin: 4px 0 6px 19px;
+}
+
+.analise-lotes .perfil-equipamentos {
+  font-size: 0.75rem;
+  color: var(--text);
+  font-weight: 600;
+  margin-left: 19px;
+  line-height: 1.45;
+}
+
+.analise-lotes .perfil-hint {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* Caixas de insight e rodapé metodológico */
+.analise-lotes .insight {
+  margin-top: 16px;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--primary-light);
+  border-left: 4px solid var(--primary);
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+
+.analise-lotes .test-note {
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin-top: 14px;
+  border-top: 1px dashed var(--border);
+  padding-top: 12px;
+}
+
+.analise-lotes .tecnico {
+  margin-top: 16px;
+  font-size: 0.8125rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  background: var(--background);
+}
+
+.analise-lotes .tecnico summary {
+  cursor: pointer;
+  color: var(--primary);
+  font-weight: 600;
+  user-select: none;
+}
+
+.analise-lotes .tecnico-stats {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.analise-lotes .stat-box {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.analise-lotes .stat-box small {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.analise-lotes .stat-box strong {
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.analise-lotes footer {
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  padding: 8px 0 16px;
+}
+
+/* Toast */
+.toast {
+  visibility: hidden;
+  background: #1F2937;
+  color: #fff;
+  border-radius: 8px;
+  padding: 12px 24px;
+  position: fixed;
+  z-index: 9999;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transition: opacity 0.3s, visibility 0.3s;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.toast.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+@media (max-width: 1024px) {
+  .analise-lotes .grid-2,
+  .analise-lotes .grid-3,
+  .analise-lotes .idle-grid,
+  .analise-lotes .perfis-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .analise-lotes .card {
+    padding: 18px;
+  }
+
+  .analise-lotes .idle-row {
+    grid-template-columns: 96px 1fr 44px;
+  }
+
+  .analise-lotes .idle-row > :nth-child(4) {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .analise-lotes .tecnico-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .analise-lotes * {
+    transition: none !important;
+  }
+}
