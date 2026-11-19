@@ -291,6 +291,7 @@ async function listarCatalogos(req, res) {
         res.json({
             sucesso: true,
             modelos: catalogos.modelos,
+            lotes: catalogos.lotes,
             unidades: catalogos.unidades,
         });
     } catch (erro) {
