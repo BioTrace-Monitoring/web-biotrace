@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-container-low":"#eff4ff","error-container":"#ffdad6","surface-variant":"#d3e4fe","on-secondary-fixed":"#23005c","outline":"#7b7486","on-background":"#0b1c30","primary":"#5300b7","on-primary-container":"#dac5ff","surface-container":"#e5eeff","inverse-on-surface":"#eaf1ff","primary-container":"#6d28d9","on-error-container":"#93000a","secondary":"#6b38d4","inverse-surface":"#213145","on-surface":"#0b1c30","surface-container-lowest":"#ffffff","surface-bright":"#f8f9ff","on-surface-variant":"#4a4455","secondary-fixed-dim":"#d0bcff","on-tertiary-container":"#dac6ff","on-secondary":"#ffffff","on-error":"#ffffff","on-tertiary-fixed":"#25005a","secondary-container":"#8455ef","on-primary-fixed":"#250059","on-primary-fixed-variant":"#5b00c5","on-tertiary":"#ffffff","surface-container-high":"#dce9ff","surface-tint":"#7331df","on-tertiary-fixed-variant":"#5a00c6","inverse-primary":"#d3bbff","tertiary-container":"#6d24de","primary-fixed":"#ebddff","background":"#f8f9ff","on-secondary-container":"#fffbff","error":"#ba1a1a","surface":"#f8f9ff","primary-fixed-dim":"#d3bbff","on-secondary-fixed-variant":"#5516be","tertiary-fixed":"#eaddff","surface-dim":"#cbdbf5","secondary-fixed":"#e9ddff","tertiary":"#5300b7","tertiary-fixed-dim":"#d2bbff","outline-variant":"#ccc3d7","on-primary":"#ffffff","surface-container-highest":"#d3e4fe"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{"space-sm":"0.5rem","space-lg":"1rem","space-md":"0.75rem","margin-sm":"1rem",margin:"1.5rem","gutter-lg":"1.5rem",gutter:"1rem","space-xs":"0.25rem","space-xl":"1.5rem"},fontFamily:{"headline-lg":["Plus Jakarta Sans"],"label-md":["Inter"],"headline-md":["Plus Jakarta Sans"],"headline-xl":["Plus Jakarta Sans"],"telemetry-numeral-sm":["Inter"],"body-sm":["Inter"],"telemetry-numeral":["Inter"],"body-lg":["Inter"],"headline-sm":["Plus Jakarta Sans"],"label-sm":["Inter"],"body-md":["Inter"]},fontSize:{"headline-lg":["24px",{lineHeight:"32px",fontWeight:"600"}],"label-md":["13px",{lineHeight:"16px",fontWeight:"500"}],"headline-md":["18px",{lineHeight:"24px",fontWeight:"600"}],"headline-xl":["32px",{lineHeight:"40px",fontWeight:"700"}],"telemetry-numeral-sm":["18px",{lineHeight:"22px",fontWeight:"600"}],"body-sm":["12px",{lineHeight:"16px",fontWeight:"400"}],"telemetry-numeral":["28px",{lineHeight:"32px",fontWeight:"600"}],"body-lg":["16px",{lineHeight:"24px",fontWeight:"400"}],"headline-sm":["15px",{lineHeight:"20px",fontWeight:"600"}],"label-sm":["11px",{lineHeight:"14px",fontWeight:"600"}],"body-md":["14px",{lineHeight:"20px",fontWeight:"400"}]}}}};</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex items-center justify-between px-margin"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[20px]">vital_signs</span></div><div class="flex flex-col"><div class="flex items-center"><span class="font-headline-md text-headline-md tracking-tight text-on-surface">BIOTRACE</span><span class="w-2 h-2 rounded-full bg-secondary-container ml-1"></span></div><span class="font-label-sm text-label-sm tracking-wider uppercase text-outline">Hardware Clinical Telemetry</span></div></div><div class="h-6 w-px bg-surface-variant mx-space-xs"></div><div class="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded bg-surface-container-low"><span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span><span class="font-label-sm text-label-sm uppercase tracking-wide text-on-surface">Jira Service Sync: Conectado</span></div></div><div class="flex items-center gap-space-lg"><div class="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded bg-surface-container-low text-on-surface"><span class="material-symbols-outlined text-[16px] text-outline">calendar_today</span><span class="font-label-md text-label-md font-semibold">Hoje</span><span class="font-label-sm text-label-sm text-on-surface-variant">(Jan 24, 2025)</span></div><div class="h-6 w-px bg-surface-variant"></div><div class="flex items-center gap-space-md"><div class="text-right hidden sm:block"><div class="font-label-md text-label-md font-semibold text-on-surface">Paula Silveira</div><div class="font-label-sm text-label-sm text-outline">Coordenação de Campo</div></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center font-bold text-on-primary text-sm">PS</div></div></div></header><aside class="fixed left-0 top-16 bottom-0 w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex flex-col justify-between py-margin"><div class="flex flex-col gap-space-sm px-space-md"><div class="px-space-md pb-space-xs"><span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Módulos Operacionais</span></div><nav class="flex flex-col gap-space-xs" data-active-classes="bg-surface-container-high text-on-surface font-semibold rounded-lg"><a aria-current="page" class="flex items-center gap-space-md px-space-md py-space-sm transition-all bg-surface-container-high text-on-surface font-semibold rounded-lg" data-path="ranking-do-dia" href="#"><span class="material-symbols-outlined text-[20px]">leaderboard</span><span class="font-label-md text-label-md">Ranking do Dia</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all" data-path="escala-e-hospitais" href="#"><span class="material-symbols-outlined text-[20px]">domain</span><span class="font-label-md text-label-md">Escala &amp; Hospitais</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all" data-path="visao-por-tecnico" href="#"><span class="material-symbols-outlined text-[20px]">badge</span><span class="font-label-md text-label-md">Visão por Técnico</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all" data-path="auditoria-de-rechamada-jira" href="#"><span class="material-symbols-outlined text-[20px]">published_with_changes</span><span class="font-label-md text-label-md">Auditoria Jira</span></a></nav></div><div class="px-space-md flex flex-col gap-space-xs"><div class="px-space-md pb-space-xs"><span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Parâmetros de Telemetria</span></div><div class="p-space-md rounded-lg bg-surface-container-low flex flex-col gap-space-xs"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm text-outline">Pool Ventiladores</span><span class="font-telemetry-numeral-sm text-telemetry-numeral-sm text-on-surface">142</span></div><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm text-outline">Tickets Críticos</span><span class="font-telemetry-numeral-sm text-telemetry-numeral-sm text-error">03</span></div><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm text-outline">MTBF Médio</span><span class="font-telemetry-numeral-sm text-telemetry-numeral-sm text-primary">86 dias</span></div></div></div></aside><div class="pl-64"><main class="w-full pt-16 bg-surface min-h-screen px-margin py-margin"><div class="flex flex-col w-full">
+<div class="flex flex-col gap-space-lg w-full max-w-7xl mx-auto">
+<!-- Top Action & Filter Header -->
+<header class="flex flex-col md:flex-row md:items-center justify-between gap-space-md bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-slate-100">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-sm flex-wrap">
+<h1 class="font-headline-lg text-headline-lg tracking-tight text-on-surface">Ranking Operacional do Dia</h1>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-label-sm text-label-sm font-semibold border border-emerald-100">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Jira Service Management • Sincronizado há 3 min
+          </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Gestão em tempo real de intervenções em ventiladores pulmonares de UTI • Plantão de 1 técnico dedicado por hospital</p>
+</div>
+<div class="flex items-center gap-space-sm flex-wrap self-start md:self-auto">
+<!-- Date Selector Pills -->
+<div class="flex items-center bg-surface-container-low p-1 rounded-lg">
+<button class="px-3 py-1.5 rounded-md font-label-md text-label-md bg-surface-container-lowest text-primary font-semibold shadow-xs transition-all" type="button">Hoje (24 Out)</button>
+<button class="px-3 py-1.5 rounded-md font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all" type="button">Ontem</button>
+<button class="px-3 py-1.5 rounded-md font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all" type="button">Semana</button>
+</div>
+<!-- Sync Button -->
+<button class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-primary-container text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary active:scale-95 transition-all shadow-sm" id="btn-sync" type="button">
+<span class="material-symbols-outlined text-[18px]" id="sync-icon">sync</span>
+<span>Atualizar Jira</span>
+</button>
+</div>
+</header>
+<!-- 4 Consolidated Executive Metrics -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Metric 1 -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-semibold">Chamados Totais (Jira)</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">confirmation_number</span>
+</div>
+</div>
+<div class="my-space-sm flex items-baseline gap-2">
+<span class="font-telemetry-numeral text-telemetry-numeral text-on-surface">46</span>
+<span class="font-label-sm text-label-sm text-outline">tickets registrados</span>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm pt-space-xs border-t border-slate-50">
+<span>38 concluídos • 8 em curso</span>
+<span class="text-secondary font-label-sm text-label-sm font-semibold">8 centros ativos</span>
+</div>
+</div>
+<!-- Metric 2 -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-semibold">Adesão ao SLA (&lt;60m)</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">timer</span>
+</div>
+</div>
+<div class="my-space-sm flex items-baseline gap-2">
+<span class="font-telemetry-numeral text-telemetry-numeral text-on-surface">95.7%</span>
+<span class="font-label-sm text-label-sm text-outline">acordo fabricante</span>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm pt-space-xs border-t border-slate-50">
+<span>44 no prazo contratual</span>
+<span class="text-error font-label-sm text-label-sm font-semibold">2 atrasos</span>
+</div>
+</div>
+<!-- Metric 3 -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-semibold">TMR Médio da Frota</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[18px]">speed</span>
+</div>
+</div>
+<div class="my-space-sm flex items-baseline gap-2">
+<span class="font-telemetry-numeral text-telemetry-numeral text-on-surface">43.8<span class="text-base font-normal text-outline ml-1">min</span></span>
+<span class="font-label-sm text-label-sm text-emerald-600 font-semibold">-16.2 min do teto</span>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm pt-space-xs border-t border-slate-50">
+<span>Limiar máximo: 60 min</span>
+<span class="text-primary font-label-sm text-label-sm font-semibold">5.75 leitos/téc</span>
+</div>
+</div>
+<!-- Metric 4 -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-semibold">Taxa Rechamada (&lt;30d)</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">published_with_changes</span>
+</div>
+</div>
+<div class="my-space-sm flex items-baseline gap-2">
+<span class="font-telemetry-numeral text-telemetry-numeral text-on-surface">2.1%</span>
+<span class="font-label-sm text-label-sm text-outline">reincidência</span>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm pt-space-xs border-t border-slate-50">
+<span>Apenas 1 caso aberto</span>
+<span class="text-emerald-700 font-label-sm text-label-sm font-semibold">Meta ≤ 4.0%</span>
+</div>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- SUÍTE ANALÍTICA EXECUTIVA CHART.JS: TELEMETRIA & OPERAÇÃO JIRA           -->
+<!-- ========================================================================= -->
+<div class="flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">insights</span>
+        Suíte Analítica Operacional da Gestora
+      </h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Métricas consolidadas de campo, curvas de SLA e telemetria de ventiladores pulmonares</p>
+</div>
+<div class="flex items-center gap-2 text-label-sm font-semibold text-outline">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span> 4 canais de telemetria integrados
+</div>
+</div>
+<!-- Row 1: Distribuição de Chamados por Hospital & Status/Adesão ao SLA Jira -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Chart 1: Distribuição de Chamados por Hospital (Horizontal Bar) -->
+<div class="lg:col-span-7 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-sm">
+<div>
+<div class="flex items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Distribuição de Chamados por Hospital</h3>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-low text-primary font-semibold">46 Tickets</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Demanda assistencial distribuída entre os 8 centros hospitalares credenciados</p>
+</div>
+<div class="hidden sm:flex items-center gap-2 text-label-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-[#6d28d9]"></span> Tickets Jira</span>
+</div>
+</div>
+<div class="relative w-full h-[220px]">
+<canvas id="chartChamadosHospital"></canvas>
+</div>
+<div class="pt-space-sm border-t border-slate-100 mt-space-sm flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span><strong class="text-on-surface font-semibold">Sírio-Libanês</strong> com maior volume registrado: 7 atendimentos</span>
+<span class="text-secondary font-medium">Capacidade equalizada em 5~7 chamados/plantão</span>
+</div>
+</div>
+<!-- Chart 2: Status dos Chamados & Adesão ao SLA Jira (Doughnut) -->
+<div class="lg:col-span-5 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-xs">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Status e Adesão ao SLA Jira</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">46 chamados de manutenção e calibração</p>
+</div>
+<span class="material-symbols-outlined text-outline text-[20px]">donut_large</span>
+</div>
+<div class="relative w-full h-[180px] flex items-center justify-center my-space-xs">
+<canvas id="chartStatusJira"></canvas>
+<div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+<span class="font-telemetry-numeral text-telemetry-numeral font-bold text-on-surface">95.7%</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">No Prazo (SLA)</span>
+</div>
+</div>
+<!-- Detailed Jira Legend with metric badges -->
+<div class="grid grid-cols-3 gap-2 pt-space-xs border-t border-slate-100 mt-space-xs text-center">
+<div class="p-2 rounded bg-surface-container-low flex flex-col items-center">
+<span class="font-label-sm text-label-sm text-emerald-700 font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 38
+</span>
+<span class="font-label-sm text-label-sm text-outline">Concluídos</span>
+</div>
+<div class="p-2 rounded bg-surface-container-low flex flex-col items-center">
+<span class="font-label-sm text-label-sm text-purple-700 font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span> 06
+</span>
+<span class="font-label-sm text-label-sm text-outline">Em Curso</span>
+</div>
+<div class="p-2 rounded bg-surface-container-low flex flex-col items-center">
+<span class="font-label-sm text-label-sm text-amber-700 font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> 02
+</span>
+<span class="font-label-sm text-label-sm text-outline">Aguard. Peça</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Row 2: TMR vs SLA (60m) & Curva de Chamados ao Longo do Dia -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Chart 3: Tempo Médio de Atendimento (TMR) vs Limiar SLA (60m) -->
+<div class="lg:col-span-7 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-sm">
+<div>
+<div class="flex items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Tempo Médio de Atendimento (TMR) vs SLA Fabricante</h3>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-low text-primary font-semibold">Minutos</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Tempo real de intervenção técnica em ventilador vs limiar contratual de 60 min</p>
+</div>
+<div class="hidden sm:flex items-center gap-2 text-label-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-[#7c3aed]"></span> TMR Real</span>
+<span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-[#ef4444]"></span> Limiar SLA (60m)</span>
+</div>
+</div>
+<div class="relative w-full h-[220px]">
+<canvas id="chartTmrSla"></canvas>
+</div>
+<div class="pt-space-sm border-t border-slate-100 mt-space-sm flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span><strong class="text-on-surface font-semibold">Mariana Souza (Sírio)</strong> mais rápida: 34 min</span>
+<span class="text-error font-medium">Santa Catarina &amp; Beneficência próximos do teto</span>
+</div>
+</div>
+<!-- Chart 4: Curva de Abertura de Chamados ao Longo do Dia -->
+<div class="lg:col-span-5 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-sm">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Curva de Chamados ao Longo do Dia</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Volume por hora: 07h às 19h vs Média Histórica</p>
+</div>
+<div class="flex items-center gap-3 text-label-sm font-medium">
+<span class="flex items-center gap-1 text-on-surface"><span class="w-2.5 h-2.5 rounded-full bg-[#7c3aed]"></span> Hoje</span>
+<span class="flex items-center gap-1 text-outline"><span class="w-2.5 h-1 rounded-sm bg-[#94a3b8]"></span> Média</span>
+</div>
+</div>
+<div class="relative w-full h-[220px]">
+<canvas id="chartCurvaChamados"></canvas>
+</div>
+<div class="pt-space-sm border-t border-slate-100 mt-space-sm flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Pico operacional concentrado entre as <strong class="text-on-surface font-semibold">11h00 e 13h00</strong></span>
+<span class="text-emerald-700 font-medium">Dentro da capacidade</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Produtividade e Qualidade por Técnico Ranking Table -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
+<div class="p-space-lg flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm bg-surface-container-lowest border-b border-surface-container">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Produtividade e Qualidade por Técnico</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Escala presencial de campo: Alocação única por centro hospitalar (8 técnicos em serviço)</p>
+</div>
+<div class="flex items-center gap-space-sm self-start sm:self-auto">
+<span class="inline-flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm bg-surface-container-low px-2.5 py-1 rounded">
+<span class="w-2 h-2 rounded-full bg-primary"></span> 100% SLA Meta
+</span>
+<span class="inline-flex items-center gap-1.5 text-error font-label-sm text-label-sm bg-error-container/60 px-2.5 py-1 rounded font-semibold">
+<span class="w-2 h-2 rounded-full bg-error"></span> Alerta de reincidência
+</span>
+</div>
+</div>
+<div class="w-full overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-space-sm px-space-md w-16 text-center">Pos</th>
+<th class="py-space-sm px-space-md">Técnico Biomédico</th>
+<th class="py-space-sm px-space-md">Hospital Atribuído (Plantão)</th>
+<th class="py-space-sm px-space-md text-center">Chamados Jira</th>
+<th class="py-space-sm px-space-md text-center">SLA Dia</th>
+<th class="py-space-sm px-space-md text-center">Rechamadas &lt;30d</th>
+<th class="py-space-sm px-space-md">Status Plantão</th>
+<th class="py-space-sm px-space-md text-right">Ação</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container font-body-md text-body-md text-on-surface">
+<!-- Row 1: Mariana Souza -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-semibold">1º</span>
+</td>
+<td class="py-space-sm px-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-primary flex items-center justify-center font-label-md text-label-md font-bold">MS</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Mariana Souza</span>
+<span class="font-label-sm text-label-sm text-outline">BIO-TECH-048</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-medium">Hospital Sírio-Libanês</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">UTI 2 e Coronária (7 leitos)</span>
+</div>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="font-telemetry-numeral-sm text-telemetry-numeral-sm font-bold text-on-surface">7</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-high text-primary font-semibold">100%</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="font-label-sm text-label-sm text-outline">0 reincidências</span>
+</td>
+<td class="py-space-sm px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-surface-container-high text-on-surface font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Finalizado (7/7)
+</span>
+</td>
+<td class="py-space-sm px-space-md text-right">
+<button class="inline-flex items-center gap-1 text-primary hover:text-primary-container font-label-sm text-label-sm font-semibold transition-all" type="button">
+                  Tickets <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: Lucas Ramos -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold">2º</span>
+</td>
+<td class="py-space-sm px-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-primary flex items-center justify-center font-label-md text-label-md font-bold">LR</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Lucas Ramos</span>
+<span class="font-label-sm text-label-sm text-outline">BIO-TECH-012</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-medium">Hospital Albert Einstein</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">CTI Adulto Bloco B</span>
+</div>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="font-telemetry-numeral-sm text-telemetry-numeral-sm font-bold text-on-surface">6</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-high text-primary font-semibold">100%</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="font-label-sm text-label-sm text-outline">0 reincidências</span>
+</td>
+<td class="py-space-sm px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-surface-container-high text-on-surface font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Finalizado (6/6)
+</span>
+</td>
+<td class="py-space-sm px-space-md text-right">
+<button class="inline-flex items-center gap-1 text-primary hover:text-primary-container font-label-sm text-label-sm font-semibold transition-all" type="button">
+                  Tickets <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: Beatriz Fontes -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold">3º</span>
+</td>
+<td class="py-space-sm px-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-primary flex items-center justify-center font-label-md text-label-md font-bold">BF</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Beatriz Fontes</span>
+<span class="font-label-sm text-label-sm text-outline">BIO-TECH-031</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-medium">Hospital das Clínicas (HC)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Instituto Central 5º Andar</span>
+</div>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="font-telemetry-numeral-sm text-telemetry-numeral-sm font-bold text-on-surface">6</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-high text-primary font-semibold">100%</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="font-label-sm text-label-sm text-outline">0 reincidências</span>
+</td>
+<td class="py-space-sm px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-surface-container-low text-on-surface-variant font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Em andamento (5/6)
+</span>
+</td>
+<td class="py-space-sm px-space-md text-right">
+<button class="inline-flex items-center gap-1 text-primary hover:text-primary-container font-label-sm text-label-sm font-semibold transition-all" type="button">
+                  Tickets <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: Carlos Henrique -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm">4º</span>
+</td>
+<td class="py-space-sm px-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-primary flex items-center justify-center font-label-md text-label-md font-bold">CH</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Carlos Henrique</span>
+<span class="font-label-sm text-label-sm text-outline">BIO-TECH-022</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-medium">Hospital Samaritano</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">UTI Geral • Pavilhão Higienópolis</span>
+</div>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="font-telemetry-numeral-sm text-telemetry-numeral-sm font-bold text-on-surface">6</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-high text-primary font-semibold">100%</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="font-label-sm text-label-sm text-outline">0 reincidências</span>
+</td>
+<td class="py-space-sm px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-surface-container-high text-on-surface font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Finalizado (6/6)
+</span>
+</td>
+<td class="py-space-sm px-space-md text-right">
+<button class="inline-flex items-center gap-1 text-primary hover:text-primary-container font-label-sm text-label-sm font-semibold transition-all" type="button">
+                  Tickets <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</button>
+</td>
+</tr>
+<!-- Row 5: Rafael Silveira -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm">5º</span>
+</td>
+<td class="py-space-sm px-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-primary flex items-center justify-center font-label-md text-label-md font-bold">RS</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Rafael Silveira</span>
+<span class="font-label-sm text-label-sm text-outline">BIO-TECH-019</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-medium">Hospital Alemão Oswaldo Cruz</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">UTI Respiratória Bloco B</span>
+</div>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="font-telemetry-numeral-sm text-telemetry-numeral-sm font-bold text-on-surface">5</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-high text-primary font-semibold">100%</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="font-label-sm text-label-sm text-outline">0 reincidências</span>
+</td>
+<td class="py-space-sm px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-surface-container-high text-on-surface font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Finalizado (5/5)
+</span>
+</td>
+<td class="py-space-sm px-space-md text-right">
+<button class="inline-flex items-center gap-1 text-primary hover:text-primary-container font-label-sm text-label-sm font-semibold transition-all" type="button">
+                  Tickets <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</button>
+</td>
+</tr>
+<!-- Row 6: Camila Duarte -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm">6º</span>
+</td>
+<td class="py-space-sm px-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-primary flex items-center justify-center font-label-md text-label-md font-bold">CD</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Camila Duarte</span>
+<span class="font-label-sm text-label-sm text-outline">BIO-TECH-041</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-medium">Hospital São Luiz Itaim</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Semi-Intensiva Ala Sul</span>
+</div>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="font-telemetry-numeral-sm text-telemetry-numeral-sm font-bold text-on-surface">5</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-high text-primary font-semibold">100%</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="font-label-sm text-label-sm text-outline">0 reincidências</span>
+</td>
+<td class="py-space-sm px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-surface-container-low text-on-surface-variant font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Em andamento (4/5)
+</span>
+</td>
+<td class="py-space-sm px-space-md text-right">
+<button class="inline-flex items-center gap-1 text-primary hover:text-primary-container font-label-sm text-label-sm font-semibold transition-all" type="button">
+                  Tickets <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</button>
+</td>
+</tr>
+<!-- Row 7: Diego Rocha -->
+<tr class="hover:bg-error-container/10 transition-colors bg-error-container/5">
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">7º</span>
+</td>
+<td class="py-space-sm px-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-error-container text-error flex items-center justify-center font-label-md text-label-md font-bold">DR</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Diego Rocha</span>
+<span class="font-label-sm text-label-sm text-outline">BIO-TECH-014</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-medium">Hospital Santa Catarina</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">UTI Central • 4º Pavimento</span>
+</div>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="font-telemetry-numeral-sm text-telemetry-numeral-sm font-bold text-on-surface">6</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-high text-on-surface font-semibold">83.3%</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-label-sm text-label-sm bg-error-container text-on-error-container font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> 1 alerta (18d)
+</span>
+</td>
+<td class="py-space-sm px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-surface-container-high text-on-surface font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Finalizado (6/6)
+</span>
+</td>
+<td class="py-space-sm px-space-md text-right">
+<button class="inline-flex items-center gap-1 text-error hover:underline font-label-sm text-label-sm font-semibold transition-all" type="button">
+                  Auditar <span class="material-symbols-outlined text-[14px]">warning</span>
+</button>
+</td>
+</tr>
+<!-- Row 8: Thiago Monteiro -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm">8º</span>
+</td>
+<td class="py-space-sm px-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-primary flex items-center justify-center font-label-md text-label-md font-bold">TM</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Thiago Monteiro</span>
+<span class="font-label-sm text-label-sm text-outline">BIO-TECH-009</span>
+</div>
+</div>
+</td>
+<td class="py-space-sm px-space-md">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-medium">Hospital Beneficência Portuguesa</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">UTI Cardiológica São Joaquim</span>
+</div>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="font-telemetry-numeral-sm text-telemetry-numeral-sm font-bold text-on-surface">5</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-high text-on-surface font-semibold">80.0%</span>
+</td>
+<td class="py-space-sm px-space-md text-center">
+<span class="font-label-sm text-label-sm text-outline">0 reincidências</span>
+</td>
+<td class="py-space-sm px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-surface-container-low text-on-surface-variant font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Em andamento (4/5)
+</span>
+</td>
+<td class="py-space-sm px-space-md text-right">
+<button class="inline-flex items-center gap-1 text-primary hover:text-primary-container font-label-sm text-label-sm font-semibold transition-all" type="button">
+                  Tickets <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-space-lg py-space-sm bg-surface-container-low flex flex-col sm:flex-row items-center justify-between font-label-sm text-label-sm text-on-surface-variant gap-2">
+<span>Exibindo 8 de 8 técnicos biomédicos alocados em hospitais hoje</span>
+<span class="font-medium">Protocolo Jira Service Management: BIO-OPS-2025 • SLA Fabricante 60 min</span>
+</div>
+</div>
+<!-- Auditoria de Rechamada Crítica Jira (<30d) + MTBF -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-slate-100 flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pb-space-sm border-b border-surface-container">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-lg bg-error-container/40 flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-[22px]">published_with_changes</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+            Auditoria de Rechamada Crítica Jira (&lt;30 dias)
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-error-container text-error">1 Alerta Ativo</span>
+</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Supervisão de garantia clínica e reincidências de falha após intervenção técnica</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<!-- MTBF KPI Card -->
+<div class="px-3 py-1.5 rounded-lg bg-surface-container-low flex items-center gap-2 border border-surface-container">
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">MTBF Médio da Frota</span>
+<span class="font-headline-sm text-headline-sm font-bold text-primary">86 dias sem retorno</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Alert Ticket Deep-Dive Banner -->
+<div class="p-space-md rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="w-8 h-8 rounded-full bg-red-100 text-error flex items-center justify-center mt-0.5 shrink-0">
+<span class="material-symbols-outlined text-[18px]">priority_high</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="font-label-md text-label-md font-bold text-on-surface">Ticket BIO-1284</span>
+<span class="px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-700">Reincidência em 18 dias</span>
+<span class="text-xs text-outline">• Hospital Santa Catarina (UTI Central • 4º Pavimento)</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface">
+<strong>Falha reportada:</strong> Ventilador Pulmonar mod. VT-8802 com oscilação na leitura de FiO2 (&gt;5% de desvio). Técnico responsável pelo plantão: <strong class="text-on-surface">Diego Rocha</strong> (BIO-TECH-014).
+          </p>
+<div class="flex items-center gap-4 text-xs text-outline mt-1">
+<span>Última intervenção: <strong>06/Jan/2025</strong> (Substituição de célula galvânica)</span>
+<span>Ação sugerida: <strong>Calibração em dois pontos e teste de estanqueidade</strong></span>
+</div>
+</div>
+</div>
+<div class="flex sm:flex-row lg:flex-col items-stretch sm:items-center lg:items-end gap-2 shrink-0">
+<button class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary-container transition-all shadow-xs" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Abrir no Jira</span>
+</button>
+<button class="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 bg-surface-container-lowest text-on-surface border border-slate-200 rounded-lg font-label-sm text-label-sm hover:bg-surface-container transition-all" type="button">
+<span>Escalar Supervisor</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Safe Chart.js Initialization
+  document.addEventListener('DOMContentLoaded', () => {
+    // Biotrace Design System Defaults
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = '#7b7486';
+
+    // 1. Chart: Distribuição de Chamados por Hospital (Horizontal Bar)
+    const ctxChamados = document.getElementById('chartChamadosHospital');
+    if (ctxChamados) {
+      window.chartChamados = new Chart(ctxChamados, {
+        type: 'bar',
+        data: {
+          labels: [
+            'Sírio-Libanês',
+            'Albert Einstein',
+            'HC das Clínicas',
+            'Samaritano',
+            'Santa Catarina',
+            'Oswaldo Cruz',
+            'São Luiz Itaim',
+            'Beneficência Port.'
+          ],
+          datasets: [{
+            label: 'Chamados Jira',
+            data: [7, 6, 6, 6, 6, 5, 5, 5],
+            backgroundColor: [
+              '#5300b7',
+              '#6d28d9',
+              '#6d28d9',
+              '#7c3aed',
+              '#7c3aed',
+              '#8455ef',
+              '#8455ef',
+              '#a78bfa'
+            ],
+            borderRadius: 4,
+            barThickness: 12
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#213145',
+              titleFont: { family: "'Plus Jakarta Sans', sans-serif", weight: '600' },
+              bodyFont: { family: "'Inter', sans-serif" },
+              padding: 10,
+              cornerRadius: 6,
+              callbacks: {
+                label: function(context) {
+                  return ` ${context.parsed.x} chamados registrados hoje`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              min: 0,
+              max: 8,
+              ticks: {
+                stepSize: 2,
+                callback: function(v) { return v + ' tickets'; },
+                font: { size: 11 }
+              },
+              grid: {
+                color: '#eff4ff',
+                drawBorder: false
+              }
+            },
+            y: {
+              ticks: {
+                font: {
+                  family: "'Plus Jakarta Sans', sans-serif",
+                  size: 11,
+                  weight: '600'
+                },
+                color: '#0b1c30'
+              },
+              grid: {
+                display: false,
+                drawBorder: false
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // 2. Chart: Status dos Chamados & Adesão ao SLA Jira (Doughnut)
+    const ctxStatus = document.getElementById('chartStatusJira');
+    if (ctxStatus) {
+      window.chartStatus = new Chart(ctxStatus, {
+        type: 'doughnut',
+        data: {
+          labels: ['Concluídos no Prazo (38)', 'Em Curso no Prazo (6)', 'Aguardando Peça (2)'],
+          datasets: [{
+            data: [38, 6, 2],
+            backgroundColor: [
+              '#10b981', // Verde conclusão
+              '#6d28d9', // Roxo Biotrace em curso
+              '#f59e0b'  // Âmbar espera de peça
+            ],
+            borderWidth: 2,
+            borderColor: '#ffffff',
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '72%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#213145',
+              titleFont: { family: "'Plus Jakarta Sans', sans-serif", weight: '600' },
+              bodyFont: { family: "'Inter', sans-serif" },
+              padding: 10,
+              cornerRadius: 6,
+              callbacks: {
+                label: function(context) {
+                  const total = 46;
+                  const pct = ((context.parsed / total) * 100).toFixed(1);
+                  return ` ${context.label}: ${context.parsed} (${pct}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // 3. Chart: Tempo Médio de Atendimento (TMR) vs Limiar SLA (60m)
+    const ctxTmr = document.getElementById('chartTmrSla');
+    if (ctxTmr) {
+      window.chartTmr = new Chart(ctxTmr, {
+        type: 'bar',
+        data: {
+          labels: [
+            'Sírio (MS)',
+            'Einstein (LR)',
+            'HC (BF)',
+            'Samaritano (CH)',
+            'Oswaldo Cruz (RS)',
+            'São Luiz (CD)',
+            'Sta Catarina (DR)',
+            'Beneficência (TM)'
+          ],
+          datasets: [
+            {
+              label: 'TMR Real (minutos)',
+              data: [34, 38, 41, 42, 45, 47, 51, 53],
+              backgroundColor: [
+                '#6d28d9',
+                '#7c3aed',
+                '#7c3aed',
+                '#8455ef',
+                '#8455ef',
+                '#a78bfa',
+                '#f59e0b',
+                '#f59e0b'
+              ],
+              borderRadius: 4,
+              barThickness: 12
+            },
+            {
+              label: 'Limiar SLA (60m)',
+              data: [60, 60, 60, 60, 60, 60, 60, 60],
+              type: 'line',
+              borderColor: '#ef4444',
+              borderWidth: 2,
+              borderDash: [5, 5],
+              pointRadius: 0,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#213145',
+              titleFont: { family: "'Plus Jakarta Sans', sans-serif", weight: '600' },
+              bodyFont: { family: "'Inter', sans-serif" },
+              padding: 10,
+              cornerRadius: 6,
+              callbacks: {
+                label: function(context) {
+                  if (context.dataset.type === 'line') return ` Teto Contratual: 60 min`;
+                  return ` TMR: ${context.parsed.x} min (Margem: ${60 - context.parsed.x} min)`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              min: 0,
+              max: 70,
+              ticks: {
+                stepSize: 15,
+                callback: function(v) { return v + ' min'; },
+                font: { size: 11 }
+              },
+              grid: {
+                color: '#eff4ff',
+                drawBorder: false
+              }
+            },
+            y: {
+              ticks: {
+                font: {
+                  family: "'Plus Jakarta Sans', sans-serif",
+                  size: 11,
+                  weight: '600'
+                },
+                color: '#0b1c30'
+              },
+              grid: {
+                display: false,
+                drawBorder: false
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // 4. Chart: Curva de Chamados ao Longo do Dia (07h às 19h)
+    const ctxCurva = document.getElementById('chartCurvaChamados');
+    if (ctxCurva) {
+      window.chartCurva = new Chart(ctxCurva, {
+        type: 'line',
+        data: {
+          labels: ['07h', '09h', '11h', '13h', '15h', '17h', '19h'],
+          datasets: [
+            {
+              label: 'Hoje (24 Out)',
+              data: [3, 7, 12, 11, 6, 4, 3],
+              borderColor: '#7c3aed',
+              backgroundColor: 'rgba(124, 58, 237, 0.12)',
+              fill: true,
+              tension: 0.35,
+              borderWidth: 2.5,
+              pointBackgroundColor: '#7c3aed',
+              pointRadius: 4,
+              pointHoverRadius: 6
+            },
+            {
+              label: 'Média Semanal',
+              data: [2, 6, 10, 9, 7, 5, 2],
+              borderColor: '#94a3b8',
+              borderDash: [4, 4],
+              fill: false,
+              tension: 0.35,
+              borderWidth: 2,
+              pointRadius: 3,
+              pointBackgroundColor: '#94a3b8'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#213145',
+              titleFont: { family: "'Plus Jakarta Sans', sans-serif", weight: '600' },
+              bodyFont: { family: "'Inter', sans-serif" },
+              padding: 10,
+              cornerRadius: 6,
+              callbacks: {
+                label: function(context) {
+                  return ` ${context.dataset.label}: ${context.parsed.y} chamados abertos`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              min: 0,
+              max: 15,
+              ticks: {
+                stepSize: 3,
+                font: { size: 11 }
+              },
+              grid: {
+                color: '#eff4ff',
+                drawBorder: false
+              }
+            },
+            x: {
+              ticks: {
+                font: {
+                  family: "'Inter', sans-serif",
+                  size: 11,
+                  weight: '500'
+                },
+                color: '#4a4455'
+              },
+              grid: {
+                display: false,
+                drawBorder: false
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Micro-interaction for Jira Refresh trigger
+    const btnSync = document.getElementById('btn-sync');
+    const syncIcon = document.getElementById('sync-icon');
+
+    if (btnSync && syncIcon) {
+      btnSync.addEventListener('click', () => {
+        syncIcon.classList.add('animate-spin');
+        btnSync.disabled = true;
+        setTimeout(() => {
+          syncIcon.classList.remove('animate-spin');
+          btnSync.disabled = false;
+          if (window.chartChamados) window.chartChamados.update();
+          if (window.chartStatus) window.chartStatus.update();
+          if (window.chartTmr) window.chartTmr.update();
+          if (window.chartCurva) window.chartCurva.update();
+        }, 900);
+      });
+    }
+  });
+</script>
+</main></div>
+</body></html>
