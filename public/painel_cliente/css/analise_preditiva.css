@@ -191,40 +191,6 @@
 .projecao strong {
   color: var(--primary);
 }
-.impacto-valores {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 30px;
-  padding: 22px 0;
-}
-.impacto-valores span {
-  font-size: 11px;
-  color: var(--text-secondary);
-}
-.impacto-valores strong {
-  display: block;
-  font-size: 26px;
-  color: var(--primary);
-  margin-top: 10px;
-}
-.comparacao-linha,
-.pendencia {
-  display: flex;
-  justify-content: space-between;
-  gap: 18px;
-  border-top: 1px solid var(--border);
-  padding: 15px 0;
-  font-size: 12px;
-}
-.comparacao-linha strong {
-  color: var(--primary);
-  text-align: right;
-}
-.pendencia .prazo {
-  flex-shrink: 0;
-  text-align: right;
-  color: var(--text-secondary);
-}
 .fontes-engenharia summary {
   cursor: pointer;
   color: var(--primary);
@@ -246,7 +212,7 @@
 .engenharia-dashboard [hidden] {
   display: none !important;
 }
-#evidenciasEngenharia {
+#detalhesLote {
   margin: auto;
   width: min(850px, 94vw);
   max-height: 88vh;
@@ -256,7 +222,7 @@
   border-radius: 14px;
   color: var(--text);
 }
-#evidenciasEngenharia::backdrop {
+#detalhesLote::backdrop {
   background: #21152f80;
 }
 .evidencia-item {
@@ -302,3 +268,8 @@
     padding: 16px;
   }
 }
+
+.detalhes { display: block; margin-top: 10px; }
+.tabela-engenharia .estado { white-space: normal; line-height: 1.6; }
+#conteudoDetalhes p { font-size: 13px; line-height: 1.8; margin: 12px 0; }
+.engenharia-dashboard a { color: var(--primary); }
