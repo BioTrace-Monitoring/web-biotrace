@@ -1,251 +1,215 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Análise de lotes | BioTrace</title>
+        <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png" />
+        <link rel="stylesheet" href="./css/style.css" />
+        <link rel="stylesheet" href="../painel_cliente/css/analise-lotes.css" />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Análise de Lotes | BioTrace</title>
-  <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./css/style.css">
-  <link rel="stylesheet" href="./css/analise-lotes.css">
-</head>
+    <body>
+        <div class="app">
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <a href="index.html" class="logo">
+                        <img src="../assets/icons/BioTrace (4).png" alt="BioTrace Logo" />
+                    </a>
+                    <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Fechar menu">
+                        &times;
+                    </button>
+                </div>
 
-<body>
-  <div class="app">
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <a href="index.html" class="logo">
-          <img src="../assets/icons/BioTrace (4).png" alt="BioTrace Logo">
-        </a>
-        <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Fechar menu">
-          &times;
-        </button>
-      </div>
+                <nav class="sidebar-nav" aria-label="Menu principal">
+                    <span class="nav-title">Acompanhamento</span>
+                    <a href="index.html" class="nav-item">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                        <span>Visão geral</span>
+                    </a>
+                    <a href="equipamentos.html" class="nav-item">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8m-4-4v4M7 10h3l2-3 2 6 2-3h2"/></svg>
+                        <span>Equipamentos</span>
+                    </a>
+                    <a href="analise-lotes.html" class="nav-item active" aria-current="page">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="7" rx="1"/><rect x="12" y="6" width="3" height="11" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/></svg>
+                        <span>Análise de lotes</span>
+                    </a>
+                    <a href="dash_proporcao_alertas.html" class="nav-item">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v9h9A9 9 0 1 1 12 3Z"/><path d="M16 3.9a9 9 0 0 1 4.1 4.1H16Z"/></svg>
+                        <span>Proporção de alertas</span>
+                    </a>
 
-      <nav class="sidebar-nav" aria-label="Menu principal">
-        <span class="nav-title">Acompanhamento</span>
-        <a href="index.html" class="nav-item">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-          <span>Visão geral</span>
-        </a>
-        <a href="equipamentos.html" class="nav-item">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8m-4-4v4M7 10h3l2-3 2 6 2-3h2"/></svg>
-          <span>Equipamentos</span>
-        </a>
-        <a href="dash_proporcao_alertas.html" class="nav-item">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v9h9A9 9 0 1 1 12 3Z"/><path d="M16 3.9a9 9 0 0 1 4.1 4.1H16Z"/></svg>
-          <span>Proporção de alertas</span>
-        </a>
-        <a href="analise-lotes.html" class="nav-item active" aria-current="page">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 3v18h18"/><circle cx="9" cy="13" r="2"/><circle cx="15" cy="9" r="2"/><circle cx="17" cy="15" r="2"/></svg>
-          <span>Análise de lotes</span>
-        </a>
+                    <span class="nav-title nav-title-spacing">Administração</span>
+                    <a href="hospitais.html" class="nav-item">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 21v-5h6v5M10 8h4m-2-2v4M9 13h.01M15 13h.01"/></svg>
+                        <span>Cadastrar hospital</span>
+                    </a>
+                    <a href="cadastrar-usuario.html" class="nav-item">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3"/><path d="M3 21v-2a6 6 0 0 1 12 0v2m2-17a3 3 0 0 1 0 6m2 5a5 5 0 0 1 2 4v2"/></svg>
+                        <span>Cadastrar usuário</span>
+                    </a>
+                </nav>
 
-        <span class="nav-title nav-title-spacing">Administração</span>
-        <a href="hospitais.html" class="nav-item">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 21v-5h6v5M10 8h4m-2-2v4M9 13h.01M15 13h.01"/></svg>
-          <span>Cadastrar hospital</span>
-        </a>
-        <a href="cadastrar-usuario.html" class="nav-item">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3"/><path d="M3 21v-2a6 6 0 0 1 12 0v2m2-17a3 3 0 0 1 0 6m2 5a5 5 0 0 1 2 4v2"/></svg>
-          <span>Cadastrar usuário</span>
-        </a>
-      </nav>
+                <div class="sidebar-footer">
+                    <div class="sidebar-user">
+                        <div id="usuario_avatar" class="usuario-avatar">BT</div>
+                        <div class="user-info">
+                            <strong id="nome_cliente">Usuário BioTrace</strong>
+                            <span id="email_cliente">perfil@biotrace.com</span>
+                        </div>
+                    </div>
+                    <button
+                        class="sidebar-logout"
+                        id="btnSair"
+                        type="button"
+                        aria-label="Sair da conta"
+                        title="Sair da conta"
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                            focusable="false"
+                        >
+                            <path d="M9 5H5v14h4M10 12h10m-4-4 4 4-4 4" />
+                        </svg>
+                    </button>
+                </div>
+            </aside>
 
-      <div class="sidebar-footer">
-        <div class="sidebar-user">
-          <div id="usuario_avatar" class="usuario-avatar">BT</div>
-          <div class="user-info">
-            <strong id="nome_cliente">Usuário BioTrace</strong>
-            <span id="email_cliente">perfil@biotrace.com</span>
-          </div>
+            <main class="main-content">
+                <header class="mobile-header">
+                    <button
+                        class="menu-button"
+                        id="menuButton"
+                        type="button"
+                        aria-label="Abrir menu"
+                        aria-controls="sidebar"
+                        aria-expanded="false"
+                    >
+                        ☰
+                    </button>
+                    <img src="../assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo" />
+                </header>
+
+                <div class="page-content" id="analiseLotesPage">
+                    <header id="cabecalhoLotes">
+                        <div>
+                            <h1>Análise de lotes</h1>
+                            <p id="subtituloModelo">Carregando modelo do lote...</p>
+                        </div>
+                        <div class="controles-cabecalho">
+                            <label for="selectLote">Lote</label>
+                            <select id="selectLote"></select>
+                            <span class="badge-gold" id="badgeProcessado">Aguardando dados</span>
+                        </div>
+                    </header>
+
+                    <div id="feedbackLote" role="status" aria-live="polite" hidden></div>
+
+                    <section class="grade-kpis">
+                        <article class="cartao-lote kpi-box">
+                            <span class="kpi-rotulo">Integridade geral</span>
+                            <strong class="kpi-numero" id="kpiIntegridade">--%</strong>
+                            <p class="kpi-sub" id="kpiIntegridadeDetalhe">Sem dados consolidados</p>
+                        </article>
+
+                        <article class="cartao-lote kpi-box">
+                            <span class="kpi-rotulo">Em funcionamento</span>
+                            <strong class="kpi-numero" id="kpiFuncionamento">-- / --</strong>
+                            <p class="kpi-sub" id="kpiSubutilizados">-- subutilizados</p>
+                        </article>
+
+                        <article class="cartao-lote kpi-box">
+                            <span class="kpi-rotulo">Números de alertas</span>
+                            <strong class="kpi-numero" id="kpiTotalAlertas">0</strong>
+                            <p class="kpi-sub" id="kpiDetalheAlertas">0 atenção · 0 limite · 0 falha</p>
+                        </article>
+
+                        <article class="cartao-lote kpi-box">
+                            <span class="kpi-rotulo">Resumo do lote</span>
+                            <ul class="lista-topicos-lote" id="listaResumoTopicos">
+                                <li>Aguardando processamento da camada Gold.</li>
+                            </ul>
+                        </article>
+                    </section>
+
+                    <section class="grade-graficos">
+                        <article class="cartao-lote">
+                            <div class="topo-cartao">
+                                <h2>Ociosidade por equipamento (%)</h2>
+                                <span class="legenda-texto">Subutilizado: &gt; 70%</span>
+                            </div>
+                            <div class="area-canvas">
+                                <canvas id="graficoOciosidade"></canvas>
+                            </div>
+                        </article>
+
+                        <article class="cartao-lote">
+                            <div class="topo-cartao">
+                                <h2>Perfis de uso (Ociosidade × Variação de picos)</h2>
+                                <div class="legenda-pontos">
+                                    <span><i class="ponto constante"></i> Constante</span>
+                                    <span><i class="ponto picos"></i> Picos</span>
+                                    <span><i class="ponto sem-uso"></i> Quase sem uso</span>
+                                </div>
+                            </div>
+                            <div class="area-canvas">
+                                <canvas id="graficoPerfis"></canvas>
+                            </div>
+                        </article>
+                    </section>
+
+                    <section class="grade-inferior">
+                        <article class="cartao-lote">
+                            <div class="topo-cartao">
+                                <h2>Números de alertas e limite de integridade</h2>
+                                <span class="selo-status" id="badgeEstadoAlerta">Normal</span>
+                            </div>
+
+                            <div class="bloco-slider">
+                                <div class="linha-slider-titulo">
+                                    <label for="sliderLimite">Limite mínimo de integridade</label>
+                                    <strong id="valorLimiteTexto">72%</strong>
+                                </div>
+                                <input type="range" id="sliderLimite" min="50" max="95" value="72" />
+                                <p class="nota-histerese">
+                                    Histerese ativa: resolução automática ao atingir <strong id="valorHisterese">75%</strong>
+                                </p>
+                            </div>
+
+                            <div class="barra-canais">
+                                <label class="check-canal">
+                                    <input type="checkbox" id="checkEmail" checked /> E-mail
+                                </label>
+                                <label class="check-canal">
+                                    <input type="checkbox" id="checkSlack" checked /> Slack
+                                </label>
+                                <button type="button" class="btn-roxo" id="btnSalvarConfig">Salvar regra</button>
+                            </div>
+                        </article>
+
+                        <article class="cartao-lote">
+                            <div class="topo-cartao">
+                                <h2>Histórico de notificações (SNS)</h2>
+                            </div>
+                            <ul class="lista-notificacoes" id="listaHistorico">
+                                <li>Nenhuma notificação disparada para este lote.</li>
+                            </ul>
+                        </article>
+                    </section>
+                </div>
+            </main>
         </div>
-        <button class="sidebar-logout" id="btnSair" type="button" aria-label="Sair da conta">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 5H5v14h4M10 12h10m-4-4 4 4-4 4" />
-          </svg>
-        </button>
-      </div>
-    </aside>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <main class="main-content">
-      <header class="mobile-header">
-        <button class="menu-button" id="menuButton" type="button" aria-label="Abrir menu" aria-controls="sidebar" aria-expanded="false">
-          ☰
-        </button>
-        <img src="../assets/icons/BioTrace (4).png" alt="BioTrace" class="mobile-logo">
-      </header>
-
-      <div class="page-content">
-        <div class="page-heading">
-          <div class="eyebrow"><span class="eyebrow-dot"></span>ANÁLISE PREDITIVA</div>
-          <h1>Análise de lotes</h1>
-          <p>Acompanhe a ociosidade, os perfis de uso e os alertas do lote antes que uma falha pare a operação.</p>
-        </div>
-
-        <div class="analise-lotes">
-          <!-- CONTEXTO / SELEÇÃO DE LOTE -->
-          <section class="card">
-            <div class="card-eyebrow">● Contexto</div>
-            <h2 class="card-title"><label for="lote-select">Selecionar lote para análise</label></h2>
-            <div class="select-wrapper">
-              <select id="lote-select">
-                <option value="LT-2026-001">LT-2026-001 · Modelo ECG-12</option>
-                <option value="LT-2026-002">LT-2026-002 · Modelo BPAP</option>
-                <option value="LT-2026-003">LT-2026-003 · Modelo Osteomax</option>
-              </select>
-            </div>
-          </section>
-
-          <!-- RESUMO DO LOTE -->
-          <section class="card resumo">
-            <div class="card-eyebrow">● Resumo do lote</div>
-            <p class="resumo-texto" id="resumo-texto"></p>
-            <span class="chip">✉ Este mesmo resumo vai no e-mail e no Slack quando o estado do lote muda</span>
-          </section>
-
-          <!-- DASHBOARD SUPERIOR: ANÁLISE DE OCIOSIDADE -->
-          <section class="card" aria-labelledby="titulo-ociosidade">
-            <div class="card-header">
-              <div>
-                <h2 class="card-title" id="titulo-ociosidade">Quanto tempo cada equipamento ficou parado?</h2>
-                <p class="card-subtitle">Percentual de tempo, nos últimos 7 dias, em que cada equipamento do lote permaneceu ocioso ou abaixo do limite de atividade</p>
-              </div>
-            </div>
-            <div class="idle-grid" id="idle-body"></div>
-            <p class="insight" id="idle-insight"></p>
-            <p class="test-note">Calculado a partir das leituras de CPU, ponderando pelo tempo entre uma leitura e a seguinte.</p>
-          </section>
-
-          <!-- DASHBOARD INFERIOR: GRÁFICO DE DISPERSÃO / CLUSTERING -->
-          <section class="card" aria-labelledby="titulo-perfis">
-            <div class="card-header">
-              <div>
-                <h2 class="card-title" id="titulo-perfis">Que tipo de equipamento é cada um?</h2>
-                <p class="card-subtitle">Equipamentos do lote agrupados por comportamento de uso nos últimos 7 dias (K-Means e Limiares)</p>
-              </div>
-            </div>
-            <div class="perfis-grid">
-              <div class="reg-box">
-                <canvas id="perf-canvas" role="img" aria-label="Gráfico de dispersão cruzando porcentagem do tempo parado no eixo X com variação de picos de uso no eixo Y"></canvas>
-              </div>
-              <div class="perfil-lista" id="perf-lista" role="group" aria-label="Legenda interativa dos perfis de uso"></div>
-            </div>
-            <p class="insight" id="perf-insight"></p>
-            <details class="tecnico">
-              <summary>Ver detalhes estatísticos</summary>
-              <div class="tecnico-stats" id="perf-tec"></div>
-              <p class="test-note">Agrupamento k-means sobre as duas medidas padronizadas (z-score); o número de grupos (2 ou 3) é escolhido pela silhouette. Teste de Kruskal-Wallis (H0: os grupos vêm da mesma distribuição), α = 0,05, com correção de Bonferroni para as duas medidas. Como os grupos foram formados com os mesmos dados, o teste é indicativo.</p>
-            </details>
-          </section>
-
-          <!-- PROPORÇÃO DE ALERTAS + NOTIFICAÇÃO PROATIVA -->
-          <div class="grid-2">
-            <section class="card">
-              <div class="card-header" style="margin-bottom:8px">
-                <div>
-                  <h2 class="card-title">Proporção de Alertas</h2>
-                  <p class="card-subtitle">Estado atual dos componentes do lote</p>
-                </div>
-              </div>
-              <div class="chart-wrap">
-                <div class="chart-box">
-                  <canvas id="alertas-donut" role="img" aria-label="Rosca com a proporção de componentes por estado de alerta"></canvas>
-                </div>
-              </div>
-              <div id="legend" class="legend"></div>
-              <a href="#" class="link-text" id="link-alertas">Ver equipamentos em alerta →</a>
-            </section>
-
-            <section class="card">
-              <div class="card-header">
-                <div>
-                  <h2 class="card-title">Notificação proativa</h2>
-                  <p class="card-subtitle">Receba um aviso automático quando a integridade do lote ficar abaixo do limite.</p>
-                </div>
-                <span id="alerta-status" class="badge red">Alerta ativo</span>
-              </div>
-
-              <div>
-                <div class="form-label-row">
-                  <label for="limite-slider" style="font-weight:600">Limite de integridade</label>
-                  <span id="slider-val" class="mono-val" style="color:var(--primary);font-size:1.125rem">80%</span>
-                </div>
-                <div class="slider-wrapper">
-                  <span>0%</span>
-                  <input type="range" id="limite-slider" min="0" max="100" value="80" aria-label="Limite de integridade do lote em porcentagem">
-                  <span>100%</span>
-                </div>
-                <p class="hint" id="hint-histerese"></p>
-              </div>
-
-              <div class="toggles">
-                <label class="toggle"><input type="checkbox" id="toggle-email" checked><span class="track"></span> E-mail ativo</label>
-                <label class="toggle"><input type="checkbox" id="toggle-slack"><span class="track"></span> Slack ativo</label>
-              </div>
-
-              <div class="action-row">
-                <input type="email" id="email-destino" value="ana.souza@empresa.com" placeholder="Digite o e-mail" aria-label="E-mail de destino dos avisos">
-                <button class="btn" id="btn-salvar" type="button">Salvar configuração</button>
-              </div>
-            </section>
-          </div>
-
-          <!-- NOTIFICAÇÕES ENVIADAS + SIMULAÇÃO DO LIMITE -->
-          <div class="grid-3">
-            <section class="card">
-              <div class="card-header">
-                <div>
-                  <h2 class="card-title">Notificações enviadas</h2>
-                  <p class="card-subtitle">Avisos disparados quando o estado do lote muda (últimos 14 dias)</p>
-                </div>
-              </div>
-              <div class="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th style="width:20%">Quando</th>
-                      <th style="width:16%">Canal</th>
-                      <th style="width:20%">Tipo</th>
-                      <th>Mensagem</th>
-                    </tr>
-                  </thead>
-                  <tbody id="notificacoes-body"></tbody>
-                </table>
-              </div>
-              <p class="info-footer">Você só é avisada quando o estado do lote muda, evitando alertas repetidos. O aviso de "resolvido" só sai quando a integridade passa do limite + <span id="hist-val">3</span> p.p.</p>
-            </section>
-
-            <div class="right-col">
-              <section class="card">
-                <h2 class="card-title">Simulação do limite</h2>
-                <p class="card-subtitle">Com base no histórico de 14 dias</p>
-                <div class="sim-box">
-                  <span id="sim-num" class="sim-num mono-val">0</span>
-                  <div>
-                    <p style="font-size:.9375rem;font-weight:500">avisos de alerta</p>
-                    <p style="font-size:.75rem;color:var(--text-secondary)">com o limite configurado</p>
-                  </div>
-                </div>
-              </section>
-            </div>
-          </div>
-
-          <footer>BioTrace Hardware Intelligence © 2026 · Dados simulados para demonstração</footer>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-  <script src="./js/dashboard.js"></script>
-  <script src="./js/analise-lotes.js"></script>
-</body>
-
+        <script src="../painel_cliente/js/dashboard.js"></script>
+        <script src="../painel_cliente/js//analise-lotes.js"></script>
+    </body>
 </html>

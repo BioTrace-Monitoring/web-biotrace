@@ -1,133 +1,118 @@
 var database = require("../database/config");
 
-var TABELAS_LEITURA = [
-    "leitura",
-    "leituras",
-    "registro",
-    "registros",
-    "captura",
-    "capturas",
-    "leitura_metrica",
-    "registro_metrica"
-];
-
-var COLUNAS_VALOR = ["valor", "valor_lido", "medicao", "leitura"];
-var COLUNAS_DATA = ["dt_hora", "data_hora", "dt_leitura", "data_leitura", "timestamp", "criado_em", "created_at"];
-
 function listarLotes(idEmpresa) {
-    var filtroEmpresa = idEmpresa ? "WHERE l.fk_empresa = ?" : "";
-    var parametros = idEmpresa ? [idEmpresa] : [];
+    var filtroEmpresa = "";
+    var parametros = [];
 
-    return database.executar(`
+    if (idEmpresa) {
+        filtroEmpresa = "WHERE l.fk_empresa = ?";
+        parametros.push(idEmpresa);
+    }
+
+    var instrucao = `
         SELECT l.id_lote_equipamento,
                l.numero_lote,
-               l.fk_modelo_equipamento,
                m.nome_modelo,
                COUNT(e.id_equipamento) AS total_equipamentos
         FROM lote_equipamento l
         JOIN modelo_equipamento m ON m.id_modelo_equipamento = l.fk_modelo_equipamento
         LEFT JOIN equipamento e ON e.fk_lote = l.id_lote_equipamento
         ${filtroEmpresa}
-        GROUP BY l.id_lote_equipamento, l.numero_lote, l.fk_modelo_equipamento, m.nome_modelo
+        GROUP BY l.id_lote_equipamento, l.numero_lote, m.nome_modelo
         ORDER BY l.numero_lote, l.id_lote_equipamento;
-    `, parametros);
-}
-
-function buscarEquipamentosCpuDoLote(idLote) {
-    return database.executar(`
-        SELECT e.id_equipamento,
-               e.numero_serie,
-               MAX(CASE WHEN tm.tipo_metrica = 'cpu_percent' THEN m.id_metrica END) AS id_metrica,
-               COALESCE(
-                   MAX(CASE WHEN tm.tipo_metrica = 'cpu_percent' THEN p.limite_ociosidade END),
-                   15.00
-               ) AS limite_ociosidade
-        FROM equipamento e
-        LEFT JOIN componente c ON c.fk_equipamento = e.id_equipamento
-        LEFT JOIN tipo_componente tc ON tc.id_tipo_componente = c.fk_tipo_componente
-            AND tc.nome_componente = 'CPU'
-        LEFT JOIN metrica m ON m.fk_componente = c.id_componente
-        LEFT JOIN tipo_metrica tm ON tm.id_tipo_metrica = m.fk_tipo_metrica
-            AND tm.tipo_metrica = 'cpu_percent'
-        LEFT JOIN parametro_metrica p ON p.id_parametro_metrica = (
-            SELECT MAX(pm.id_parametro_metrica)
-            FROM parametro_metrica pm
-            WHERE pm.fk_metrica = m.id_metrica
-        )
-        WHERE e.fk_lote = ?
-        GROUP BY e.id_equipamento, e.numero_serie
-        ORDER BY e.numero_serie, e.id_equipamento;
-    `, [idLote]);
-}
-
-async function descobrirTabelaLeitura() {
-    var placeholders = TABELAS_LEITURA.map(function () { return "?"; }).join(",");
-    var linhas = await database.executar(`
-        SELECT TABLE_NAME, COLUMN_NAME
-        FROM information_schema.COLUMNS
-        WHERE TABLE_SCHEMA = DATABASE()
-          AND TABLE_NAME IN (${placeholders});
-    `, TABELAS_LEITURA);
-
-    if (!linhas.length) return null;
-
-    var porTabela = {};
-    for (var i = 0; i < linhas.length; i++) {
-        var nomeTabela = linhas[i].TABLE_NAME;
-        if (!porTabela[nomeTabela]) porTabela[nomeTabela] = [];
-        porTabela[nomeTabela].push(linhas[i].COLUMN_NAME);
-    }
-
-    for (var j = 0; j < TABELAS_LEITURA.length; j++) {
-        var tabela = TABELAS_LEITURA[j];
-        var cols = porTabela[tabela];
-        if (!cols) continue;
-
-        var colFk = cols.indexOf("fk_metrica") !== -1 ? "fk_metrica" : null;
-        var colValor = COLUNAS_VALOR.find(function (c) { return cols.indexOf(c) !== -1; });
-        var colData = COLUNAS_DATA.find(function (c) { return cols.indexOf(c) !== -1; });
-
-        if (colFk && colValor && colData) {
-            return { tabela: tabela, colFk: colFk, colValor: colValor, colData: colData };
-        }
-    }
-
-    return null;
-}
-
-async function buscarLeiturasCpuUltimos7Dias(idLote) {
-    var esquema = await descobrirTabelaLeitura();
-    if (!esquema) return [];
-
-    return database.executar(`
-        SELECT e.id_equipamento,
-               e.numero_serie,
-               r.${esquema.colValor} AS valor,
-               r.${esquema.colData} AS dt_leitura
-        FROM ${esquema.tabela} r
-        JOIN metrica m ON m.id_metrica = r.${esquema.colFk}
-        JOIN tipo_metrica tm ON tm.id_tipo_metrica = m.fk_tipo_metrica
-        JOIN componente c ON c.id_componente = m.fk_componente
-        JOIN equipamento e ON e.id_equipamento = c.fk_equipamento
-        WHERE e.fk_lote = ?
-          AND tm.tipo_metrica = 'cpu_percent'
-          AND r.${esquema.colData} >= DATE_SUB(NOW(), INTERVAL 7 DAY)
-        ORDER BY e.id_equipamento, r.${esquema.colData} ASC;
-    `, [idLote]);
+    `;
+    return database.executar(instrucao, parametros);
 }
 
 function buscarLotePorId(idLote) {
-    return database.executar(`
-        SELECT l.id_lote_equipamento, l.numero_lote, m.nome_modelo
+    var instrucao = `
+        SELECT l.id_lote_equipamento,
+               l.numero_lote,
+               m.nome_modelo
         FROM lote_equipamento l
         JOIN modelo_equipamento m ON m.id_modelo_equipamento = l.fk_modelo_equipamento
         WHERE l.id_lote_equipamento = ?;
-    `, [idLote]);
+    `;
+    return database.executar(instrucao, [idLote]);
+}
+
+function buscarResumoLote(idLote) {
+    var instrucao = `
+        SELECT integridade_geral,
+               total_equipamentos,
+               qtd_sem_alerta,
+               qtd_em_atencao,
+               qtd_limite_excedido,
+               qtd_falha_leitura,
+               qtd_abaixo_minimo,
+               equipamentos_ociosos,
+               processado_em
+        FROM resumo_integridade_lote
+        WHERE fk_lote = ?
+        ORDER BY id_resumo DESC
+        LIMIT 1;
+    `;
+    return database.executar(instrucao, [idLote]);
+}
+
+function buscarPerfisEquipamentos(idLote) {
+    var instrucao = `
+        SELECT e.numero_serie,
+               COALESCE(p.percentual_ociosidade, 0) AS percentual_ociosidade,
+               COALESCE(p.variacao_picos, 0) AS variacao_picos,
+               COALESCE(p.perfil_uso, 'Uso constante') AS perfil_uso,
+               COALESCE(p.status_operacional, 'Em funcionamento') AS status_operacional,
+               COALESCE(p.categoria_alerta, 'normal') AS categoria_alerta
+        FROM equipamento e
+        LEFT JOIN perfil_uso_equipamento_lote p
+               ON p.fk_lote = e.fk_lote AND p.numero_serie = e.numero_serie
+        WHERE e.fk_lote = ?
+        ORDER BY p.percentual_ociosidade DESC, e.numero_serie ASC;
+    `;
+    return database.executar(instrucao, [idLote]);
+}
+
+function buscarConfiguracaoLote(idLote) {
+    var instrucao = `
+        SELECT limite_integridade,
+               email_ativo,
+               slack_ativo,
+               estado_atual
+        FROM configuracao_alerta_lote
+        WHERE fk_lote = ?;
+    `;
+    return database.executar(instrucao, [idLote]);
+}
+
+function salvarConfiguracaoLote(idLote, limiteIntegridade, emailAtivo, slackAtivo) {
+    var instrucao = `
+        INSERT INTO configuracao_alerta_lote (fk_lote, limite_integridade, email_ativo, slack_ativo)
+        VALUES (?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+            limite_integridade = VALUES(limite_integridade),
+            email_ativo = VALUES(email_ativo),
+            slack_ativo = VALUES(slack_ativo);
+    `;
+    return database.executar(instrucao, [idLote, limiteIntegridade, emailAtivo, slackAtivo]);
+}
+
+function buscarHistoricoNotificacoes(idLote) {
+    var instrucao = `
+        SELECT *
+        FROM historico_notificacao_lote
+        WHERE fk_lote = ?
+        ORDER BY id_notificacao DESC
+        LIMIT 10;
+    `;
+    return database.executar(instrucao, [idLote]);
 }
 
 module.exports = {
     listarLotes,
     buscarLotePorId,
-    buscarEquipamentosCpuDoLote,
-    buscarLeiturasCpuUltimos7Dias
+    buscarResumoLote,
+    buscarPerfisEquipamentos,
+    buscarConfiguracaoLote,
+    salvarConfiguracaoLote,
+    buscarHistoricoNotificacoes
 };
