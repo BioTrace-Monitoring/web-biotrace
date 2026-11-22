@@ -5,6 +5,8 @@ let loteAtualId = null;
 document.addEventListener("DOMContentLoaded", function () {
     const selectLote = document.getElementById("selectLote");
     const sliderLimite = document.getElementById("sliderLimite");
+    const checkEmail = document.getElementById("checkEmail");
+    const inputEmail = document.getElementById("inputDestinatarioEmail");
     const btnSalvarConfig = document.getElementById("btnSalvarConfig");
 
     sliderLimite.addEventListener("input", function () {
@@ -12,6 +14,12 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("valorLimiteTexto").textContent = valor + "%";
         document.getElementById("valorHisterese").textContent = Math.min(100, valor + 3) + "%";
     });
+
+    if (checkEmail && inputEmail) {
+        checkEmail.addEventListener("change", function () {
+            inputEmail.disabled = !checkEmail.checked;
+        });
+    }
 
     selectLote.addEventListener("change", function () {
         loteAtualId = Number(selectLote.value);
@@ -23,6 +31,8 @@ document.addEventListener("DOMContentLoaded", function () {
     btnSalvarConfig.addEventListener("click", function () {
         if (loteAtualId) {
             salvarRegraAlerta(loteAtualId);
+        } else {
+            mostrarErroTela("Nenhum lote selecionado para salvar.");
         }
     });
 
@@ -30,27 +40,36 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function obterIdEmpresaSessao() {
-    const fkLocal = localStorage.getItem("FK_EMPRESA");
-    if (fkLocal) {
-        return fkLocal;
-    }
-    const fkSession = sessionStorage.getItem("FK_EMPRESA");
-    if (fkSession) {
-        return fkSession;
-    }
-    return sessionStorage.getItem("ID_EMPRESA") || "";
+    return (
+        localStorage.getItem("FK_EMPRESA") ||
+        sessionStorage.getItem("FK_EMPRESA") ||
+        sessionStorage.getItem("ID_EMPRESA") ||
+        ""
+    );
+}
+
+function obterEmailSessao() {
+    return (
+        localStorage.getItem("EMAIL_USUARIO") ||
+        sessionStorage.getItem("EMAIL_USUARIO") ||
+        ""
+    );
 }
 
 function mostrarErroTela(texto) {
     const box = document.getElementById("feedbackLote");
-    box.textContent = texto;
-    box.hidden = false;
+    if (box) {
+        box.textContent = texto;
+        box.hidden = false;
+    }
 }
 
 function limparErroTela() {
     const box = document.getElementById("feedbackLote");
-    box.textContent = "";
-    box.hidden = true;
+    if (box) {
+        box.textContent = "";
+        box.hidden = true;
+    }
 }
 
 function carregarListaLotes() {
@@ -130,9 +149,7 @@ function carregarPainelLote(idLote) {
 }
 
 function atualizarCabecalho(lote, resumo) {
-    if (!lote) {
-        return;
-    }
+    if (!lote) return;
 
     document.getElementById("subtituloModelo").textContent = "Modelo: " + (lote.nome_modelo || "Não informado");
     const badge = document.getElementById("badgeProcessado");
@@ -148,7 +165,18 @@ function atualizarCabecalho(lote, resumo) {
 function atualizarKpisEResumo(resumo, equipamentos) {
     const totalEquipamentos = resumo ? Number(resumo.total_equipamentos) : equipamentos.length;
     const integridade = resumo ? Number(resumo.integridade_geral).toFixed(1) : "100.0";
-    const ociosos = resumo ? Number(resumo.equipamentos_ociosos) : 0;
+
+    const listaSubutilizados = [];
+    for (let i = 0; i < equipamentos.length; i++) {
+        const eq = equipamentos[i];
+        if (Number(eq.percentual_ociosidade) > 70 || eq.status_operacional === "Subutilizado") {
+            listaSubutilizados.push(eq.numero_serie);
+        }
+    }
+
+    const ociosos = listaSubutilizados.length > 0
+        ? listaSubutilizados.length
+        : (resumo ? Number(resumo.equipamentos_ociosos) : 0);
     const emFuncionamento = Math.max(0, totalEquipamentos - ociosos);
 
     const emAtencao = resumo ? Number(resumo.qtd_em_atencao) : 0;
@@ -167,30 +195,52 @@ function atualizarKpisEResumo(resumo, equipamentos) {
     document.getElementById("kpiDetalheAlertas").textContent =
         emAtencao + " atenção · " + limiteExcedido + " limite · " + falhaLeitura + " falha";
 
+    const seloResumo = document.getElementById("seloStatusResumo");
+    if (totalAlertas > 0 || ociosos > 0) {
+        seloResumo.textContent = "Atenção";
+        seloResumo.classList.add("alerta");
+    } else {
+        seloResumo.textContent = "Estável";
+        seloResumo.classList.remove("alerta");
+    }
+
+    const textoSubutilizados = listaSubutilizados.length > 0
+        ? "Subutilizados (&gt; 70%): <strong>" + listaSubutilizados.join(", ") + "</strong> disponíveis para realocação."
+        : (ociosos > 0
+            ? "<strong>" + ociosos + " equipamento(s)</strong> subutilizado(s) disponível(is) para realocação."
+            : "<strong>Nenhum equipamento</strong> subutilizado neste lote.");
+
     const listaTopicos = document.getElementById("listaResumoTopicos");
     listaTopicos.innerHTML = "";
 
-    const topicos = [
-        "Integridade consolidada em " + integridade + "% com " + emFuncionamento + " equipamentos em funcionamento.",
-        totalAlertas + " ocorrências de alerta identificadas na última leitura da camada Gold.",
-        ociosos + " equipamentos classificados como subutilizados e disponíveis para realocação."
+    const itensHtml = [
+        "Integridade em <strong>" + integridade + "%</strong> com <strong>" + emFuncionamento + " de " + totalEquipamentos + "</strong> em utilização normal.",
+        "<strong>" + totalAlertas + " ocorrências</strong> de alerta registradas na leitura Gold.",
+        textoSubutilizados
     ];
 
-    for (let i = 0; i < topicos.length; i++) {
+    for (let i = 0; i < itensHtml.length; i++) {
         const li = document.createElement("li");
-        li.textContent = topicos[i];
+        li.innerHTML = itensHtml[i];
         listaTopicos.appendChild(li);
     }
 }
 
 function atualizarConfiguracao(config) {
-    const limite = Number(config.limite_integridade || 72);
+    const limite = Number(config.limite_integridade || 80);
     const slider = document.getElementById("sliderLimite");
-    slider.value = limite;
+    const checkEmail = document.getElementById("checkEmail");
+    const inputEmail = document.getElementById("inputDestinatarioEmail");
 
+    slider.value = limite;
     document.getElementById("valorLimiteTexto").textContent = limite + "%";
     document.getElementById("valorHisterese").textContent = Math.min(100, limite + 3) + "%";
-    document.getElementById("checkEmail").checked = Boolean(config.email_ativo);
+
+    const emailAtivo = Boolean(config.email_ativo);
+    checkEmail.checked = emailAtivo;
+    inputEmail.value = config.destinatario_email || obterEmailSessao();
+    inputEmail.disabled = !emailAtivo;
+
     document.getElementById("checkSlack").checked = Boolean(config.slack_ativo);
 
     const badgeEstado = document.getElementById("badgeEstadoAlerta");
@@ -204,9 +254,20 @@ function atualizarConfiguracao(config) {
 }
 
 function salvarRegraAlerta(idLote) {
+    limparErroTela();
+    const emailAtivo = document.getElementById("checkEmail").checked ? 1 : 0;
+    const destinatarioEmail = document.getElementById("inputDestinatarioEmail").value.trim();
+
+    if (emailAtivo && !destinatarioEmail) {
+        mostrarErroTela("Informe o e-mail de destino antes de salvar a regra.");
+        document.getElementById("inputDestinatarioEmail").focus();
+        return;
+    }
+
     const payload = {
         limite_integridade: Number(document.getElementById("sliderLimite").value),
-        email_ativo: document.getElementById("checkEmail").checked ? 1 : 0,
+        email_ativo: emailAtivo,
+        destinatario_email: destinatarioEmail,
         slack_ativo: document.getElementById("checkSlack").checked ? 1 : 0
     };
 
@@ -214,26 +275,30 @@ function salvarRegraAlerta(idLote) {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
-    }).then(function (resposta) {
-        if (resposta.ok) {
+    })
+        .then(function (resposta) {
+            if (!resposta.ok) {
+                return resposta.json().then(function (erroJson) {
+                    throw new Error(erroJson.erro || "Falha ao salvar configuração.");
+                });
+            }
             const btn = document.getElementById("btnSalvarConfig");
             btn.textContent = "Salvo!";
             setTimeout(function () {
                 btn.textContent = "Salvar regra";
             }, 1500);
-        }
-    });
+        })
+        .catch(function (erro) {
+            console.error(erro);
+            mostrarErroTela(erro.message);
+        });
 }
 
 function formatarDataNotificacao(item) {
-    const bruto = item.dt_notificacao || item.criado_em || item.data_hora || item.dt_envio || item.processado_em;
-    if (!bruto) {
-        return "";
-    }
+    const bruto = item.criado_em || item.dt_notificacao || item.data_hora || item.dt_envio || item.processado_em;
+    if (!bruto) return "";
     const data = new Date(bruto);
-    if (isNaN(data.getTime())) {
-        return String(bruto);
-    }
+    if (isNaN(data.getTime())) return String(bruto);
     return data.toLocaleString("pt-BR");
 }
 
@@ -329,9 +394,9 @@ function renderizarGraficoPerfis(equipamentos) {
         type: "scatter",
         data: {
             datasets: [
-                { label: "Uso constante", data: pontosConstante, backgroundColor: "#08b98a", pointRadius: 7 },
-                { label: "Uso em picos", data: pontosPicos, backgroundColor: "#f59e0b", pointRadius: 7 },
-                { label: "Quase sem uso", data: pontosSemUso, backgroundColor: "#9035e8", pointRadius: 7 }
+                { label: "Uso constante", data: pontosConstante, backgroundColor: "#08b98a", pointRadius: 6 },
+                { label: "Uso em picos", data: pontosPicos, backgroundColor: "#f59e0b", pointRadius: 6 },
+                { label: "Quase sem uso", data: pontosSemUso, backgroundColor: "#9035e8", pointRadius: 6 }
             ]
         },
         options: {

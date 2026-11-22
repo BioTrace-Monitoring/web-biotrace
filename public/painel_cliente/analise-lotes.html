@@ -6,7 +6,7 @@
         <title>Análise de lotes | BioTrace</title>
         <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png" />
         <link rel="stylesheet" href="./css/style.css" />
-        <link rel="stylesheet" href="../painel_cliente/css/analise-lotes.css" />
+        <link rel="stylesheet" href="./css/analise-lotes.css" />
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
 
@@ -121,7 +121,7 @@
                         </article>
 
                         <article class="cartao-lote kpi-box">
-                            <span class="kpi-rotulo">Em funcionamento</span>
+                            <span class="kpi-rotulo">Em Utilização Normal</span>
                             <strong class="kpi-numero" id="kpiFuncionamento">-- / --</strong>
                             <p class="kpi-sub" id="kpiSubutilizados">-- subutilizados</p>
                         </article>
@@ -132,8 +132,11 @@
                             <p class="kpi-sub" id="kpiDetalheAlertas">0 atenção · 0 limite · 0 falha</p>
                         </article>
 
-                        <article class="cartao-lote kpi-box">
-                            <span class="kpi-rotulo">Resumo do lote</span>
+                        <article class="cartao-lote kpi-box cartao-resumo-destaque">
+                            <div class="topo-resumo-destaque">
+                                <span class="kpi-rotulo">Resumo do lote</span>
+                                <span class="selo-resumo-gold" id="seloStatusResumo">Estável</span>
+                            </div>
                             <ul class="lista-topicos-lote" id="listaResumoTopicos">
                                 <li>Aguardando processamento da camada Gold.</li>
                             </ul>
@@ -141,7 +144,7 @@
                     </section>
 
                     <section class="grade-graficos">
-                        <article class="cartao-lote">
+                        <article class="cartao-lote cartao-grafico">
                             <div class="topo-cartao">
                                 <h2>Ociosidade por equipamento (%)</h2>
                                 <span class="legenda-texto">Subutilizado: &gt; 70%</span>
@@ -151,7 +154,7 @@
                             </div>
                         </article>
 
-                        <article class="cartao-lote">
+                        <article class="cartao-lote cartao-grafico">
                             <div class="topo-cartao">
                                 <h2>Perfis de uso (Ociosidade × Variação de picos)</h2>
                                 <div class="legenda-pontos">
@@ -167,7 +170,7 @@
                     </section>
 
                     <section class="grade-inferior">
-                        <article class="cartao-lote">
+                        <article class="cartao-lote cartao-compacto">
                             <div class="topo-cartao">
                                 <h2>Números de alertas e limite de integridade</h2>
                                 <span class="selo-status" id="badgeEstadoAlerta">Normal</span>
@@ -176,11 +179,11 @@
                             <div class="bloco-slider">
                                 <div class="linha-slider-titulo">
                                     <label for="sliderLimite">Limite mínimo de integridade</label>
-                                    <strong id="valorLimiteTexto">72%</strong>
+                                    <strong id="valorLimiteTexto">80%</strong>
                                 </div>
-                                <input type="range" id="sliderLimite" min="50" max="95" value="72" />
+                                <input type="range" id="sliderLimite" min="50" max="95" value="80" />
                                 <p class="nota-histerese">
-                                    Histerese ativa: resolução automática ao atingir <strong id="valorHisterese">75%</strong>
+                                    Histerese ativa: resolução automática ao atingir <strong id="valorHisterese">83%</strong>
                                 </p>
                             </div>
 
@@ -188,6 +191,13 @@
                                 <label class="check-canal">
                                     <input type="checkbox" id="checkEmail" checked /> E-mail
                                 </label>
+                                <input
+                                    type="email"
+                                    id="inputDestinatarioEmail"
+                                    class="input-email-destino"
+                                    placeholder="destino@hospital.com"
+                                    aria-label="E-mail de destino para alertas"
+                                />
                                 <label class="check-canal">
                                     <input type="checkbox" id="checkSlack" checked /> Slack
                                 </label>
@@ -195,7 +205,7 @@
                             </div>
                         </article>
 
-                        <article class="cartao-lote">
+                        <article class="cartao-lote cartao-compacto">
                             <div class="topo-cartao">
                                 <h2>Histórico de notificações (SNS)</h2>
                             </div>
@@ -209,7 +219,7 @@
         </div>
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-        <script src="../painel_cliente/js/dashboard.js"></script>
-        <script src="../painel_cliente/js//analise-lotes.js"></script>
+        <script src="./js/dashboard.js"></script>
+        <script src="./js/analise-lotes.js"></script>
     </body>
 </html>
