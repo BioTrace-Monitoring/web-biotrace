@@ -1,4 +1,8 @@
 var analiseLotesModel = require("../models/analiseLotesModel");
+var { SNSClient, SubscribeCommand } = require("@aws-sdk/client-sns");
+
+var snsClient = new SNSClient({ region: "us-east-1" });
+var SNS_TOPIC_ARN = "arn:aws:sns:us-east-1:481665118734:Biotrace-Alertas";
 
 function listarLotes(req, res) {
     var idEmpresa = req.query.idEmpresa;
@@ -40,8 +44,9 @@ function obterPainelLote(req, res) {
             }
 
             var configuracao = {
-                limite_integridade: 72,
+                limite_integridade: 80,
                 email_ativo: 1,
+                destinatario_email: "",
                 slack_ativo: 1,
                 estado_atual: "normal"
             };
@@ -66,6 +71,7 @@ function atualizarConfiguracao(req, res) {
     var idLote = Number(req.params.idLote);
     var limiteIntegridade = Number(req.body.limite_integridade);
     var emailAtivo = req.body.email_ativo ? 1 : 0;
+    var destinatarioEmail = req.body.destinatario_email ? String(req.body.destinatario_email).trim() : null;
     var slackAtivo = req.body.slack_ativo ? 1 : 0;
 
     if (!idLote || isNaN(limiteIntegridade)) {
@@ -73,8 +79,24 @@ function atualizarConfiguracao(req, res) {
         return;
     }
 
-    analiseLotesModel.salvarConfiguracaoLote(idLote, limiteIntegridade, emailAtivo, slackAtivo)
-        .then(function () {
+    if (emailAtivo && !destinatarioEmail) {
+        res.status(400).json({ erro: "Informe um e-mail de destino para ativar alertas por e-mail." });
+        return;
+    }
+
+    analiseLotesModel.salvarConfiguracaoLote(idLote, limiteIntegridade, emailAtivo, destinatarioEmail, slackAtivo)
+        .then(async function () {
+            if (emailAtivo && destinatarioEmail) {
+                try {
+                    await snsClient.send(new SubscribeCommand({
+                        TopicArn: SNS_TOPIC_ARN,
+                        Protocol: "email",
+                        Endpoint: destinatarioEmail
+                    }));
+                } catch (erroSns) {
+                    console.error("Aviso SNS Subscribe:", erroSns.message);
+                }
+            }
             res.status(200).json({ sucesso: true });
         })
         .catch(function (erro) {

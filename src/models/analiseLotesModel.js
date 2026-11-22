@@ -76,6 +76,7 @@ function buscarConfiguracaoLote(idLote) {
     var instrucao = `
         SELECT limite_integridade,
                email_ativo,
+               destinatario_email,
                slack_ativo,
                estado_atual
         FROM configuracao_alerta_lote
@@ -84,16 +85,24 @@ function buscarConfiguracaoLote(idLote) {
     return database.executar(instrucao, [idLote]);
 }
 
-function salvarConfiguracaoLote(idLote, limiteIntegridade, emailAtivo, slackAtivo) {
+function salvarConfiguracaoLote(idLote, limiteIntegridade, emailAtivo, destinatarioEmail, slackAtivo) {
     var instrucao = `
-        INSERT INTO configuracao_alerta_lote (fk_lote, limite_integridade, email_ativo, slack_ativo)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO configuracao_alerta_lote
+            (fk_lote, limite_integridade, email_ativo, destinatario_email, slack_ativo)
+        VALUES (?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
             limite_integridade = VALUES(limite_integridade),
             email_ativo = VALUES(email_ativo),
+            destinatario_email = VALUES(destinatario_email),
             slack_ativo = VALUES(slack_ativo);
     `;
-    return database.executar(instrucao, [idLote, limiteIntegridade, emailAtivo, slackAtivo]);
+    return database.executar(instrucao, [
+        idLote,
+        limiteIntegridade,
+        emailAtivo,
+        destinatarioEmail || null,
+        slackAtivo
+    ]);
 }
 
 function buscarHistoricoNotificacoes(idLote) {

@@ -1,6 +1,5 @@
 var express = require("express");
 var router = express.Router();
-
 var analiseLotesController = require("../controllers/analiseLotesController");
 
 router.get("/", function (req, res) {
