@@ -408,6 +408,132 @@ dialog input[type="checkbox"] {
   width: 100%;
   margin-top: 4px;
 }
+#acoesParametros {
+  position: sticky;
+  top: -26px;
+  z-index: 2;
+  margin: -26px -26px 20px;
+  padding: 22px 26px 14px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+}
+#acoesParametros #impacto {
+  margin: 12px 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary) !important;
+}
+#acoesParametros #erroParametros {
+  margin-top: 12px;
+}
+#infraestrutura #editor {
+  max-height: calc(100vh - 48px);
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  scroll-padding-block: 190px 24px;
+}
+#selecaoLimites {
+  padding: 24px;
+  margin-bottom: 24px;
+}
+#selecaoLimites h2,
+#infraestrutura [data-cabecalho-metricas] h2 {
+  font-size: 17px;
+}
+#selecaoDestino,
+#camposLimites {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+#selecaoDestino {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 20px 0 12px;
+}
+#infraestrutura [data-campo-destino] label,
+#infraestrutura [data-cabecalho-metricas] label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+#infraestrutura [data-campo-destino] select {
+  width: 100%;
+}
+#infraestrutura #resumoDestino {
+  padding: 12px 16px;
+  margin-top: 16px;
+  border-left: 3px solid var(--primary);
+  background: #f5f3f9;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+#infraestrutura [data-cabecalho-metricas] {
+  padding: 22px;
+  border-bottom: 1px solid var(--border);
+}
+#infraestrutura [data-cabecalho-metricas] select {
+  width: min(100%, 320px);
+}
+#destinoParametro {
+  padding: 14px;
+  margin: 14px 0 22px;
+  background: #f5f3f9;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow-wrap: anywhere;
+}
+#destinoParametro strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+#infraestrutura #destinoParametro p {
+  font-size: 12px;
+}
+#painelParametros #camposLimites [data-limite] input[type="number"] {
+  width: 135px;
+  padding: 9px;
+  text-align: left;
+}
+#painelParametros [data-sem-limite] {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 400;
+}
+#painelParametros #habilitar {
+  margin-top: 20px;
+  font-size: 13px;
+}
+#painelParametros input:disabled {
+  opacity: 0.5;
+}
+#painelParametros [data-cartao],
+#painelParametros select,
+#painelParametros input[type="number"],
+#painelParametros button,
+#painelParametros #impacto,
+#painelParametros #avisoDivergencia {
+  border-radius: 8px;
+}
+#painelParametros button:disabled {
+  cursor: not-allowed;
+}
+#painelParametros input:focus-visible,
+#painelParametros select:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
 #infraestrutura [data-ajuda],
 dialog [data-ajuda] {
   font-size: 12px;
@@ -478,11 +604,12 @@ dialog [role="alert"] {
   margin-top: 16px;
 }
 @media (min-width: 1251px) {
+  #visaoParametros {
+    grid-template-columns: minmax(0, 1.65fr) minmax(340px, 1fr);
+  }
   #editor {
     position: sticky;
     top: 24px;
-    max-height: calc(100vh - 48px);
-    overflow-y: auto;
   }
 }
 @media (max-width: 1250px) {
@@ -498,6 +625,9 @@ dialog [role="alert"] {
   }
 }
 @media (max-width: 700px) {
+  #selecaoDestino {
+    grid-template-columns: minmax(0, 1fr);
+  }
   #cabecalho {
     flex-direction: column;
   }
@@ -514,6 +644,11 @@ dialog [role="alert"] {
   }
   #infraestrutura aside[data-cartao] {
     padding: 20px;
+  }
+  #acoesParametros {
+    top: -20px;
+    margin: -20px -20px 20px;
+    padding: 18px 20px 14px;
   }
   dialog {
     padding: 22px;

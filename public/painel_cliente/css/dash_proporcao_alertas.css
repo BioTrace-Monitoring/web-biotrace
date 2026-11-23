@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --purple: #7046b5;
+    --ink: #292530;
+    --muted: #85808b;
+    --line: #ece9ef;
+    --canvas: #f7f6f9;
+    --white: #fff
+}
+
+body {
+    margin: 0;
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px
+}
+
+.filters {
+    display: flex;
+    align-items: end;
+    gap: 13px;
+    margin-bottom: 16px;
+    padding: 15px 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+}
+
+.filters label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: #827c88;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .5px
+}
+
+.filters select {
+    min-width: 200px;
+    padding: 10px 30px 10px 10px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: #fff;
+    color: #413b48;
+    font: 500 11px 'DM Sans'
+}
+
+
+.card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 18px #28242d07;
+}
+
+.kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 15px
+}
+
+.kpi {
+    position: relative;
+    min-height: 150px;
+    padding: 16px;
+}
+
+.ia-analysis {
+    position: relative;
+}
+
+.ia-analysis .assistant-badge {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+}
+
+.assistant {
+    display: grid;
+    grid-template-columns: 38px 1fr auto;
+    align-items: center;
+    gap: 13px;
+    margin-top: 14px;
+    padding: 16px 18px;
+}
+
+.sparkle {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: #f0eafa;
+    color: var(--purple);
+    font-size: 18px;
+}
+
+.assistant small {
+    color: #7956b7;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .8px
+}
+
+.assistant-heading {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.assistant-badge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    overflow: hidden;
+    padding: 4px 10px;
+    border: 1px solid #bda2ef;
+    border-radius: 999px;
+    background: linear-gradient(125deg, #492879, #8052c5 55%, #59318e);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-shadow: 0 1px 3px #34145566;
+    box-shadow: inset 0 1px 0 #ffffff40, 0 2px 7px #7046b526;
+}
+
+.assistant h2 {
+    margin: 4px 0
+}
+
+.assistant p {
+    margin: 0;
+    color: #88818d;
+    font-size: 9px
+}
+
+.assistant button {
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 7px;
+    background: var(--purple);
+    color: #fff;
+    font: 600 9px 'DM Sans';
+    cursor: pointer;
+    transition: .2s;
+}
+
+.assistante button:hover {
+    background: #ffffff;
+}
+
+.assistant button b {
+    padding-left: 10px
+}

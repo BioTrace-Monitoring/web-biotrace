@@ -5,7 +5,7 @@
 }
 
 :root {
-    --sidebar-width: 250px;
+    --sidebar-width: 264px;
     --primary: #6d3fc0;
     --primary-dark: #5830a3;
     --primary-light: #f0eafa;
@@ -50,11 +50,14 @@ button:focus-visible {
     left: 0;
     width: var(--sidebar-width);
     height: 100vh;
-    background: var(--white);
-    border-right: 1px solid var(--border);
-    padding: 24px 16px;
+    height: 100dvh;
+    max-width: calc(100vw - 32px);
+    background: #fcfcfd;
+    border-right: 1px solid #e3e5eb;
+    padding: 28px 16px 20px;
     display: flex;
     flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     z-index: 100;
 }
 
@@ -63,7 +66,10 @@ button:focus-visible {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 10px 25px;
+    min-height: 65px;
+    margin-bottom: 24px;
+    padding: 0 12px 24px;
+    border-bottom: 1px solid #e3e5eb;
 }
 
 .logo {
@@ -85,6 +91,9 @@ button:focus-visible {
     color: var(--text);
     font-size: 28px;
     cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
 }
 
 .sidebar-nav {
@@ -93,50 +102,69 @@ button:focus-visible {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
+    scrollbar-width: thin;
+    padding: 0 2px 20px;
 }
 
 .nav-title {
-    margin: 8px 12px 10px;
-    color: #aaa4b2;
+    flex-shrink: 0;
+    margin: 0 12px 12px;
+    color: #737986;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.1px;
 }
 
-.nav-title-spacing,
-.nav-title-dashboards {
-    margin-top: 28px;
+.nav-title-spacing {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #e3e5eb;
 }
 
 .nav-item {
     display: flex;
+    flex-shrink: 0;
+    position: relative;
     align-items: center;
     gap: 12px;
     min-height: 44px;
-    padding: 10px 14px;
+    padding: 12px;
     margin-bottom: 4px;
-    border-radius: 8px;
-    color: var(--text-secondary);
+    border-radius: 6px;
+    color: #525968;
     font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
     transition: background .2s, color .2s;
 }
 
-.nav-item:hover,
-.nav-item.active {
-    color: var(--primary);
-    background: var(--primary-light);
+.nav-item:hover {
+    color: #272d39;
+    background: #f0f1f5;
 }
 
 .nav-item.active {
-    font-weight: 700;
+    color: var(--primary-dark);
+    background: #eeebf5;
+    font-weight: 600;
+}
+
+.nav-item.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 3px;
+    border-radius: 2px;
+    background: var(--primary);
 }
 
 .nav-icon {
     width: 20px;
+    height: 20px;
     flex-shrink: 0;
-    text-align: center;
-    font-size: 19px;
 }
 
 .sidebar-footer {
@@ -144,8 +172,8 @@ button:focus-visible {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 18px 6px 4px;
-    border-top: 1px solid var(--border);
+    padding: 20px 4px 0;
+    border-top: 1px solid #e3e5eb;
 }
 
 .sidebar-user {
@@ -163,9 +191,10 @@ button:focus-visible {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    background: var(--primary);
-    color: var(--white);
+    border-radius: 8px;
+    background: #eeebf5;
+    color: var(--primary-dark);
+    border: 1px solid #e0daec;
     font-size: 12px;
     font-weight: 700;
 }
@@ -186,7 +215,7 @@ button:focus-visible {
 
 .user-info span {
     display: block;
-    color: #99939f;
+    color: #737986;
     font-size: 11px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -198,9 +227,9 @@ button:focus-visible {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: 32px;
-    height: 32px;
-    padding: 6px;
+    width: 40px;
+    height: 40px;
+    padding: 10px;
     border: 0;
     border-radius: 8px;
     background: transparent;
@@ -410,6 +439,11 @@ button:focus-visible {
 }
 
 .menu-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
     background: none;
     border: none;
     color: var(--primary);
@@ -425,6 +459,18 @@ button:focus-visible {
 
 .sidebar-overlay {
     display: none;
+}
+
+body.sidebar-open {
+    overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sidebar,
+    .nav-item,
+    .sidebar-logout {
+        transition: none !important;
+    }
 }
 
 
