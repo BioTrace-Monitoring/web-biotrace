@@ -250,7 +250,7 @@
 
 .ponto.constante { background: #08b98a; }
 .ponto.picos { background: #f59e0b; }
-.ponto.sem-uso { background: #9035e8; }
+.ponto.sem-uso { background-color: #ef4444; }
 
 .area-canvas {
     position: relative;
