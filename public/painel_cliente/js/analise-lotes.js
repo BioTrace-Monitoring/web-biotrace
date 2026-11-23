@@ -1,18 +1,20 @@
 let graficoOciosidadeInstance = null;
 let graficoPerfisInstance = null;
 let loteAtualId = null;
+let integridadeAtual = null;
 
 document.addEventListener("DOMContentLoaded", function () {
-    const selectLote = document.getElementById("selectLote");
-    const sliderLimite = document.getElementById("sliderLimite");
-    const checkEmail = document.getElementById("checkEmail");
-    const inputEmail = document.getElementById("inputDestinatarioEmail");
-    const btnSalvarConfig = document.getElementById("btnSalvarConfig");
+    const selectLote = document.querySelector("#selectLote");
+    const sliderLimite = document.querySelector("#sliderLimite");
+    const checkEmail = document.querySelector("#checkEmail");
+    const inputEmail = document.querySelector("#inputDestinatarioEmail");
+    const btnSalvarConfig = document.querySelector("#btnSalvarConfig");
 
     sliderLimite.addEventListener("input", function () {
         const valor = Number(sliderLimite.value);
-        document.getElementById("valorLimiteTexto").textContent = valor + "%";
-        document.getElementById("valorHisterese").textContent = Math.min(100, valor + 3) + "%";
+        document.querySelector("#valorLimiteTexto").textContent = valor + "%";
+        document.querySelector("#valorHisterese").textContent = Math.min(100, valor + 3) + "%";
+        atualizarCorIntegridade();
     });
 
     if (checkEmail && inputEmail) {
@@ -39,6 +41,29 @@ document.addEventListener("DOMContentLoaded", function () {
     carregarListaLotes();
 });
 
+function formatarDataBrasilia(valor) {
+    if (!valor) return "";
+    let texto = String(valor).trim();
+    if (/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(\.\d+)?$/.test(texto)) {
+        texto = texto.replace(" ", "T") + "Z";
+    }
+    const data = new Date(texto);
+    if (isNaN(data.getTime())) return String(valor);
+    return data.toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
+}
+
+function atualizarCorIntegridade() {
+    const kpiIntegridade = document.querySelector("#kpiIntegridade");
+    const sliderLimite = document.querySelector("#sliderLimite");
+    if (!kpiIntegridade || !sliderLimite) return;
+
+    if (integridadeAtual !== null && integridadeAtual < Number(sliderLimite.value)) {
+        kpiIntegridade.style.color = "#ef4444";
+    } else {
+        kpiIntegridade.style.color = "";
+    }
+}
+
 function obterIdEmpresaSessao() {
     return (
         localStorage.getItem("FK_EMPRESA") ||
@@ -57,7 +82,7 @@ function obterEmailSessao() {
 }
 
 function mostrarErroTela(texto) {
-    const box = document.getElementById("feedbackLote");
+    const box = document.querySelector("#feedbackLote");
     if (box) {
         box.textContent = texto;
         box.hidden = false;
@@ -65,7 +90,7 @@ function mostrarErroTela(texto) {
 }
 
 function limparErroTela() {
-    const box = document.getElementById("feedbackLote");
+    const box = document.querySelector("#feedbackLote");
     if (box) {
         box.textContent = "";
         box.hidden = true;
@@ -84,7 +109,7 @@ function carregarListaLotes() {
             return resposta.json();
         })
         .then(function (lotes) {
-            const selectLote = document.getElementById("selectLote");
+            const selectLote = document.querySelector("#selectLote");
             selectLote.innerHTML = "";
 
             if (!Array.isArray(lotes) || lotes.length === 0) {
@@ -92,7 +117,7 @@ function carregarListaLotes() {
                 option.value = "";
                 option.textContent = "Nenhum lote cadastrado";
                 selectLote.appendChild(option);
-                document.getElementById("subtituloModelo").textContent = "Nenhum lote vinculado à empresa";
+                document.querySelector("#subtituloModelo").textContent = "Nenhum lote vinculado à empresa";
                 return;
             }
 
@@ -151,12 +176,11 @@ function carregarPainelLote(idLote) {
 function atualizarCabecalho(lote, resumo) {
     if (!lote) return;
 
-    document.getElementById("subtituloModelo").textContent = "Modelo: " + (lote.nome_modelo || "Não informado");
-    const badge = document.getElementById("badgeProcessado");
+    document.querySelector("#subtituloModelo").textContent = "Modelo: " + (lote.nome_modelo || "Não informado");
+    const badge = document.querySelector("#badgeProcessado");
 
     if (resumo && resumo.processado_em) {
-        const dataFormatada = new Date(resumo.processado_em).toLocaleString("pt-BR");
-        badge.textContent = "Gold processada em " + dataFormatada;
+        badge.textContent = "Gold processada em " + formatarDataBrasilia(resumo.processado_em);
     } else {
         badge.textContent = "Sem processamento Gold";
     }
@@ -164,7 +188,8 @@ function atualizarCabecalho(lote, resumo) {
 
 function atualizarKpisEResumo(resumo, equipamentos) {
     const totalEquipamentos = resumo ? Number(resumo.total_equipamentos) : equipamentos.length;
-    const integridade = resumo ? Number(resumo.integridade_geral).toFixed(1) : "100.0";
+    integridadeAtual = resumo ? Number(resumo.integridade_geral) : 100;
+    const integridade = integridadeAtual.toFixed(1);
 
     const listaSubutilizados = [];
     for (let i = 0; i < equipamentos.length; i++) {
@@ -184,18 +209,20 @@ function atualizarKpisEResumo(resumo, equipamentos) {
     const falhaLeitura = resumo ? Number(resumo.qtd_falha_leitura) : 0;
     const totalAlertas = emAtencao + limiteExcedido + falhaLeitura;
 
-    document.getElementById("kpiIntegridade").textContent = integridade + "%";
-    document.getElementById("kpiIntegridadeDetalhe").textContent =
+    document.querySelector("#kpiIntegridade").textContent = integridade + "%";
+    document.querySelector("#kpiIntegridadeDetalhe").textContent =
         (resumo ? resumo.qtd_sem_alerta : totalEquipamentos) + " de " + totalEquipamentos + " sem alertas";
 
-    document.getElementById("kpiFuncionamento").textContent = emFuncionamento + " / " + totalEquipamentos;
-    document.getElementById("kpiSubutilizados").textContent = ociosos + " subutilizados (> 70% ociosos)";
+    atualizarCorIntegridade();
 
-    document.getElementById("kpiTotalAlertas").textContent = totalAlertas;
-    document.getElementById("kpiDetalheAlertas").textContent =
+    document.querySelector("#kpiFuncionamento").textContent = emFuncionamento + " / " + totalEquipamentos;
+    document.querySelector("#kpiSubutilizados").textContent = ociosos + " subutilizados (> 70% ociosos)";
+
+    document.querySelector("#kpiTotalAlertas").textContent = totalAlertas;
+    document.querySelector("#kpiDetalheAlertas").textContent =
         emAtencao + " atenção · " + limiteExcedido + " limite · " + falhaLeitura + " falha";
 
-    const seloResumo = document.getElementById("seloStatusResumo");
+    const seloResumo = document.querySelector("#seloStatusResumo");
     if (totalAlertas > 0 || ociosos > 0) {
         seloResumo.textContent = "Atenção";
         seloResumo.classList.add("alerta");
@@ -210,7 +237,7 @@ function atualizarKpisEResumo(resumo, equipamentos) {
             ? "<strong>" + ociosos + " equipamento(s)</strong> subutilizado(s) disponível(is) para realocação."
             : "<strong>Nenhum equipamento</strong> subutilizado neste lote.");
 
-    const listaTopicos = document.getElementById("listaResumoTopicos");
+    const listaTopicos = document.querySelector("#listaResumoTopicos");
     listaTopicos.innerHTML = "";
 
     const itensHtml = [
@@ -228,22 +255,23 @@ function atualizarKpisEResumo(resumo, equipamentos) {
 
 function atualizarConfiguracao(config) {
     const limite = Number(config.limite_integridade || 80);
-    const slider = document.getElementById("sliderLimite");
-    const checkEmail = document.getElementById("checkEmail");
-    const inputEmail = document.getElementById("inputDestinatarioEmail");
+    const slider = document.querySelector("#sliderLimite");
+    const checkEmail = document.querySelector("#checkEmail");
+    const inputEmail = document.querySelector("#inputDestinatarioEmail");
 
     slider.value = limite;
-    document.getElementById("valorLimiteTexto").textContent = limite + "%";
-    document.getElementById("valorHisterese").textContent = Math.min(100, limite + 3) + "%";
+    document.querySelector("#valorLimiteTexto").textContent = limite + "%";
+    document.querySelector("#valorHisterese").textContent = Math.min(100, limite + 3) + "%";
+    atualizarCorIntegridade();
 
     const emailAtivo = Boolean(config.email_ativo);
     checkEmail.checked = emailAtivo;
     inputEmail.value = config.destinatario_email || obterEmailSessao();
     inputEmail.disabled = !emailAtivo;
 
-    document.getElementById("checkSlack").checked = Boolean(config.slack_ativo);
+    document.querySelector("#checkSlack").checked = Boolean(config.slack_ativo);
 
-    const badgeEstado = document.getElementById("badgeEstadoAlerta");
+    const badgeEstado = document.querySelector("#badgeEstadoAlerta");
     if (config.estado_atual === "alerta") {
         badgeEstado.textContent = "Em alerta";
         badgeEstado.classList.add("alerta");
@@ -255,20 +283,20 @@ function atualizarConfiguracao(config) {
 
 function salvarRegraAlerta(idLote) {
     limparErroTela();
-    const emailAtivo = document.getElementById("checkEmail").checked ? 1 : 0;
-    const destinatarioEmail = document.getElementById("inputDestinatarioEmail").value.trim();
+    const emailAtivo = document.querySelector("#checkEmail").checked ? 1 : 0;
+    const destinatarioEmail = document.querySelector("#inputDestinatarioEmail").value.trim();
 
     if (emailAtivo && !destinatarioEmail) {
         mostrarErroTela("Informe o e-mail de destino antes de salvar a regra.");
-        document.getElementById("inputDestinatarioEmail").focus();
+        document.querySelector("#inputDestinatarioEmail").focus();
         return;
     }
 
     const payload = {
-        limite_integridade: Number(document.getElementById("sliderLimite").value),
+        limite_integridade: Number(document.querySelector("#sliderLimite").value),
         email_ativo: emailAtivo,
         destinatario_email: destinatarioEmail,
-        slack_ativo: document.getElementById("checkSlack").checked ? 1 : 0
+        slack_ativo: document.querySelector("#checkSlack").checked ? 1 : 0
     };
 
     fetch("/analise-lotes/" + idLote + "/configuracao", {
@@ -282,7 +310,7 @@ function salvarRegraAlerta(idLote) {
                     throw new Error(erroJson.erro || "Falha ao salvar configuração.");
                 });
             }
-            const btn = document.getElementById("btnSalvarConfig");
+            const btn = document.querySelector("#btnSalvarConfig");
             btn.textContent = "Salvo!";
             setTimeout(function () {
                 btn.textContent = "Salvar regra";
@@ -296,14 +324,11 @@ function salvarRegraAlerta(idLote) {
 
 function formatarDataNotificacao(item) {
     const bruto = item.criado_em || item.dt_notificacao || item.data_hora || item.dt_envio || item.processado_em;
-    if (!bruto) return "";
-    const data = new Date(bruto);
-    if (isNaN(data.getTime())) return String(bruto);
-    return data.toLocaleString("pt-BR");
+    return formatarDataBrasilia(bruto);
 }
 
 function atualizarHistorico(historico) {
-    const lista = document.getElementById("listaHistorico");
+    const lista = document.querySelector("#listaHistorico");
     lista.innerHTML = "";
 
     if (!Array.isArray(historico) || historico.length === 0) {
@@ -324,7 +349,7 @@ function atualizarHistorico(historico) {
 }
 
 function renderizarGraficoOciosidade(equipamentos) {
-    const ctx = document.getElementById("graficoOciosidade").getContext("2d");
+    const ctx = document.querySelector("#graficoOciosidade").getContext("2d");
     const labels = [];
     const valores = [];
     const cores = [];
@@ -364,7 +389,7 @@ function renderizarGraficoOciosidade(equipamentos) {
 }
 
 function renderizarGraficoPerfis(equipamentos) {
-    const ctx = document.getElementById("graficoPerfis").getContext("2d");
+    const ctx = document.querySelector("#graficoPerfis").getContext("2d");
     const pontosConstante = [];
     const pontosPicos = [];
     const pontosSemUso = [];
@@ -396,7 +421,7 @@ function renderizarGraficoPerfis(equipamentos) {
             datasets: [
                 { label: "Uso constante", data: pontosConstante, backgroundColor: "#08b98a", pointRadius: 6 },
                 { label: "Uso em picos", data: pontosPicos, backgroundColor: "#f59e0b", pointRadius: 6 },
-                { label: "Quase sem uso", data: pontosSemUso, backgroundColor: "#9035e8", pointRadius: 6 }
+                { label: "Quase sem uso", data: pontosSemUso, backgroundColor: "#ef4444", pointRadius: 6 }
             ]
         },
         options: {
