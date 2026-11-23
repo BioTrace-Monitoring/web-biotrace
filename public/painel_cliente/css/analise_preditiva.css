@@ -273,3 +273,14 @@
 .tabela-engenharia .estado { white-space: normal; line-height: 1.6; }
 #conteudoDetalhes p { font-size: 13px; line-height: 1.8; margin: 12px 0; }
 .engenharia-dashboard a { color: var(--primary); }
+
+.engenharia-resultados {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+#conteudoDetalhes,
+#recursosUnidade {
+  margin: 12px 0;
+}

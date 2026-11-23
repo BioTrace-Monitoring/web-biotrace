@@ -12,18 +12,7 @@ async function lerArquivoGold(chave) {
                 throw new Error("Caminho inválido da Gold.");
             return JSON.parse(await fs.readFile(arquivo, "utf8"));
         }
-        if (!process.env.S3_BUCKET) {
-            var configuracao = new Error(
-                "Configure S3_BUCKET ou GOLD_LOCAL_DIR para consultar a Gold.",
-            );
-            configuracao.status = 503;
-            throw configuracao;
-        }
-        if (!clienteS3)
-            clienteS3 = new s3.S3Client({
-                region: process.env.AWS_REGION || "us-east-1",
-            });
-        var resposta = await clienteS3.send(
+        var resposta = await obterClienteS3().send(
             new s3.GetObjectCommand({
                 Bucket: process.env.S3_BUCKET,
                 Key: chave,
@@ -40,7 +29,7 @@ async function lerArquivoGold(chave) {
         throw falha;
     }
 }
-async function carregarLeiturasGold(empresa, serie, inicio, fim) {
+function validarSerieGold(serie) {
     if (
         !serie ||
         serie.includes("/") ||
@@ -54,7 +43,10 @@ async function carregarLeiturasGold(empresa, serie, inicio, fim) {
         erro.status = 400;
         throw erro;
     }
-    var prefixo = (process.env.S3_GOLD_PREFIX || "gold/").replace(/\/$/, "");
+}
+async function carregarLeiturasGold(empresa, serie, inicio, fim) {
+    validarSerieGold(serie);
+    var prefixo = prefixoGold();
     var dia = new Date(inicio);
     dia.setUTCHours(0, 0, 0, 0);
     var leituras = [];
@@ -270,4 +262,185 @@ function avaliarGold(protocolo, participantes, inicio, fim) {
         observacoes_automaticas: observacoes.join("\n").slice(0, 15000),
     };
 }
-module.exports = { carregarLeiturasGold, avaliarGold };
+function prefixoGold() {
+    return (process.env.S3_GOLD_PREFIX || "gold/").replace(/\/$/, "");
+}
+
+function obterClienteS3() {
+    if (!process.env.S3_BUCKET) {
+        var erro = new Error("Configure S3_BUCKET ou GOLD_LOCAL_DIR para consultar a Gold.");
+        erro.status = 503;
+        throw erro;
+    }
+    if (!clienteS3) {
+        clienteS3 = new s3.S3Client({ region: process.env.AWS_REGION || "us-east-1" });
+    }
+    return clienteS3;
+}
+
+function erroContrato(mensagem) {
+    var erro = new Error(mensagem);
+    erro.status = 502;
+    return erro;
+}
+
+function datasUTC({ inicio, fim }) {
+    var dia = new Date(inicio);
+    dia.setUTCHours(0, 0, 0, 0);
+    var datas = [];
+    while (dia.getTime() < fim) {
+        datas.push(dia.toISOString().slice(0, 10));
+        dia.setUTCDate(dia.getUTCDate() + 1);
+    }
+    return datas;
+}
+
+async function lerEmLotes(chaves) {
+    var documentos = [];
+    for (var i = 0; i < chaves.length; i += 12) {
+        documentos.push(...await Promise.all(chaves.slice(i, i + 12).map(lerArquivoGold)));
+    }
+    return documentos;
+}
+
+async function carregarHorasTermicasGold(empresa, lote, periodo) {
+    var datas = datasUTC(periodo);
+    var prefixo = prefixoGold() + "/analise_termica/empresa_id=" + empresa + "/lote_id=" + lote + "/";
+    var documentos = await lerEmLotes(datas.map(data => prefixo + "data=" + data + "/metricas.json"));
+    var horas = new Map();
+    documentos.forEach(function (doc, i) {
+        if (doc === null) return;
+        if (doc.schema_version !== 2 || doc.empresa_id !== empresa || doc.lote_id !== lote ||
+            doc.data !== datas[i] || doc.unidade !== "°C" || !Array.isArray(doc.horas)) {
+            throw erroContrato("Identificação ou formato inválido no resumo térmico da Gold.");
+        }
+        for (var hora of doc.horas) {
+            var inicio = Date.parse(hora?.periodo_inicio);
+            if (!Number.isFinite(inicio) || inicio % 3600000 !== 0 ||
+                new Date(inicio).toISOString().slice(0, 10) !== doc.data ||
+                !Number.isSafeInteger(hora.leituras_validas) || hora.leituras_validas < 0) {
+                throw erroContrato("Hora ou contagem inválida no resumo térmico da Gold.");
+            }
+            if (hora.leituras_validas === 0 || inicio < periodo.inicio || inicio >= periodo.fim) continue;
+            var ultima = Date.parse(hora.ultima_leitura);
+            var maximos = hora.maximo_por_equipamento;
+            if (![hora.media, hora.minimo, hora.maximo, hora.soma_desvios_quadraticos, ultima].every(Number.isFinite) ||
+                hora.minimo > hora.media || hora.media > hora.maximo ||
+                hora.soma_desvios_quadraticos < 0 || ultima < inicio || ultima >= inicio + 3600000 ||
+                !maximos || typeof maximos !== "object" || Array.isArray(maximos) || !Object.keys(maximos).length ||
+                !Object.values(maximos).every(Number.isFinite) || horas.has(inicio)) {
+                throw erroContrato("Estatísticas inválidas no resumo térmico da Gold.");
+            }
+            horas.set(inicio, hora);
+        }
+    });
+    return [...horas.entries()].sort(([a], [b]) => a - b).map(([, hora]) => hora);
+}
+
+async function carregarUltimasLeiturasGold(empresa, series) {
+    var prefixo = prefixoGold() + "/atual/empresa_id=" + empresa + "/numero_serie=";
+    var documentos = await lerEmLotes(series.map(function (serie) {
+        validarSerieGold(serie);
+        return prefixo + serie + "/ultima_leitura.json";
+    }));
+    documentos.forEach(function (doc, i) {
+        if (doc !== null && (doc.schema_version !== 2 || doc.empresa_id !== empresa ||
+            doc.numero_serie !== series[i] || !doc.metricas || !Number.isFinite(Date.parse(doc.timestamp)))) {
+            throw erroContrato("Última leitura incompatível com o equipamento da Gold.");
+        }
+    });
+    return documentos;
+}
+
+async function lerDiretorioGold(prefixo) {
+    try {
+        return await fs.readdir(path.join(process.env.GOLD_LOCAL_DIR, prefixo), { withFileTypes: true });
+    } catch (erro) {
+        if (erro.code === "ENOENT") return [];
+        throw erro;
+    }
+}
+
+async function listarHistoricoGold(prefixo, datas) {
+    var padrao = /^data=\d{4}-\d{2}-\d{2}(\/hora=(?:[01]\d|2[0-3]))?\/leituras\.json$/;
+    var chaves = [];
+    try {
+        if (process.env.GOLD_LOCAL_DIR) {
+            for (var data of datas) {
+                var particao = prefixo + "data=" + data + "/";
+                var itens = await lerDiretorioGold(particao);
+                for (var item of itens) {
+                    if (item.isFile() && item.name === "leituras.json") chaves.push(particao + item.name);
+                    if (item.isDirectory() && /^hora=(?:[01]\d|2[0-3])$/.test(item.name)) {
+                        var hora = particao + item.name + "/";
+                        if ((await lerDiretorioGold(hora)).some(a => a.isFile() && a.name === "leituras.json")) {
+                            chaves.push(hora + "leituras.json");
+                        }
+                    }
+                }
+            }
+        } else {
+            var paginas = s3.paginateListObjectsV2({ client: obterClienteS3() }, {
+                Bucket: process.env.S3_BUCKET, Prefix: prefixo, StartAfter: prefixo + "data=" + datas[0] + "/",
+            });
+            var ultimaData = datas[datas.length - 1];
+            for await (var pagina of paginas) {
+                for (var { Key } of pagina.Contents || []) {
+                    var caminho = Key.slice(prefixo.length);
+                    if (!padrao.test(caminho)) continue;
+                    if (caminho.slice(5, 15) > ultimaData) return chaves;
+                    chaves.push(Key);
+                }
+            }
+        }
+    } catch (erro) {
+        if (erro.status) throw erro;
+        throw erroContrato("Não foi possível listar o histórico na Gold. Confira a configuração e as permissões de acesso.");
+    }
+    return chaves;
+}
+
+async function carregarHistoricoOperacaoGold(empresa, serie, periodo) {
+    validarSerieGold(serie);
+    var prefixo = prefixoGold() + "/historico/empresa_id=" + empresa + "/numero_serie=" + serie + "/";
+    var datas = datasUTC(periodo);
+    if (!datas.length) return [];
+    var chaves = await listarHistoricoGold(prefixo, datas);
+    var documentos = await lerEmLotes(chaves);
+    var leituras = new Map();
+    // Quando as versões coexistirem, o arquivo horário é a fonte dessa hora.
+    var horasPublicadas = new Set(chaves.filter((chave, i) => documentos[i] !== null && chave.includes("/hora="))
+        .map(chave => chave.slice(prefixo.length).slice(0, 23)));
+
+    documentos.forEach(function (doc, i) {
+        if (doc === null) return;
+        var caminho = chaves[i].slice(prefixo.length);
+        var data = caminho.slice(5, 15);
+        var hora = caminho.includes("/hora=") ? caminho.slice(21, 23) : null;
+        if (doc.schema_version !== 2 || doc.empresa_id !== empresa || doc.numero_serie !== serie ||
+            !Array.isArray(doc.leituras)) {
+            throw erroContrato("Identificação ou formato inválido no histórico da Gold.");
+        }
+        for (var leitura of doc.leituras) {
+            var instante = Date.parse(leitura?.timestamp);
+            if (!Number.isFinite(instante) || leitura.empresa_id !== empresa ||
+                leitura.numero_serie !== serie || !leitura.metricas) {
+                throw erroContrato("Leitura inválida no histórico da Gold.");
+            }
+            var utc = new Date(instante).toISOString();
+            var particao = "data=" + utc.slice(0, 10) + "/hora=" + utc.slice(11, 13);
+            if (utc.slice(0, 10) !== data || (hora !== null && hora !== utc.slice(11, 13))) {
+                throw erroContrato("Leitura fora da partição UTC no histórico da Gold.");
+            }
+            if (instante < periodo.inicio || instante >= periodo.fim ||
+                (hora === null && horasPublicadas.has(particao))) continue;
+            leituras.set(instante, leitura);
+        }
+    });
+    return [...leituras.entries()].sort(([a], [b]) => a - b).map(([, leitura]) => leitura);
+}
+
+module.exports = {
+    carregarLeiturasGold, avaliarGold, carregarHorasTermicasGold,
+    carregarUltimasLeiturasGold, carregarHistoricoOperacaoGold,
+};

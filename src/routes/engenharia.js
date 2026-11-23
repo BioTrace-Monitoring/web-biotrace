@@ -17,7 +17,10 @@ router.use(function (req, res, next) {
     }
     next();
 });
+
 router.get("/catalogos", controller.listarCatalogos);
+router.get("/analise-termica", controller.consultarAnaliseTermica);
+router.get("/analise-termica/equipamentos/:id", controller.consultarEquipamentoTermico);
 router.get("/protocolos", controller.listarProtocolos);
 router.get("/protocolos/:id", controller.buscarProtocolo);
 router.post("/protocolos", controller.cadastrarProtocolo);

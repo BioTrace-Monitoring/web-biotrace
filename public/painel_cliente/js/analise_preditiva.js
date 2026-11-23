@@ -1,346 +1,384 @@
-// Dados fictícios. Esta tela não consulta o backend nem o S3.
-var referencia = new Date('2026-11-11T12:00:00-03:00').getTime();
-var horaEmMs = 3600000;
-var formatoData = new Intl.DateTimeFormat('pt-BR', {
-    timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+const HORA_MS = 3600000;
+const CORES = ['#ba4055', '#147c74', '#7654ab', '#986307', '#27689c'];
+const dataBR = new Intl.DateTimeFormat('pt-BR', {
+    timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit',
+    hour: '2-digit', minute: '2-digit'
 });
-var lotes = [
-    { id: 'LT-001', modelo: 'ECG-12', unidades: 4, semColeta: 0, temperaturaAtual: 83.7, tendencia: 0.04, oscilacao: 0.25, cor: '#ba4055' },
-    { id: 'LT-002', modelo: 'ECG-12', unidades: 4, semColeta: 0, temperaturaAtual: 57, tendencia: 0.006, oscilacao: 0.5, cor: '#147c74' },
-    { id: 'LT-003', modelo: 'BPAP', unidades: 4, semColeta: 1, temperaturaAtual: 65, tendencia: 0, oscilacao: 4, cor: '#7654ab' }
-];
-var leituras = criarLeituras();
-var resultados = [];
-var graficos = {};
+const graficos = {};
+let catalogo, analise, consultaLotes, consultaUnidade;
 
-function criarLeituras() {
-    var dados = [];
-    var oscilacoes = [0, 1, -1, 2, -2, 1, 0];
-    lotes.forEach(function (lote) {
-        for (var horasAtras = 30 * 24; horasAtras >= 0; horasAtras -= 4) {
-            var ponto = (horasAtras / 4) % oscilacoes.length;
-            for (var unidade = 0; unidade < lote.unidades; unidade++) {
-                if (horasAtras <= 24 && unidade >= lote.unidades - lote.semColeta) continue;
-                var picoLocal = lote.id === 'LT-001' && horasAtras === 0 && unidade === 3 ? 3 : 0;
-                dados.push({
-                    lote: lote.id,
-                    serie: lote.id + '-' + (unidade + 1),
-                    instante: referencia - horasAtras * horaEmMs,
-                    temperatura: lote.temperaturaAtual - lote.tendencia * horasAtras +
-                        oscilacoes[ponto] * lote.oscilacao + unidade * 0.2 + picoLocal,
-                    cpu: 40 + ponto * 5 + unidade,
-                    ram: 48 + ponto * (lote.id === 'LT-001' ? 7 : 3) + unidade,
-                    discoLivre: 42 - ponto - unidade,
-                    novosErrosRede: lote.id === 'LT-001' && ponto === 4 && unidade === 3 ? 2 : 0
-                });
-            }
-        }
-    });
-    return dados;
+function el(id) {
+    return document.getElementById(id);
 }
-// O eixo usa horas relativas para manter a inclinação da regressão em °C/h.
-function dataNoEixo(horas) {
-    return formatoData.format(referencia + horas * horaEmMs);
-}
-function eixoColetas() {
-    return {
-        type: 'linear',
-        title: { display: true, text: 'Data e hora da coleta (Brasília)' },
-        ticks: { callback: dataNoEixo, maxTicksLimit: 7 }
-    };
-}
-function numero(valor, casas) {
+
+function numero(valor, casas = 1) {
+    if (!Number.isFinite(valor)) return '—';
     return valor.toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas });
 }
-function media(valores) {
-    return valores.reduce(function (soma, valor) { return soma + valor; }, 0) / valores.length;
+
+function percentual(valor) {
+    return Number.isFinite(valor) ? numero(valor) + '%' : '—';
 }
-function desvioPadrao(valores) {
-    var centro = media(valores);
-    return Math.sqrt(media(valores.map(function (v) { return Math.pow(v - centro, 2); })));
+
+function dataCurta(instante) {
+    return instante ? dataBR.format(new Date(instante)) : '—';
 }
-function regressao(pontos) {
-    if (pontos.length < 4) return null;
-    var mx = media(pontos.map(function (p) { return p.x; }));
-    var my = media(pontos.map(function (p) { return p.y; }));
-    var xx = 0, yy = 0, xy = 0;
-    pontos.forEach(function (p) {
-        xx += Math.pow(p.x - mx, 2);
-        yy += Math.pow(p.y - my, 2);
-        xy += (p.x - mx) * (p.y - my);
+
+async function consultar(caminho, signal) {
+    const resposta = await fetch('/engenharia/' + caminho, {
+        headers: { Authorization: 'Bearer ' + localStorage.getItem('token') },
+        signal
     });
-    if (xx === 0 || yy === 0) return null;
-    var a = xy / xx;
-    return { a: a, b: my - a * mx, r2: Math.min(1, xy * xy / (xx * yy)) };
+    const dados = await resposta.json();
+    if (!resposta.ok) throw new Error(dados.mensagem || dados.erro || 'Falha ao consultar a API.');
+    return dados;
 }
-function analisar(lote, dias) {
-    var dados = leituras.filter(function (l) {
-        return l.lote === lote.id && l.instante >= referencia - dias * 86400000 && l.instante <= referencia;
-    });
-    var seriesRecentes = new Set(dados.filter(function (l) {
-        return l.instante >= referencia - 24 * 3600000;
-    }).map(function (l) { return l.serie; }));
-    var unidades = [];
-    for (var i = 1; i <= lote.unidades; i++) {
-        var serie = lote.id + '-' + i;
-        var dadosUnidade = dados.filter(function (l) { return l.serie === serie; });
-        unidades.push({
-            serie: serie,
-            dados: dadosUnidade,
-            recente: seriesRecentes.has(serie),
-            acimaLimite: dadosUnidade.some(function (l) { return l.temperatura >= 85; })
-        });
+
+function preencherLotes() {
+    const modelo = el('filtroProjeto').value;
+    el('filtroLote').replaceChildren(new Option('Todos os lotes', ''));
+    catalogo.lotes.filter(lote => !modelo || String(lote.fk_modelo_equipamento) === modelo)
+        .forEach(lote => el('filtroLote').add(new Option(lote.numero_lote, lote.id_lote_equipamento)));
+}
+
+async function atualizar() {
+    consultaLotes?.abort();
+    const consulta = new AbortController();
+    consultaLotes = consulta;
+    el('resultadosAnalise').hidden = true;
+    el('tentarNovamente').hidden = true;
+    el('escopo').textContent = 'Carregando a análise térmica…';
+    try {
+        if (!catalogo) {
+            catalogo = await consultar('catalogos', consulta.signal);
+            catalogo.modelos.forEach(modelo => {
+                el('filtroProjeto').add(new Option(modelo.nome_modelo, modelo.id_modelo_equipamento));
+            });
+            preencherLotes();
+        }
+        const modelo = el('filtroProjeto').value;
+        const lote = el('filtroLote').value;
+        const query = new URLSearchParams({ dias: el('filtroJanela').value });
+        if (lote) query.set('lote', lote);
+        const resposta = await consultar('analise-termica?' + query, consulta.signal);
+        if (consulta.signal.aborted) return;
+        analise = resposta;
+        analise.lotes = resposta.lotes.filter(item => !modelo || String(item.fk_modelo_equipamento) === modelo);
+        mostrarAnalise();
+    } catch (erro) {
+        if (consulta.signal.aborted) return;
+        el('escopo').textContent = 'Não foi possível carregar a análise. ' + erro.message;
+        el('tentarNovamente').hidden = false;
     }
-    // Limite atingido primeiro, depois unidades sem coleta recente.
-    unidades.sort(function (a, b) {
-        return Number(b.acimaLimite) - Number(a.acimaLimite) || Number(a.recente) - Number(b.recente);
-    });
-    var temperaturasPorHora = new Map();
-    dados.forEach(function (leitura) {
-        var hora = Math.floor(leitura.instante / horaEmMs) * horaEmMs;
-        if (!temperaturasPorHora.has(hora)) temperaturasPorHora.set(hora, []);
-        temperaturasPorHora.get(hora).push(leitura.temperatura);
-    });
-    var pontos = Array.from(temperaturasPorHora, function (entrada) {
-        var temperaturas = entrada[1];
-        return {
-            x: (entrada[0] - referencia) / horaEmMs,
-            y: media(temperaturas),
-            minimo: Math.min.apply(null, temperaturas),
-            maximo: Math.max.apply(null, temperaturas)
-        };
-    }).sort(function (a, b) { return a.x - b.x; });
-    var valores = dados.map(function (l) { return l.temperatura; });
-    var ajuste = regressao(pontos);
-    var elegivel = ajuste !== null && ajuste.r2 >= 0.7 && seriesRecentes.size === lote.unidades;
-    var fim = pontos.length ? pontos[pontos.length - 1].x : 0;
-    var horasAteLimite = null;
-    if (elegivel && ajuste.a > 0) {
-        var horas = (85 - ajuste.b) / ajuste.a - fim;
-        if (horas > 0 && horas <= 24) horasAteLimite = horas;
-    }
-    return { lote: lote, dados: dados, unidades: unidades, pontos: pontos, ajuste: ajuste, elegivel: elegivel,
-        recentes: seriesRecentes.size, media: valores.length ? media(valores) : null,
-        pico: valores.length ? Math.max.apply(null, valores) : null,
-        desvio: valores.length ? desvioPadrao(valores) : null, fim: fim, horas: horasAteLimite };
 }
-function textoProjecao(r) {
-    if (!r.elegivel) return 'Indisponível: coleta ou ajuste insuficiente';
-    if (r.ajuste.b + r.ajuste.a * r.fim >= 85) return 'Média ajustada já no limite';
-    if (r.horas !== null) return '≈ ' + numero(r.horas, 1) + ' h após o último ponto observado · ' + dataNoEixo(r.fim + r.horas);
-    return 'Sem cruzamento estimado nas 24 h após o último ponto';
+
+function textoProjecao(projecao) {
+    const mensagens = {
+        sem_dados: 'Sem dados térmicos',
+        sem_limite: 'Nenhum limite térmico ativo',
+        limites_diferentes: 'Limites diferentes entre as unidades',
+        series_divergentes: 'Histórico inclui séries fora da análise atual',
+        cobertura_insuficiente: 'Coleta térmica recente insuficiente',
+        ajuste_insuficiente: 'Ajuste insuficiente para projetar',
+        no_limite: 'Média ajustada no limite ou acima',
+        sem_cruzamento: 'Sem cruzamento estimado em 24 h',
+        cruzamento: 'Cruzamento estimado em ' + dataCurta(projecao.cruzamento_em)
+    };
+    return mensagens[projecao.estado];
 }
-function acao(r) {
-    if (r.pico >= 85) return 'Investigar unidade acima do limite';
-    if (r.recentes < r.lote.unidades) return 'Restabelecer coleta das unidades ausentes';
-    if (!r.elegivel) return 'Investigar a variação das leituras';
-    if (r.horas !== null) return 'Verificar a dissipação térmica';
+
+function acao(lote) {
+    if (lote.cobertura.unidades_no_limite) return 'Investigar unidades no limite';
+    if (lote.projecao.estado === 'cruzamento' || lote.projecao.estado === 'no_limite') return 'Verificar a dissipação térmica';
+    if (lote.cobertura.unidades_com_coleta_recente < lote.cobertura.unidades_cadastradas) return 'Verificar unidades sem coleta recente';
+    if (lote.estatisticas.series_fora_da_analise.length) return 'Conferir as séries do lote';
+    if (!lote.horas.length) return 'Aguardar leituras de temperatura';
     return 'Acompanhar a tendência térmica';
 }
-function atualizarLotes() {
-    var modelo = document.getElementById('filtroProjeto').value;
-    document.getElementById('filtroLote').innerHTML = '<option value="todos">Todos os lotes</option>';
-    lotes.forEach(function (lote) {
-        if (modelo === 'todos' || lote.modelo === modelo) {
-            document.getElementById('filtroLote').add(new Option(lote.id, lote.id));
+
+function mostrarAnalise() {
+    const { lotes, periodo, referencia_em } = analise;
+    const comHistorico = lotes.filter(lote => lote.horas.length);
+    const projetados = lotes.filter(lote => lote.projecao.a_partir_de);
+    const cruzamentos = projetados.filter(lote => lote.projecao.estado === 'cruzamento');
+    const soma = campo => lotes.reduce((total, lote) => total + lote.cobertura[campo], 0);
+    const cadastradas = soma('unidades_cadastradas');
+    const recentes = soma('unidades_com_coleta_recente');
+    const avaliadas = soma('unidades_avaliadas_no_periodo');
+    const ultima = Math.max(...comHistorico.map(lote => Date.parse(lote.estatisticas.ultima_leitura_termica_em)));
+    const intervalo = dataCurta(periodo.inicio) + ' a ' + dataCurta(periodo.fim_exclusivo) + ' (Brasília)';
+    el('escopo').textContent = !comHistorico.length
+        ? 'Sem leituras térmicas para os filtros selecionados · ' + intervalo
+        : intervalo + ' · ' + lotes.length + ' lote(s) · Última leitura térmica: ' + dataCurta(ultima);
+    el('kpiRisco').textContent = projetados.length ? cruzamentos.length + ' / ' + projetados.length : '—';
+    el('detalheRisco').textContent = projetados.length ? 'Entre os lotes com projeção disponível.' : 'Nenhum lote apto para projeção no período.';
+    el('kpiLimite').textContent = avaliadas ? soma('unidades_no_limite') + ' / ' + avaliadas : '—';
+    el('kpiAjuste').textContent = comHistorico.length
+        ? comHistorico.filter(lote => lote.regressao?.r2 >= 0.7).length + ' / ' + comHistorico.length
+        : '—';
+    el('kpiCobertura').textContent = cadastradas ? numero(100 * recentes / cadastradas, 0) + '%' : '—';
+    el('detalheCobertura').textContent = cadastradas
+        ? recentes + ' de ' + cadastradas + ' unidades nas 24 h anteriores a ' + dataCurta(referencia_em) + '.'
+        : 'Nenhuma unidade cadastrada nos lotes selecionados.';
+
+    const prioridade = lotes.find(lote => lote.cobertura.unidades_no_limite) || cruzamentos[0] || comHistorico[0] || lotes[0];
+    el('tituloPrioridade').textContent = prioridade ? prioridade.numero_lote + ' · ' + acao(prioridade) : 'Nenhum lote nos filtros selecionados';
+    el('acaoPrioridade').textContent = prioridade ? textoProjecao(prioridade.projecao) + '.' : '';
+    el('exportarResumo').disabled = !lotes.length;
+    el('resultadosAnalise').hidden = false;
+    atualizarTabela(lotes);
+    atualizarGraficos(lotes);
+}
+
+function atualizarTabela(lotes) {
+    const tabela = el('tabelaResultados');
+    tabela.replaceChildren();
+    for (const lote of lotes) {
+        const linha = tabela.insertRow();
+        const dados = lote.estatisticas;
+        const cobertura = lote.cobertura;
+        const modelo = linha.insertCell();
+        const nomeLote = document.createElement('strong');
+        nomeLote.textContent = lote.numero_lote;
+        const detalhe = document.createElement('small');
+        detalhe.textContent = (lote.nome_modelo || 'Modelo não informado') + ' · ' + numero(dados.leituras_validas, 0) + ' leituras';
+        modelo.append(nomeLote, detalhe);
+        if (dados.series_fora_da_analise.length) {
+            const aviso = document.createElement('small');
+            aviso.textContent = 'Inclui séries fora da análise atual';
+            modelo.append(aviso);
         }
-    });
+        for (const valor of [
+            numero(dados.media_c) + ' / ' + numero(dados.maximo_c),
+            numero(dados.desvio_padrao_c, 2),
+            numero(lote.regressao?.tendencia_c_por_hora, 2),
+            numero(lote.regressao?.r2, 2),
+            cobertura.unidades_com_coleta_recente + ' / ' + cobertura.unidades_cadastradas,
+            textoProjecao(lote.projecao)
+        ]) linha.insertCell().textContent = valor;
+        const ultima = linha.insertCell();
+        ultima.textContent = acao(lote);
+        if (!lote.unidades.length) continue;
+        const botao = document.createElement('button');
+        botao.type = 'button';
+        botao.className = 'botao secundario detalhes';
+        botao.textContent = 'Investigar equipamentos';
+        botao.onclick = () => abrirDetalhes(lote);
+        ultima.append(botao);
+    }
+    if (!lotes.length) {
+        const celula = tabela.insertRow().insertCell();
+        celula.colSpan = 8;
+        celula.textContent = 'Nenhum lote encontrado no cadastro para estes filtros.';
+    }
 }
-function atualizar() {
-    var modelo = document.getElementById('filtroProjeto').value;
-    var loteId = document.getElementById('filtroLote').value;
-    var dias = Number(document.getElementById('filtroJanela').value);
-    resultados = lotes.filter(function (lote) {
-        return (modelo === 'todos' || lote.modelo === modelo) && (loteId === 'todos' || lote.id === loteId);
-    }).map(function (lote) { return analisar(lote, dias); });
-    var inicio = new Date(referencia - dias * 86400000).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
-    document.getElementById('escopo').textContent = 'Histórico de operação simulado · ' + inicio + ' a 11/11/2026, 12h (Brasília) · ' + resultados.length + ' lote(s).';
-    var riscos = resultados.filter(function (r) { return r.horas !== null; });
-    document.getElementById('kpiRisco').textContent = riscos.length + ' / ' + resultados.length;
-    document.getElementById('detalheRisco').textContent = 'Lotes com cruzamento futuro elegível. Horizonte de 24 h a partir do último ponto observado de cada lote.';
-    var unidadesFiltradas = resultados.flatMap(function (r) { return r.unidades; });
-    var comDados = unidadesFiltradas.filter(function (u) { return u.dados.length > 0; });
-    var acimaLimite = comDados.filter(function (u) { return u.acimaLimite; });
-    document.getElementById('kpiLimite').textContent = comDados.length ? acimaLimite.length + ' / ' + comDados.length : '—';
-    document.getElementById('kpiAjuste').textContent = resultados.filter(function (r) { return r.elegivel; }).length + ' / ' + resultados.length;
-    var recentes = 0, unidades = 0;
-    resultados.forEach(function (r) { recentes += r.recentes; unidades += r.lote.unidades; });
-    document.getElementById('kpiCobertura').textContent = unidades ? numero(recentes / unidades * 100, 0) + '%' : '—';
-    document.getElementById('detalheCobertura').textContent = recentes + ' de ' + unidades + ' unidades com leitura nas últimas 24 h; referência fixa da demonstração.';
-    var prioridade = resultados.find(function (r) { return r.pico >= 85; }) || riscos[0] || resultados.find(function (r) { return !r.elegivel; }) || resultados[0];
-    document.getElementById('tituloPrioridade').textContent = prioridade ? prioridade.lote.id + ' · ' + acao(prioridade) : 'Nenhum lote no filtro';
-    document.getElementById('acaoPrioridade').textContent = prioridade ? 'Pico de ' + numero(prioridade.pico, 1) + ' °C frente ao limite de 85 °C. ' + textoProjecao(prioridade) + '. Consulte as evidências técnicas antes de decidir.' : 'Selecione outro modelo ou lote.';
-    atualizarTabela();
-    atualizarGraficos();
+
+function desenhar(id, erroId, config) {
+    if (graficos[id]) {
+        graficos[id].destroy();
+        delete graficos[id];
+    }
+    const temDados = Boolean(config);
+    const disponivel = temDados && typeof Chart !== 'undefined';
+    el(id).hidden = !disponivel;
+    el(erroId).hidden = disponivel;
+    el(erroId).textContent = temDados ? 'Gráfico indisponível. Consulte o resumo textual.' : 'Sem temperaturas neste período.';
+    if (disponivel) graficos[id] = new Chart(el(id), config);
 }
-function atualizarTabela() {
-    document.getElementById('tabelaResultados').innerHTML = resultados.map(function (r) {
-        return '<tr><td><strong>' + r.lote.modelo + '</strong><small>' + r.lote.id + ' · ' + r.dados.length + ' leituras</small></td>' +
-            '<td>' + (r.media === null ? '—' : numero(r.media, 1) + ' / ' + numero(r.pico, 1)) + '</td>' +
-            '<td>' + (r.desvio === null ? '—' : numero(r.desvio, 2)) + '</td>' +
-            '<td>' + (r.ajuste ? numero(r.ajuste.a, 2) : '—') + '</td>' +
-            '<td>' + (r.ajuste ? numero(r.ajuste.r2, 2) : '—') + '</td>' +
-            '<td>' + r.recentes + ' / ' + r.lote.unidades + '</td><td>' + textoProjecao(r) + '</td>' +
-            '<td><span class="estado ' + (r.pico >= 85 || r.horas !== null ? 'falha' : r.elegivel ? 'ok' : 'pendente') + '">' + acao(r) + '</span>' +
-            '<button class="botao secundario detalhes" data-lote="' + r.lote.id + '" type="button">Investigar equipamentos</button></td></tr>';
-    }).join('') || '<tr><td colspan="8">Nenhuma leitura para os filtros selecionados.</td></tr>';
-    document.querySelectorAll('[data-lote]').forEach(function (botao) {
-        botao.onclick = function () { abrirDetalhes(botao.dataset.lote); };
-    });
-}
-function desenhar(id, erro, configuracao) {
-    if (graficos[id]) graficos[id].destroy();
-    var disponivel = typeof Chart !== 'undefined' && resultados.some(function (r) { return r.dados.length; });
-    document.getElementById(id).hidden = !disponivel;
-    document.getElementById(erro).hidden = disponivel;
-    document.getElementById(erro).textContent = 'Gráfico indisponível. Consulte os mesmos resultados na tabela.';
-    if (disponivel) graficos[id] = new Chart(document.getElementById(id), configuracao);
-}
-function atualizarGraficos() {
-    var series = [];
-    var inicio = 0;
-    var fim = -Infinity;
-    resultados.forEach(function (r) {
-        if (!r.pontos.length) return;
-        var primeiro = r.pontos[0].x;
-        inicio = Math.min(inicio, primeiro);
-        fim = Math.max(fim, r.fim + (r.elegivel ? 24 : 0));
-        series.push({ label: r.lote.id + ' · médias', data: r.pontos, backgroundColor: r.lote.cor, borderColor: r.lote.cor, pointRadius: 2 });
-        if (document.getElementById('filtroLote').value !== 'todos') {
-            ['minimo', 'maximo'].forEach(function (campo) {
-                series.push({
-                    label: campo === 'minimo' ? 'Mínimo observado' : 'Máximo observado',
-                    data: r.pontos.map(function (p) { return { x: p.x, y: p[campo] }; }),
-                    borderColor: '#746787',
-                    backgroundColor: '#746787',
-                    borderDash: [3, 3],
-                    showLine: true,
-                    pointRadius: 2
-                });
-            });
-        }
-        if (!r.ajuste) return;
-        series.push({ label: r.lote.id + ' · ajuste', data: [{ x: primeiro, y: r.ajuste.b + r.ajuste.a * primeiro }, { x: r.fim, y: r.ajuste.b + r.ajuste.a * r.fim }], borderColor: r.lote.cor, showLine: true, pointRadius: 0 });
-        if (r.elegivel) series.push({ label: r.lote.id + ' · projeção', data: [{ x: r.fim, y: r.ajuste.b + r.ajuste.a * r.fim }, { x: r.fim + 24, y: r.ajuste.b + r.ajuste.a * (r.fim + 24) }], borderColor: r.lote.cor, borderDash: [6, 5], showLine: true, pointRadius: 0 });
-    });
-    if (series.length) series.push({ label: 'Limite térmico · 85 °C', data: [{ x: inicio, y: 85 }, { x: fim, y: 85 }], borderColor: '#666666', borderDash: [2, 4], showLine: true, pointRadius: 0 });
-    desenhar('graficoTendencia', 'erroTendencia', { type: 'scatter', data: { datasets: series }, options: {
+
+function graficoTemperatura(series) {
+    return { type: 'scatter', data: { datasets: series }, options: {
         responsive: true, maintainAspectRatio: false, animation: false,
         plugins: {
-            legend: { labels: { boxWidth: 9, font: { size: 10 } } },
-            tooltip: { callbacks: { title: function (itens) { return dataNoEixo(itens[0].parsed.x); } } }
+            legend: { labels: { boxWidth: 10 } },
+            tooltip: { callbacks: { title: itens => dataCurta(itens[0].parsed.x) } }
         },
-        scales: { x: eixoColetas(), y: { title: { display: true, text: 'Temperatura média da CPU (°C)' } } }
-    } });
-    desenhar('graficoDispersao', 'erroDispersao', { type: 'bar', data: {
-        labels: resultados.map(function (r) { return r.lote.id; }),
-        datasets: [{ label: 'Desvio padrão (°C)', data: resultados.map(function (r) { return r.desvio; }), backgroundColor: resultados.map(function (r) { return r.lote.cor; }) }]
-    }, options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales: { x: { title: { display: true, text: 'Lote' } }, y: { beginAtZero: true, title: { display: true, text: 'Desvio padrão (°C)' } } } } });
+        scales: {
+            x: { type: 'linear', title: { display: true, text: 'Horário de Brasília' }, ticks: { callback: dataCurta, maxTicksLimit: 7 } },
+            y: { title: { display: true, text: 'Temperatura da CPU (°C)' } }
+        }
+    }};
 }
-function abrirDetalhes(id) {
-    var r = resultados.find(function (item) { return item.lote.id === id; });
-    var recursos = r.dados.filter(function (l) { return l.cpu >= 95 || l.ram >= 90 || l.discoLivre < 20; }).length;
-    var rede = r.dados.reduce(function (total, l) { return total + l.novosErrosRede; }, 0);
-    document.getElementById('tituloDetalhes').textContent = r.lote.id + ' · Evidências simuladas';
-    document.getElementById('conteudoDetalhes').innerHTML = '<p>' + r.dados.length + ' leituras no período selecionado. ' + r.recentes + ' de ' + r.lote.unidades + ' unidades com coleta nas últimas 24 h.</p>' +
-        '<h3>Comportamento térmico</h3><p>Média ' + numero(r.media, 1) + ' °C · pico ' + numero(r.pico, 1) + ' °C · limite 85 °C. ' + textoProjecao(r) + '.</p>' +
-        '<h3>Recursos e estabilidade</h3><p>' + recursos + ' leituras ultrapassam os critérios de CPU ≥ 95%, RAM ≥ 90% ou disco livre &lt; 20%. ' + rede + ' novos erros de rede simulados no período.</p>' +
-        '<h3>Próxima verificação</h3><p>' + acao(r) + '. Confira as unidades individualmente e compare períodos com condições de operação semelhantes. A tendência do lote pode ocultar diferenças entre unidades.</p>';
-    var seletor = document.getElementById('filtroUnidade');
-    seletor.replaceChildren();
-    r.unidades.forEach(function (unidade) {
-        var texto = unidade.serie;
-        if (unidade.acimaLimite) texto += ' · limite atingido';
-        if (!unidade.recente) texto += ' · sem coleta recente';
-        seletor.add(new Option(texto, unidade.serie));
-    });
-    seletor.onchange = function () {
-        mostrarUnidade(r.unidades.find(function (u) { return u.serie === seletor.value; }));
-    };
-    document.getElementById('detalhesLote').showModal();
-    seletor.onchange();
+
+function linha(label, cor, dados, tracejado = []) {
+    return { label, data: dados, borderColor: cor, backgroundColor: cor, pointRadius: 0, showLine: true, borderDash: tracejado };
 }
-function mostrarUnidade(unidade) {
-    var resumo = document.getElementById('resumoUnidade');
-    var areaGrafico = document.getElementById('areaGraficoUnidade');
-    var erro = document.getElementById('erroUnidade');
-    if (graficos.graficoUnidade) {
-        graficos.graficoUnidade.destroy();
-        delete graficos.graficoUnidade;
-    }
-    areaGrafico.hidden = true;
-    erro.hidden = true;
-    if (!unidade.dados.length) {
-        resumo.textContent = 'Sem leituras para este equipamento no período selecionado.';
-        return;
-    }
 
-    var pontos = unidade.dados.map(function (l) {
-        return { x: (l.instante - referencia) / horaEmMs, y: l.temperatura };
-    }).sort(function (a, b) { return a.x - b.x; });
-    var primeiro = pontos[0].x;
-    var ultimo = pontos[pontos.length - 1].x;
-    var ajuste = regressao(pontos);
-    var pico = Math.max.apply(null, pontos.map(function (p) { return p.y; }));
-    resumo.textContent = pontos.length + ' leituras de ' + dataNoEixo(primeiro) + ' a ' + dataNoEixo(ultimo) + ' (Brasília) · ' +
-        'Pico de ' + numero(pico, 1) + ' °C · limite de 85 °C. ' +
-        (ajuste ? 'Tendência de ' + numero(ajuste.a, 2) + ' °C/h · R² ' + numero(ajuste.r2, 2) + '.' : 'Dados insuficientes para ajustar uma reta.') +
-        (unidade.recente ? '' : ' Sem coleta nas últimas 24 h.');
-    if (typeof Chart === 'undefined') {
-        erro.hidden = false;
-        erro.textContent = 'Gráfico indisponível. O resumo das leituras está acima.';
-        return;
-    }
+function reta(ajuste, inicio, fim) {
+    const origem = Date.parse(ajuste.origem_em);
+    return [inicio, fim].map(x => ({
+        x, y: ajuste.temperatura_na_origem_c + ajuste.tendencia_c_por_hora * (x - origem) / HORA_MS
+    }));
+}
 
-    var series = [
-        { label: 'Temperatura simulada', data: pontos, borderColor: '#7654ab', backgroundColor: '#7654ab', pointRadius: 2 },
-        { label: 'Limite de 85 °C', data: [{ x: primeiro, y: 85 }, { x: ultimo, y: 85 }], borderColor: '#61616a', borderDash: [3, 4], pointRadius: 0, showLine: true }
-    ];
-    if (ajuste) {
-        series.push({
-            label: 'Regressão linear',
-            data: [{ x: primeiro, y: ajuste.b + ajuste.a * primeiro }, { x: ultimo, y: ajuste.b + ajuste.a * ultimo }],
-            borderColor: '#147c74',
-            borderDash: [6, 4],
-            pointRadius: 0,
-            showLine: true
-        });
-    }
-    areaGrafico.hidden = false;
-    graficos.graficoUnidade = new Chart(document.getElementById('graficoUnidade'), {
-        type: 'scatter',
-        data: { datasets: series },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: false,
-            plugins: { tooltip: { callbacks: { title: function (itens) { return dataNoEixo(itens[0].parsed.x); } } } },
-            scales: {
-                x: eixoColetas(),
-                y: { title: { display: true, text: 'Temperatura da CPU (°C)' } }
-            }
+function atualizarGraficos(lotes) {
+    const series = [];
+    let inicio = Infinity, fim = -Infinity;
+    lotes.forEach((lote, i) => {
+        const pontos = lote.horas.map(hora => ({ x: Date.parse(hora.periodo_inicio), y: hora.media }));
+        if (!pontos.length) return;
+        const cor = CORES[i % CORES.length];
+        const primeiro = pontos[0].x;
+        const ultimo = pontos.at(-1).x;
+        inicio = Math.min(inicio, primeiro);
+        fim = Math.max(fim, ultimo);
+        series.push({ label: lote.numero_lote + ' · médias', data: pontos, backgroundColor: cor, pointRadius: 2 });
+        if (el('filtroLote').value) {
+            series.push(linha('Mínimo observado', '#3783a3', lote.horas.map(h => ({ x: Date.parse(h.periodo_inicio), y: h.minimo })), [2, 3]));
+            series.push(linha('Máximo observado', '#b36516', lote.horas.map(h => ({ x: Date.parse(h.periodo_inicio), y: h.maximo })), [2, 3]));
+        }
+        if (!lote.regressao) return;
+        series.push(linha(lote.numero_lote + ' · ajuste', cor, reta(lote.regressao, primeiro, ultimo)));
+        if (lote.projecao.a_partir_de) {
+            const base = Date.parse(lote.projecao.a_partir_de);
+            const horizonte = base + lote.projecao.horizonte_horas * HORA_MS;
+            fim = Math.max(fim, horizonte);
+            series.push(linha(lote.numero_lote + ' · projeção', cor, reta(lote.regressao, base, horizonte), [6, 5]));
         }
     });
+    const limites = new Set(lotes.filter(lote => lote.horas.length).map(lote => lote.projecao.limite_c));
+    const limite = limites.values().next().value;
+    if (series.length && limites.size === 1 && Number.isFinite(limite)) {
+        series.push(linha('Limite comum · ' + numero(limite) + ' °C', '#666', [{ x: inicio, y: limite }, { x: fim, y: limite }], [3, 3]));
+    }
+    desenhar('graficoTendencia', 'erroTendencia', series.length ? graficoTemperatura(series) : null);
+    desenhar('graficoDispersao', 'erroDispersao', series.length ? {
+        type: 'bar',
+        data: { labels: lotes.map(lote => lote.numero_lote), datasets: [{
+            label: 'Desvio padrão (°C)', data: lotes.map(lote => lote.estatisticas.desvio_padrao_c),
+            backgroundColor: lotes.map((_, i) => CORES[i % CORES.length])
+        }] },
+        options: { responsive: true, maintainAspectRatio: false, animation: false, scales: { y: { beginAtZero: true } } }
+    } : null);
 }
-function exportar() {
-    var linhas = [['Dados simulados', 'Media_C', 'Pico_C', 'Desvio_C', 'Tendencia_C_h', 'R2', 'Unidades_recentes', 'Unidades_total', 'Projecao', 'Periodo_dias', 'Referencia']];
-    resultados.forEach(function (r) { linhas.push([r.lote.id, r.media, r.pico, r.desvio, r.ajuste ? r.ajuste.a : '', r.ajuste ? r.ajuste.r2 : '', r.recentes, r.lote.unidades, textoProjecao(r), document.getElementById('filtroJanela').value, '2026-11-11T12:00:00-03:00']); });
-    var csv = '\uFEFF' + linhas.map(function (linha) { return linha.map(function (v) { return '"' + String(v).replaceAll('"', '""') + '"'; }).join(';'); }).join('\r\n');
-    var url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-    var link = document.createElement('a'); link.href = url; link.download = 'biotrace-estatistica-simulada.csv'; link.click();
-    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+
+function abrirDetalhes(lote) {
+    const seletor = el('filtroUnidade');
+    const dados = lote.estatisticas;
+    el('tituloDetalhes').textContent = lote.numero_lote + ' · Equipamentos';
+    el('conteudoDetalhes').textContent = 'Pico do lote: ' + numero(dados.maximo_c) + ' °C · Última leitura térmica: ' +
+        dataCurta(dados.ultima_leitura_termica_em) + '. ' + textoProjecao(lote.projecao) + '.';
+    const unidades = [...lote.unidades].sort((a, b) =>
+        Number(b.atingiu_limite === true) - Number(a.atingiu_limite === true) ||
+        Number(a.coleta_recente) - Number(b.coleta_recente)
+    );
+    seletor.replaceChildren();
+    for (const unidade of unidades) {
+        let rotulo = unidade.numero_serie;
+        if (unidade.atingiu_limite) rotulo += ' · limite atingido';
+        if (!unidade.coleta_recente) rotulo += ' · sem coleta recente';
+        seletor.add(new Option(rotulo, unidade.id_equipamento));
+    }
+    const consultarSelecao = () => mostrarUnidade(unidades.find(u => String(u.id_equipamento) === seletor.value));
+    seletor.onchange = consultarSelecao;
+    el('tentarUnidade').onclick = consultarSelecao;
+    el('detalhesLote').showModal();
+    consultarSelecao();
 }
-document.addEventListener('DOMContentLoaded', function () {
-    if (!exigirCargo(['Administrador', 'Gestor'])) return;
-    atualizarLotes();
-    document.getElementById('filtroProjeto').onchange = function () { atualizarLotes(); atualizar(); };
-    document.getElementById('filtroLote').onchange = atualizar;
-    document.getElementById('filtroJanela').onchange = atualizar;
-    document.getElementById('limparFiltros').onclick = function () {
-        document.getElementById('filtroProjeto').value = 'todos';
-        document.getElementById('filtroJanela').value = '30'; atualizarLotes(); atualizar();
+
+async function mostrarUnidade(unidade) {
+    consultaUnidade?.abort();
+    const consulta = new AbortController();
+    consultaUnidade = consulta;
+    el('areaGraficoUnidade').hidden = true;
+    el('erroUnidade').hidden = true;
+    el('tentarUnidade').hidden = true;
+    el('recursosUnidade').textContent = '';
+    el('resumoUnidade').textContent = 'Carregando leituras de ' + unidade.numero_serie + '…';
+    try {
+        const resultado = await consultar('analise-termica/equipamentos/' + unidade.id_equipamento +
+            '?dias=' + analise.periodo.dias, consulta.signal);
+        if (consulta.signal.aborted) return;
+        renderizarUnidade(unidade, resultado);
+    } catch (erro) {
+        if (consulta.signal.aborted) return;
+        el('resumoUnidade').textContent = 'Não foi possível carregar o equipamento. ' + erro.message;
+        el('tentarUnidade').hidden = false;
+    }
+}
+
+function renderizarUnidade(unidade, { equipamento, leituras, regressao }) {
+    el('resumoUnidade').textContent = 'Última coleta: ' + dataCurta(unidade.ultima_coleta_em) +
+        ' (Brasília) · ' + (leituras.length ? numero(leituras.length, 0) + ' leituras no período.' : 'Sem leituras no período selecionado.');
+    if (!leituras.length) return;
+    const media = campo => {
+        const valores = leituras.map(l => l[campo]).filter(Number.isFinite);
+        return valores.length ? valores.reduce((a, b) => a + b, 0) / valores.length : null;
     };
-    document.getElementById('fecharDetalhes').onclick = function () { document.getElementById('detalhesLote').close(); };
-    document.getElementById('exportarResumo').onclick = exportar;
+    const incrementos = leituras.flatMap(l => [l.novos_erros_entrada, l.novos_erros_saida]).filter(Number.isFinite);
+    el('recursosUnidade').textContent = 'Médias do período · CPU: ' + percentual(media('cpu_percent')) + ' · RAM: ' +
+        percentual(media('memoria_percent')) + ' · Disco livre: ' + percentual(media('disco_livre_percent')) +
+        ' · Novos erros de rede: ' + (incrementos.length ? numero(incrementos.reduce((a, b) => a + b, 0), 0) : 'Sem comparação válida');
+    const pontos = leituras.filter(l => Number.isFinite(l.temperatura_cpu))
+        .map(l => ({ x: Date.parse(l.timestamp), y: l.temperatura_cpu }));
+    if (!pontos.length) {
+        el('resumoUnidade').textContent += ' Sem temperaturas válidas.';
+        return;
+    }
+    const primeiro = pontos[0].x;
+    const ultimo = pontos.at(-1).x;
+    const limite = equipamento.limite_temperatura_c;
+    const pico = Math.max(...pontos.map(ponto => ponto.y));
+    el('resumoUnidade').textContent += ' Pico de ' + numero(pico) + ' °C.';
+    if (equipamento.origem_limite_temperatura === 'referencia') {
+        el('resumoUnidade').textContent += ' Limite de referência: ' + numero(limite) + ' °C.';
+    }
+    const series = [{ label: 'Temperatura observada', data: pontos, backgroundColor: '#7654ab', pointRadius: 2 }];
+    if (Number.isFinite(limite)) {
+        series.push(linha('Limite · ' + numero(limite) + ' °C', '#666', [{ x: primeiro, y: limite }, { x: ultimo, y: limite }], [3, 3]));
+    }
+    if (regressao) {
+        series.push(linha('Regressão linear', '#147c74', reta(regressao, primeiro, ultimo)));
+        el('resumoUnidade').textContent += ' Tendência de ' + numero(regressao.tendencia_c_por_hora, 2) + ' °C/h · R² ' + numero(regressao.r2, 2) + '.';
+    }
+    el('areaGraficoUnidade').hidden = false;
+    desenhar('graficoUnidade', 'erroUnidade', graficoTemperatura(series));
+}
+
+function exportar() {
+    const { lotes, periodo } = analise;
+    const linhas = [[
+        'Lote', 'Modelo', 'Início UTC', 'Fim exclusivo UTC', 'Última leitura térmica UTC',
+        'Leituras válidas', 'Média (°C)', 'Pico (°C)', 'Desvio (°C)', 'Tendência (°C/h)', 'R²',
+        'Unidades cadastradas', 'Unidades com coleta recente', 'Unidades avaliadas', 'Unidades no limite',
+        'Séries fora da análise', 'Projeção', 'Cruzamento estimado UTC'
+    ]];
+    for (const lote of lotes) {
+        const e = lote.estatisticas;
+        const c = lote.cobertura;
+        linhas.push([lote.numero_lote, lote.nome_modelo, periodo.inicio, periodo.fim_exclusivo,
+            e.ultima_leitura_termica_em, e.leituras_validas, e.media_c, e.maximo_c, e.desvio_padrao_c,
+            lote.regressao?.tendencia_c_por_hora, lote.regressao?.r2, c.unidades_cadastradas,
+            c.unidades_com_coleta_recente, c.unidades_avaliadas_no_periodo, c.unidades_no_limite,
+            e.series_fora_da_analise.join(', '), textoProjecao(lote.projecao), lote.projecao.cruzamento_em]);
+    }
+    const csv = linhas.map(linhaCsv => linhaCsv.map(valor => {
+        if (typeof valor === 'number') valor = String(valor).replace('.', ',');
+        else if (/^[\s]*[=+@-]/.test(valor ?? '') || /^[\t\r\n]/.test(valor ?? '')) valor = "'" + valor;
+        return '"' + String(valor ?? '').replaceAll('"', '""') + '"';
+    }).join(';')).join('\r\n');
+    const url = URL.createObjectURL(new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'biotrace-analise-termica.csv';
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (!exigirCargo(['Administrador', 'Gestor'])) return;
+    el('filtroProjeto').onchange = () => { if (catalogo) preencherLotes(); atualizar(); };
+    el('filtroLote').onchange = atualizar;
+    el('filtroJanela').onchange = atualizar;
+    el('tentarNovamente').onclick = atualizar;
+    el('limparFiltros').onclick = () => {
+        el('filtroProjeto').value = '';
+        el('filtroJanela').value = '30';
+        if (catalogo) preencherLotes();
+        atualizar();
+    };
+    el('fecharDetalhes').onclick = () => el('detalhesLote').close();
+    el('detalhesLote').addEventListener('close', () => consultaUnidade?.abort());
+    el('exportarResumo').onclick = exportar;
     atualizar();
 });

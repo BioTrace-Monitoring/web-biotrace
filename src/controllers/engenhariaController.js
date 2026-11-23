@@ -1,4 +1,5 @@
 var model = require("../models/engenhariaModel");
+var analiseTermica = require("../services/analiseTermicaService");
 
 function idPositivo(valor) {
     return (
@@ -299,3 +300,36 @@ async function listarCatalogos(req, res) {
     }
 }
 module.exports.listarCatalogos = listarCatalogos;
+
+function diasAnalise(valor) {
+    if (valor === undefined) return 7;
+    if (!["7", "14", "30"].includes(valor)) {
+        throw model.erroEngenharia(400, "Selecione 7, 14 ou 30 dias.");
+    }
+    return Number(valor);
+}
+
+async function consultarAnaliseTermica(req, res) {
+    try {
+        var dias = diasAnalise(req.query.dias);
+        var lote = req.query.lote === undefined ? null : identificador(req.query.lote);
+        var resultado = await analiseTermica.consultarLotes(Number(req.usuario.fk_empresa), dias, lote);
+        res.json({ sucesso: true, ...resultado });
+    } catch (erro) {
+        responderErro(res, erro);
+    }
+}
+
+async function consultarEquipamentoTermico(req, res) {
+    try {
+        var dias = diasAnalise(req.query.dias);
+        var equipamento = identificador(req.params.id);
+        var resultado = await analiseTermica.consultarEquipamento(Number(req.usuario.fk_empresa), dias, equipamento);
+        res.json({ sucesso: true, ...resultado });
+    } catch (erro) {
+        responderErro(res, erro);
+    }
+}
+
+module.exports.consultarAnaliseTermica = consultarAnaliseTermica;
+module.exports.consultarEquipamentoTermico = consultarEquipamentoTermico;

@@ -121,63 +121,68 @@
               <h1>Quais lotes podem atingir o limite térmico?</h1>
               <p>Compare as tendências dos lotes e investigue as unidades que precisam de atenção.</p>
             </div>
-            <span class="selo-demo">PROTÓTIPO · DADOS SIMULADOS</span>
           </header>
-          <noscript>Ative o JavaScript para explorar esta demonstração.</noscript>
+          <noscript>Ative o JavaScript para consultar a análise.</noscript>
           <section class="engenharia-filtros painel" aria-label="Filtros da análise">
-            <label>Modelo<select id="filtroProjeto"><option value="todos">Todos os modelos</option><option>ECG-12</option><option>BPAP</option></select></label>
-            <label>Lote<select id="filtroLote"><option value="todos">Todos os lotes</option></select></label>
+            <label>Modelo<select id="filtroProjeto"><option value="">Todos os modelos</option></select></label>
+            <label>Lote<select id="filtroLote"><option value="">Todos os lotes</option></select></label>
             <label>Histórico de operação<select id="filtroJanela"><option value="7">Últimos 7 dias</option><option value="14">Últimos 14 dias</option><option value="30" selected>Últimos 30 dias</option></select></label>
             <button id="limparFiltros" class="botao secundario" type="button">Limpar filtros</button>
           </section>
-          <p id="escopo" class="texto-apoio" aria-live="polite"></p>
-          <section class="engenharia-kpis" aria-label="Indicadores técnicos">
-            <article class="painel"><h2>Projeção de cruzamento em até 24 h</h2><strong id="kpiRisco">—</strong><p id="detalheRisco"></p></article>
-            <article class="painel"><h2>Unidades no limite ou acima</h2><strong id="kpiLimite">—</strong><p>Unidades com alguma leitura ≥ 85 °C / unidades com leituras no período.</p></article>
-            <article class="painel"><h2>Lotes com ajuste consistente</h2><strong id="kpiAjuste">—</strong><p>R² ≥ 0,70 e todas as unidades com coleta recente. Não representa chance de acerto.</p></article>
-            <article class="painel"><h2>Unidades com coleta recente</h2><strong id="kpiCobertura">—</strong><p id="detalheCobertura"></p></article>
-          </section>
-          <section class="engenharia-prioridade painel" aria-live="polite">
-            <div><span class="rotulo">PRIORIDADE TÉCNICA</span><h2 id="tituloPrioridade"></h2><p id="acaoPrioridade"></p></div>
-          </section>
-          <section class="engenharia-graficos" aria-label="Tendência e dispersão térmica">
-            <article class="painel">
-              <div class="titulo-painel"><div><h2>Temperatura média da CPU ao longo do tempo</h2><p>Leituras de operação agrupadas por hora. Limite de referência: 85 °C.</p></div><span class="rotulo">REGRESSÃO LINEAR</span></div>
-              <div class="canvas-engenharia"><canvas id="graficoTendencia" role="img" aria-label="Temperatura por horário de coleta, ajuste e extrapolação. Valores e resultados na tabela abaixo."></canvas><p id="erroTendencia" hidden></p></div>
-              <p class="texto-apoio">Pontos: médias por hora de coleta · linha contínua: ajuste · tracejado: projeção de até 24 h após o último ponto · linha cinza: limite. Cada cor representa um lote. Selecione um lote para ver também seus mínimos e máximos.</p>
-              <p class="texto-apoio">A projeção só aparece com R² ≥ 0,70 e coleta recente de todas as unidades. Supõe que a tendência recente continue; não é previsão por IA.</p>
-            </article>
-            <article class="painel">
-              <h2>Quanto a temperatura varia em cada lote?</h2><p>Desvio padrão populacional de todas as leituras do período, em °C.</p>
-              <div class="canvas-engenharia"><canvas id="graficoDispersao" role="img" aria-label="Desvio padrão da temperatura por lote. Valores na tabela abaixo."></canvas><p id="erroDispersao" hidden></p></div>
-              <p class="texto-apoio">Maior dispersão pede investigação: pode refletir aquecimento ao longo do teste ou diferença entre unidades. Compare com a tendência; sozinha, não indica falha.</p>
-            </article>
-          </section>
-          <section class="painel">
-            <div class="titulo-painel"><div><h2>Onde investigar primeiro?</h2><p>Métricas calculadas no período selecionado. Abra o lote para conferir CPU, RAM, disco e rede.</p></div><button id="exportarResumo" class="botao secundario" type="button">Exportar resumo CSV</button></div>
-            <div class="tabela-rolagem"><table class="tabela-engenharia">
-              <caption class="sr-engenharia">Estatísticas térmicas, cobertura e projeção por lote</caption>
-              <thead><tr><th scope="col">Modelo / lote</th><th scope="col">Média / pico (°C)</th><th scope="col">Desvio (°C)</th><th scope="col">Tendência (°C/h)</th><th scope="col">R²</th><th scope="col">Coleta recente</th><th scope="col">Projeção até 85 °C</th><th scope="col">Ação sugerida</th></tr></thead>
-              <tbody id="tabelaResultados"></tbody>
-            </table></div>
-            <p class="texto-apoio">Projeções usam a média ajustada, enquanto o pico considera leituras individuais. Uma média abaixo de 85 °C pode esconder uma unidade acima do limite. Sem coleta não significa zero nem normalidade.</p>
-          </section>
-          <details class="painel fontes-engenharia">
-            <summary>Como os cálculos apoiam a validação técnica?</summary>
-            <p><strong>Para o engenheiro de hardware:</strong> investigar aquecimento e instabilidade, comparar unidades e identificar falhas de coleta.</p>
-            <p><strong>Origem:</strong> todos os números desta tela são simulados em JavaScript. Representam temperatura interna da CPU, CPU, RAM, espaço livre, uptime e contadores de rede que a captura Python pode fornecer. Nenhuma nova consulta ao S3 ou banco foi adicionada.</p>
-            <p><strong>Média e desvio:</strong> usam as amostras recebidas com o mesmo peso, sem ponderação pelo tempo. <strong>Regressão:</strong> T = a × horas + b, calculada sobre as médias por hora de coleta. A inclinação a mede °C/h; R² mede o ajuste à variação observada, não a precisão futura.</p>
-            <p><strong>Coleta recente:</strong> unidades com leitura nas 24 h anteriores à referência / unidades cadastradas no lote. O limite térmico e o R² mínimo são referências desta demonstração.</p>
-            <p><strong>Escopo da análise:</strong> a temperatura interna da CPU ajuda a identificar aquecimento e orientar a investigação térmica do equipamento.</p>
-          </details>
-          <footer class="texto-apoio">BioTrace · Análise técnica demonstrativa · Referência: 11/11/2026 às 12h (Brasília).</footer>
+          <div>
+            <p id="escopo" class="texto-apoio" role="status"></p>
+            <button id="tentarNovamente" class="botao secundario detalhes" type="button" hidden>Tentar novamente</button>
+          </div>
+          <div id="resultadosAnalise" class="engenharia-resultados" hidden>
+            <section class="engenharia-kpis" aria-label="Indicadores técnicos">
+              <article class="painel"><h2>Projeção de cruzamento em até 24 h</h2><strong id="kpiRisco">—</strong><p id="detalheRisco"></p></article>
+              <article class="painel"><h2>Unidades no limite ou acima</h2><strong id="kpiLimite">—</strong><p>Unidades que atingiram seu limite entre as que têm temperatura no período e um limite ativo.</p></article>
+              <article class="painel"><h2>Lotes com ajuste consistente</h2><strong id="kpiAjuste">—</strong><p>Lotes com R² ≥ 0,70 entre os que têm histórico térmico. O R² descreve o ajuste aos dados observados.</p></article>
+              <article class="painel"><h2>Unidades com coleta recente</h2><strong id="kpiCobertura">—</strong><p id="detalheCobertura"></p></article>
+            </section>
+            <section class="engenharia-prioridade painel" aria-live="polite">
+              <div><span class="rotulo">PRIORIDADE TÉCNICA</span><h2 id="tituloPrioridade"></h2><p id="acaoPrioridade"></p></div>
+            </section>
+            <section class="engenharia-graficos" aria-label="Tendência e dispersão térmica">
+              <article class="painel">
+                <div class="titulo-painel"><div><h2>Temperatura média da CPU ao longo do tempo</h2><p>Leituras de operação agrupadas por hora.</p></div><span class="rotulo">REGRESSÃO LINEAR</span></div>
+                <div class="canvas-engenharia"><canvas id="graficoTendencia" role="img" aria-label="Temperatura por horário de coleta, ajuste e extrapolação. Valores e resultados na tabela abaixo."></canvas><p id="erroTendencia" hidden></p></div>
+                <p class="texto-apoio">Pontos: médias por hora de coleta · linha contínua: ajuste · tracejado: projeção de até 24 h após o último ponto · linha cinza: limite comum às séries exibidas, quando houver. Cada cor representa um lote. Selecione um lote para ver também seus mínimos e máximos.</p>
+                <p class="texto-apoio">A projeção supõe que a tendência se mantenha. Ela exige limite comum, histórico compatível com o cadastro, temperatura recente nas unidades avaliadas e ajuste consistente.</p>
+              </article>
+              <article class="painel">
+                <h2>Quanto a temperatura varia em cada lote?</h2><p>Desvio padrão populacional de todas as leituras do período, em °C.</p>
+                <div class="canvas-engenharia"><canvas id="graficoDispersao" role="img" aria-label="Desvio padrão da temperatura por lote. Valores na tabela abaixo."></canvas><p id="erroDispersao" hidden></p></div>
+                <p class="texto-apoio">Maior dispersão pede investigação: pode refletir aquecimento ao longo do período ou diferença entre unidades. Compare com a tendência; sozinha, não indica falha.</p>
+              </article>
+            </section>
+            <section class="painel">
+              <div class="titulo-painel"><div><h2>Onde investigar primeiro?</h2><p>Métricas calculadas no período selecionado. Abra um equipamento do lote para conferir CPU, RAM, disco e rede.</p></div><button id="exportarResumo" class="botao secundario" type="button">Exportar resumo CSV</button></div>
+              <div class="tabela-rolagem"><table class="tabela-engenharia">
+                <caption class="sr-engenharia">Estatísticas térmicas, cobertura e projeção por lote</caption>
+                <thead><tr><th scope="col">Modelo / lote</th><th scope="col">Média / pico (°C)</th><th scope="col">Desvio (°C)</th><th scope="col">Tendência (°C/h)</th><th scope="col">R²</th><th scope="col">Coleta recente</th><th scope="col">Projeção térmica</th><th scope="col">Ação sugerida</th></tr></thead>
+                <tbody id="tabelaResultados"></tbody>
+              </table></div>
+              <p class="texto-apoio">Projeções usam a média ajustada, enquanto o pico considera leituras individuais. Uma média abaixo do limite pode esconder uma unidade acima dele. Sem coleta, a situação térmica fica indeterminada.</p>
+            </section>
+            <details class="painel fontes-engenharia">
+              <summary>Como os cálculos apoiam a validação técnica?</summary>
+              <p><strong>Para o engenheiro de hardware:</strong> investigar aquecimento e instabilidade, comparar unidades e identificar falhas de coleta.</p>
+              <p><strong>Origem:</strong> a Gold no S3 fornece a telemetria histórica. Modelos, lotes, equipamentos e limites vêm do cadastro no MySQL. A coleta em andamento pode demorar a chegar à Gold.</p>
+              <p><strong>Média e desvio:</strong> usam as amostras recebidas com o mesmo peso, sem ponderação pelo tempo. <strong>Regressão:</strong> T = a × horas + b, calculada sobre as médias por hora de coleta. A inclinação a mede °C/h; R² mede o ajuste à variação observada, não a precisão futura.</p>
+              <p><strong>Coleta recente:</strong> unidades com leitura nas 24 h anteriores à referência / unidades cadastradas no lote. Os indicadores de coleta e de limite usam o cadastro atual. As estatísticas do lote incluem as séries vinculadas a ele no momento da coleta.</p>
+              <p><strong>Escopo da análise:</strong> a temperatura interna da CPU ajuda a identificar aquecimento e orientar a investigação térmica do equipamento.</p>
+            </details>
+          </div>
           <dialog id="detalhesLote" aria-labelledby="tituloDetalhes"><div class="titulo-painel"><h2 id="tituloDetalhes"></h2><button id="fecharDetalhes" class="botao secundario" type="button">Fechar</button></div><div id="conteudoDetalhes"></div>
             <section class="engenharia-filtros" aria-label="Investigação por equipamento">
               <label for="filtroUnidade">Equipamento do lote<select id="filtroUnidade"></select></label>
             </section>
-            <p id="resumoUnidade" aria-live="polite"></p>
+            <p id="resumoUnidade" role="status"></p>
+            <button id="tentarUnidade" class="botao secundario detalhes" type="button" hidden>Tentar novamente</button>
+            <p id="recursosUnidade"></p>
             <div class="canvas-engenharia" id="areaGraficoUnidade" hidden>
-              <canvas id="graficoUnidade" role="img" aria-label="Leituras individuais de temperatura, regressão e limite de 85 graus."></canvas>
+              <canvas id="graficoUnidade" role="img" aria-label="Leituras individuais de temperatura, regressão e limite térmico."></canvas>
             </div>
             <p id="erroUnidade" hidden></p>
           </dialog>
