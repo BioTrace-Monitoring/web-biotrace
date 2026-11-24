@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Painel de acompanhamento de chamados e desempenho operacional."
+    />
+    <title>Central de processos | BioTrace</title>
+    <link rel="icon" href="../assets/icons/BioTrace (4).png" type="image/png" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="../css/styles_dash_eficiencia_chamado.css" />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+      defer
+    ></script>
+    <script src="./js/dash_eficiencia_chamados_mock.js" defer></script>
+    <script src="./js/dash_eficiencia_chamados.js" defer></script>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="index.html" aria-label="BioTrace">
+        <span class="brand-mark">b<span>p</span></span>
+      </a>
+
+      <div class="sidebar-section-label">Acompanhamento</div>
+      <nav class="navigation" aria-label="Navegação principal">
+        <a class="nav-link" href="index.html"><span class="nav-icon">▦</span> Visão geral</a>
+        <a class="nav-link" href="equipamentos.html"><span class="nav-icon">▣</span> Equipamentos</a>
+        <a class="nav-link" href="dash_proporcao_alertas.html"><span class="nav-icon">◷</span> Proporção de alertas</a>
+        <a class="nav-link active" href="dash-eficencia-chamados.html" aria-current="page">
+          <span class="nav-icon">⌁</span> Central de processos
+        </a>
+      </nav>
+
+      <div class="account">
+        <div class="avatar avatar-small">UB</div>
+        <div class="account-copy">
+          <strong>Usuário BioTrace</strong>
+          <span>usuario@biotrace.com</span>
+        </div>
+        <button class="logout-button" type="button" aria-label="Sair">⇥</button>
+      </div>
+    </aside>
+
+    <main class="page">
+      <header class="page-header">
+        <div class="eyebrow"><span class="dot dot-purple"></span> Desempenho operacional</div>
+        <h1 id="page-title">Ana Souza</h1>
+        <p>Acompanhe chamados, eficiência ajustada pelo deslocamento e trajeto do funcionário.</p>
+      </header>
+
+      <div class="dashboard">
+        <div class="left-column">
+          <section class="employees panel" aria-labelledby="employees-heading">
+            <div class="employees-heading">
+              <div>
+                <h2 id="employees-heading">Funcionários</h2>
+                <p class="muted">Selecione alguém para ver o perfil</p>
+              </div>
+            </div>
+            <label class="sort-control" for="employee-sort">
+              <span>Ordenar mediana no local</span>
+              <select id="employee-sort" aria-label="Ordenar funcionários pela mediana no local">
+                <option value="asc">Menor para maior</option>
+                <option value="desc">Maior para menor</option>
+              </select>
+            </label>
+            <div class="employee-list" id="employee-list"></div>
+            <div class="legend employee-legend">
+              <span><i class="legend-dot green"></i> Eficiente</span>
+              <span><i class="legend-dot red"></i> Precisa de atenção</span>
+            </div>
+          </section>
+        </div>
+
+        <section class="content">
+          <div class="period-filter panel">
+            <label class="period-label" for="period-select">Período dos indicadores e chamados</label>
+            <select id="period-select">
+              <option value="3">Últimos 3 meses</option>
+              <option value="1">Último mês</option>
+              <option value="6">Últimos 6 meses</option>
+              <option value="12">Último ano</option>
+            </select>
+          </div>
+
+          <article class="profile panel">
+            <div class="avatar" id="profile-initials">AS</div>
+            <div class="profile-copy">
+              <div class="eyebrow"><span class="dot dot-purple"></span> Perfil do funcionário</div>
+              <h2 id="profile-name">Ana Souza</h2>
+              <p id="profile-role">Técnica de equipamentos · Base Paulista</p>
+            </div>
+            <span class="status-pill" id="profile-status">Eficiente</span>
+          </article>
+
+          <section class="metrics" aria-label="Indicadores do período">
+            <article class="metric panel">
+              <span class="metric-label">Mediana no local</span>
+              <strong class="metric-value green-text" id="metric-time">136 min</strong>
+              <span class="metric-note" id="metric-time-note">Mediana no local · Eficiente</span>
+            </article>
+            <article class="metric panel">
+              <span class="metric-label">Mediana de atendimento da equipe</span>
+              <strong class="metric-value" id="metric-team">200 min</strong>
+              <span class="metric-note" id="metric-team-note">Mediana geral da equipe · Eficiente</span>
+            </article>
+            <article class="metric panel">
+              <span class="metric-label">Mediana de deslocamento</span>
+              <strong class="metric-value" id="metric-distance">61 min</strong>
+              <span class="metric-note">Mediana do trânsito no período</span>
+            </article>
+            <article class="metric panel">
+              <span class="metric-label">Chamados no período</span>
+              <strong class="metric-value" id="metric-calls">4</strong>
+              <span class="metric-note">Chamados concluídos no histórico filtrado</span>
+            </article>
+          </section>
+
+          <div class="detail-grid">
+            <article class="map-card panel">
+              <div class="card-heading">
+                <div>
+                  <h2>Bases, hospitais e trajeto</h2>
+                  <p class="muted" id="route-summary">Base Paulista → Hospital Paulista · Bela Vista (demo) · BT-4091</p>
+                </div>
+              </div>
+              <div class="map" id="map" aria-label="Mapa interativo de bases, hospitais e trajeto do chamado"></div>
+              <p class="map-caption">
+                Bases e hospitais demonstrativos distribuídos pela cidade de São Paulo · Mapa © OpenStreetMap ·
+                <a href="https://operations.osmfoundation.org/policies/tiles/" target="_blank" rel="noopener noreferrer">política de uso dos tiles</a>
+                · rota OSRM sem trânsito em tempo real.
+              </p>
+              <div class="route-estimate">
+                <strong id="route-estimate-title">Carregando trajeto…</strong>
+                <span id="route-status" aria-live="polite">Aguardando o serviço de rotas.</span>
+              </div>
+              <div class="legend map-legend">
+                <span><i class="map-key base-key">B</i> Bases</span>
+                <span><i class="map-key hospital-key">H</i> Hospitais</span>
+                <span><i class="route-key"></i> Trajeto</span>
+              </div>
+            </article>
+
+            <div class="side-panels">
+              <article class="history panel">
+                <div class="history-heading">
+                  <div>
+                    <h2>Histórico de chamados</h2>
+                    <p class="muted">Selecione um chamado concluído para ver o trajeto</p>
+                  </div>
+                  <span class="count-badge" id="history-count">4</span>
+                </div>
+                <div class="legend status-legend">
+                  <span><i class="legend-dot green"></i> Eficiente</span>
+                  <span><i class="legend-dot orange"></i> Intermediário</span>
+                  <span><i class="legend-dot red"></i> Ineficiente</span>
+                </div>
+                <div class="call-list" id="call-list"></div>
+              </article>
+
+              <article class="criteria panel">
+                <h2>Critérios de eficiência</h2>
+                <p class="muted">Definidos pela gestora para o tempo de atendimento no local</p>
+                <div class="criteria-summary" id="criteria-summary"></div>
+                <div class="range-wrap">
+                  <div class="range-track"></div>
+                  <input id="efficient-limit" type="range" min="0" max="720" step="1" aria-label="Limite de tempo eficiente" disabled />
+                  <input id="attention-limit" type="range" min="0" max="720" step="1" aria-label="Limite de tempo intermediário" disabled />
+                </div>
+                <div class="range-labels">
+                  <span class="range-start">0 min</span>
+                  <span id="efficient-range-label"></span>
+                  <span id="attention-range-label"></span>
+                  <span class="range-end">720 min</span>
+                </div>
+                <p class="helper-text">Arraste os dois pontos para ajustar os limites. A classificação considera o atendimento no local, sem incluir deslocamento.</p>
+                <div class="criteria-actions">
+                  <button class="edit-button" id="edit-criteria" type="button">Editar critérios</button>
+                  <button class="save-button" id="save-criteria" type="button" hidden>Salvar critérios</button>
+                </div>
+                <p class="save-message" id="save-message" aria-live="polite"></p>
+              </article>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>
