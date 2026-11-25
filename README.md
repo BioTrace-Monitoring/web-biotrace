@@ -96,10 +96,15 @@ ler os JSONs da camada Gold; as credenciais não devem ser colocadas no frontend
    a aplicação consultar o S3 e inicie com `AWS_PROFILE=biotrace npm start`.
    Com `GOLD_LOCAL_DIR` preenchido, a aplicação dá prioridade aos arquivos locais.
 
-O histórico esperado atualmente segue o caminho:
-`gold/historico/empresa_id=ID/numero_serie=SERIE/data=AAAA-MM-DD/leituras.json`.
+O histórico é publicado em partições horárias UTC.
+`gold/historico/empresa_id=ID/numero_serie=SERIE/data=AAAA-MM-DD/hora=HH/leituras.json`
+
 O JSON precisa ter `schema_version: 2`, `empresa_id`, `numero_serie` e uma lista
-`leituras` compatível com o serviço. Confirme esse contrato com a equipe da ETL.
-A permissão mínima de leitura é `s3:GetObject` nos objetos necessários;
-objetos criptografados com uma chave KMS podem exigir também `kms:Decrypt`.
+`leituras` compatível com o serviço. O detalhe por equipamento ainda aceita
+`data=AAAA-MM-DD/leituras.json` para horas sem arquivo horário.
+
+A aplicação precisa de `s3:GetObject` nos objetos consultados e de
+`s3:ListBucket` no bucket, com acesso ao prefixo do histórico, para encontrar
+as partições do equipamento. Objetos criptografados com uma chave KMS podem
+exigir também `kms:Decrypt`.
 Na EC2, o serviço pode usar as credenciais da IAM Role associada à instância.

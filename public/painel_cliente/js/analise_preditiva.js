@@ -5,7 +5,7 @@ const dataBR = new Intl.DateTimeFormat('pt-BR', {
     hour: '2-digit', minute: '2-digit'
 });
 const graficos = {};
-let catalogo, analise, consultaLotes, consultaUnidade;
+let catalogo, analise, consultaLotes;
 
 function el(id) {
     return document.getElementById(id);
@@ -14,10 +14,6 @@ function el(id) {
 function numero(valor, casas = 1) {
     if (!Number.isFinite(valor)) return '—';
     return valor.toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas });
-}
-
-function percentual(valor) {
-    return Number.isFinite(valor) ? numero(valor) + '%' : '—';
 }
 
 function dataCurta(instante) {
@@ -46,6 +42,7 @@ async function atualizar() {
     const consulta = new AbortController();
     consultaLotes = consulta;
     el('resultadosAnalise').hidden = true;
+    el('exportarResumo').hidden = true;
     el('tentarNovamente').hidden = true;
     el('escopo').textContent = 'Carregando a análise térmica…';
     try {
@@ -88,10 +85,11 @@ function textoProjecao(projecao) {
 }
 
 function acao(lote) {
-    if (lote.cobertura.unidades_no_limite) return 'Investigar unidades no limite';
+    const { unidades_no_limite, unidades_avaliadas_no_periodo, unidades_com_coleta_recente, unidades_cadastradas } = lote.cobertura;
+    if (unidades_no_limite) return `Limite atingido em ${unidades_no_limite} de ${unidades_avaliadas_no_periodo} unidades avaliadas`;
     if (lote.projecao.estado === 'cruzamento' || lote.projecao.estado === 'no_limite') return 'Verificar a dissipação térmica';
-    if (lote.cobertura.unidades_com_coleta_recente < lote.cobertura.unidades_cadastradas) return 'Verificar unidades sem coleta recente';
-    if (lote.estatisticas.series_fora_da_analise.length) return 'Conferir as séries do lote';
+    if (unidades_com_coleta_recente < unidades_cadastradas) return `Coleta recente em ${unidades_com_coleta_recente} de ${unidades_cadastradas} unidades`;
+    if (lote.estatisticas.series_fora_da_analise.length) return 'Revisar a composição do lote no histórico';
     if (!lote.horas.length) return 'Aguardar leituras de temperatura';
     return 'Acompanhar a tendência térmica';
 }
@@ -125,52 +123,9 @@ function mostrarAnalise() {
     el('tituloPrioridade').textContent = prioridade ? prioridade.numero_lote + ' · ' + acao(prioridade) : 'Nenhum lote nos filtros selecionados';
     el('acaoPrioridade').textContent = prioridade ? textoProjecao(prioridade.projecao) + '.' : '';
     el('exportarResumo').disabled = !lotes.length;
+    el('exportarResumo').hidden = false;
     el('resultadosAnalise').hidden = false;
-    atualizarTabela(lotes);
     atualizarGraficos(lotes);
-}
-
-function atualizarTabela(lotes) {
-    const tabela = el('tabelaResultados');
-    tabela.replaceChildren();
-    for (const lote of lotes) {
-        const linha = tabela.insertRow();
-        const dados = lote.estatisticas;
-        const cobertura = lote.cobertura;
-        const modelo = linha.insertCell();
-        const nomeLote = document.createElement('strong');
-        nomeLote.textContent = lote.numero_lote;
-        const detalhe = document.createElement('small');
-        detalhe.textContent = (lote.nome_modelo || 'Modelo não informado') + ' · ' + numero(dados.leituras_validas, 0) + ' leituras';
-        modelo.append(nomeLote, detalhe);
-        if (dados.series_fora_da_analise.length) {
-            const aviso = document.createElement('small');
-            aviso.textContent = 'Inclui séries fora da análise atual';
-            modelo.append(aviso);
-        }
-        for (const valor of [
-            numero(dados.media_c) + ' / ' + numero(dados.maximo_c),
-            numero(dados.desvio_padrao_c, 2),
-            numero(lote.regressao?.tendencia_c_por_hora, 2),
-            numero(lote.regressao?.r2, 2),
-            cobertura.unidades_com_coleta_recente + ' / ' + cobertura.unidades_cadastradas,
-            textoProjecao(lote.projecao)
-        ]) linha.insertCell().textContent = valor;
-        const ultima = linha.insertCell();
-        ultima.textContent = acao(lote);
-        if (!lote.unidades.length) continue;
-        const botao = document.createElement('button');
-        botao.type = 'button';
-        botao.className = 'botao secundario detalhes';
-        botao.textContent = 'Investigar equipamentos';
-        botao.onclick = () => abrirDetalhes(lote);
-        ultima.append(botao);
-    }
-    if (!lotes.length) {
-        const celula = tabela.insertRow().insertCell();
-        celula.colSpan = 8;
-        celula.textContent = 'Nenhum lote encontrado no cadastro para estes filtros.';
-    }
 }
 
 function desenhar(id, erroId, config) {
@@ -182,7 +137,7 @@ function desenhar(id, erroId, config) {
     const disponivel = temDados && typeof Chart !== 'undefined';
     el(id).hidden = !disponivel;
     el(erroId).hidden = disponivel;
-    el(erroId).textContent = temDados ? 'Gráfico indisponível. Consulte o resumo textual.' : 'Sem temperaturas neste período.';
+    el(erroId).textContent = temDados ? 'Gráfico indisponível. Exporte o resumo CSV para consultar as estatísticas por lote.' : 'Sem temperaturas neste período.';
     if (disponivel) graficos[id] = new Chart(el(id), config);
 }
 
@@ -223,10 +178,6 @@ function atualizarGraficos(lotes) {
         inicio = Math.min(inicio, primeiro);
         fim = Math.max(fim, ultimo);
         series.push({ label: lote.numero_lote + ' · médias', data: pontos, backgroundColor: cor, pointRadius: 2 });
-        if (el('filtroLote').value) {
-            series.push(linha('Mínimo observado', '#3783a3', lote.horas.map(h => ({ x: Date.parse(h.periodo_inicio), y: h.minimo })), [2, 3]));
-            series.push(linha('Máximo observado', '#b36516', lote.horas.map(h => ({ x: Date.parse(h.periodo_inicio), y: h.maximo })), [2, 3]));
-        }
         if (!lote.regressao) return;
         series.push(linha(lote.numero_lote + ' · ajuste', cor, reta(lote.regressao, primeiro, ultimo)));
         if (lote.projecao.a_partir_de) {
@@ -252,96 +203,13 @@ function atualizarGraficos(lotes) {
     } : null);
 }
 
-function abrirDetalhes(lote) {
-    const seletor = el('filtroUnidade');
-    const dados = lote.estatisticas;
-    el('tituloDetalhes').textContent = lote.numero_lote + ' · Equipamentos';
-    el('conteudoDetalhes').textContent = 'Pico do lote: ' + numero(dados.maximo_c) + ' °C · Última leitura térmica: ' +
-        dataCurta(dados.ultima_leitura_termica_em) + '. ' + textoProjecao(lote.projecao) + '.';
-    const unidades = [...lote.unidades].sort((a, b) =>
-        Number(b.atingiu_limite === true) - Number(a.atingiu_limite === true) ||
-        Number(a.coleta_recente) - Number(b.coleta_recente)
-    );
-    seletor.replaceChildren();
-    for (const unidade of unidades) {
-        let rotulo = unidade.numero_serie;
-        if (unidade.atingiu_limite) rotulo += ' · limite atingido';
-        if (!unidade.coleta_recente) rotulo += ' · sem coleta recente';
-        seletor.add(new Option(rotulo, unidade.id_equipamento));
-    }
-    const consultarSelecao = () => mostrarUnidade(unidades.find(u => String(u.id_equipamento) === seletor.value));
-    seletor.onchange = consultarSelecao;
-    el('tentarUnidade').onclick = consultarSelecao;
-    el('detalhesLote').showModal();
-    consultarSelecao();
-}
-
-async function mostrarUnidade(unidade) {
-    consultaUnidade?.abort();
-    const consulta = new AbortController();
-    consultaUnidade = consulta;
-    el('areaGraficoUnidade').hidden = true;
-    el('erroUnidade').hidden = true;
-    el('tentarUnidade').hidden = true;
-    el('recursosUnidade').textContent = '';
-    el('resumoUnidade').textContent = 'Carregando leituras de ' + unidade.numero_serie + '…';
-    try {
-        const resultado = await consultar('analise-termica/equipamentos/' + unidade.id_equipamento +
-            '?dias=' + analise.periodo.dias, consulta.signal);
-        if (consulta.signal.aborted) return;
-        renderizarUnidade(unidade, resultado);
-    } catch (erro) {
-        if (consulta.signal.aborted) return;
-        el('resumoUnidade').textContent = 'Não foi possível carregar o equipamento. ' + erro.message;
-        el('tentarUnidade').hidden = false;
-    }
-}
-
-function renderizarUnidade(unidade, { equipamento, leituras, regressao }) {
-    el('resumoUnidade').textContent = 'Última coleta: ' + dataCurta(unidade.ultima_coleta_em) +
-        ' (Brasília) · ' + (leituras.length ? numero(leituras.length, 0) + ' leituras no período.' : 'Sem leituras no período selecionado.');
-    if (!leituras.length) return;
-    const media = campo => {
-        const valores = leituras.map(l => l[campo]).filter(Number.isFinite);
-        return valores.length ? valores.reduce((a, b) => a + b, 0) / valores.length : null;
-    };
-    const incrementos = leituras.flatMap(l => [l.novos_erros_entrada, l.novos_erros_saida]).filter(Number.isFinite);
-    el('recursosUnidade').textContent = 'Médias do período · CPU: ' + percentual(media('cpu_percent')) + ' · RAM: ' +
-        percentual(media('memoria_percent')) + ' · Disco livre: ' + percentual(media('disco_livre_percent')) +
-        ' · Novos erros de rede: ' + (incrementos.length ? numero(incrementos.reduce((a, b) => a + b, 0), 0) : 'Sem comparação válida');
-    const pontos = leituras.filter(l => Number.isFinite(l.temperatura_cpu))
-        .map(l => ({ x: Date.parse(l.timestamp), y: l.temperatura_cpu }));
-    if (!pontos.length) {
-        el('resumoUnidade').textContent += ' Sem temperaturas válidas.';
-        return;
-    }
-    const primeiro = pontos[0].x;
-    const ultimo = pontos.at(-1).x;
-    const limite = equipamento.limite_temperatura_c;
-    const pico = Math.max(...pontos.map(ponto => ponto.y));
-    el('resumoUnidade').textContent += ' Pico de ' + numero(pico) + ' °C.';
-    if (equipamento.origem_limite_temperatura === 'referencia') {
-        el('resumoUnidade').textContent += ' Limite de referência: ' + numero(limite) + ' °C.';
-    }
-    const series = [{ label: 'Temperatura observada', data: pontos, backgroundColor: '#7654ab', pointRadius: 2 }];
-    if (Number.isFinite(limite)) {
-        series.push(linha('Limite · ' + numero(limite) + ' °C', '#666', [{ x: primeiro, y: limite }, { x: ultimo, y: limite }], [3, 3]));
-    }
-    if (regressao) {
-        series.push(linha('Regressão linear', '#147c74', reta(regressao, primeiro, ultimo)));
-        el('resumoUnidade').textContent += ' Tendência de ' + numero(regressao.tendencia_c_por_hora, 2) + ' °C/h · R² ' + numero(regressao.r2, 2) + '.';
-    }
-    el('areaGraficoUnidade').hidden = false;
-    desenhar('graficoUnidade', 'erroUnidade', graficoTemperatura(series));
-}
-
 function exportar() {
     const { lotes, periodo } = analise;
     const linhas = [[
         'Lote', 'Modelo', 'Início UTC', 'Fim exclusivo UTC', 'Última leitura térmica UTC',
         'Leituras válidas', 'Média (°C)', 'Pico (°C)', 'Desvio (°C)', 'Tendência (°C/h)', 'R²',
         'Unidades cadastradas', 'Unidades com coleta recente', 'Unidades avaliadas', 'Unidades no limite',
-        'Séries fora da análise', 'Projeção', 'Cruzamento estimado UTC'
+        'Quantidade de séries fora da análise', 'Projeção', 'Cruzamento estimado UTC'
     ]];
     for (const lote of lotes) {
         const e = lote.estatisticas;
@@ -350,7 +218,7 @@ function exportar() {
             e.ultima_leitura_termica_em, e.leituras_validas, e.media_c, e.maximo_c, e.desvio_padrao_c,
             lote.regressao?.tendencia_c_por_hora, lote.regressao?.r2, c.unidades_cadastradas,
             c.unidades_com_coleta_recente, c.unidades_avaliadas_no_periodo, c.unidades_no_limite,
-            e.series_fora_da_analise.join(', '), textoProjecao(lote.projecao), lote.projecao.cruzamento_em]);
+            e.series_fora_da_analise.length, textoProjecao(lote.projecao), lote.projecao.cruzamento_em]);
     }
     const csv = linhas.map(linhaCsv => linhaCsv.map(valor => {
         if (typeof valor === 'number') valor = String(valor).replace('.', ',');
@@ -377,8 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (catalogo) preencherLotes();
         atualizar();
     };
-    el('fecharDetalhes').onclick = () => el('detalhesLote').close();
-    el('detalhesLote').addEventListener('close', () => consultaUnidade?.abort());
     el('exportarResumo').onclick = exportar;
     atualizar();
 });

@@ -27,45 +27,33 @@
         </div>
 
         <nav class="sidebar-nav" aria-label="Menu principal">
-          <span class="nav-title">Principal</span>
-          <a href="index.html" class="nav-item">
-            <span class="nav-icon">📊</span>
-            <span>Visão Geral</span>
-          </a>
-          <a href="equipamentos.html" class="nav-item">
-            <span class="nav-icon">📟</span>
-            <span>Equipamentos</span>
-          </a>
-
-          <span class="nav-title nav-title-dashboards">Dashboards</span>
-          <a href="dash_engenheiro.html" class="nav-item">
-            <span class="nav-icon">📈</span>
-            <span>Equipamentos por lote</span>
-          </a>
-
-          <a href="dash_geral.html" class="nav-item">
-            <span class="nav-icon">📉</span>
-            <span>Análise de lotes</span>
-          </a>
-          <a
-            href="analise_preditiva.html"
-            class="nav-item active"
-            aria-current="page"
-          >
-            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 4v16h18M6 16l4-4 3 2"/><path d="M13 14l7-7" stroke-dasharray="2 2"/></svg>
-            <span>Análise preditiva</span>
-          </a>
-
-          <span class="nav-title nav-title-spacing">Cadastros</span>
-          <a href="hospitais.html" class="nav-item">
-            <span class="nav-icon">🏥</span>
-            <span>Cadastrar hospital</span>
-          </a>
-          <a href="cadastrar-usuario.html" class="nav-item">
-            <span class="nav-icon">👤</span>
-            <span>Cadastrar usuário</span>
-          </a>
-        </nav>
+                <span class="nav-title">Acompanhamento</span>
+                <a href="index.html" class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                    <span>Visão geral</span>
+                </a>
+                <a href="equipamentos.html" class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8m-4-4v4M7 10h3l2-3 2 6 2-3h2"/></svg>
+                    <span>Equipamentos</span>
+                </a>
+                <a href="dash_proporcao_alertas.html" class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v9h9A9 9 0 1 1 12 3Z"/><path d="M16 3.9a9 9 0 0 1 4.1 4.1H16Z"/></svg>
+                    <span>Proporção de alertas</span>
+                </a>
+                <a href="analise_preditiva.html" class="nav-item active">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 4v16h18M6 16l4-4 3 2"/><path d="M13 14l7-7" stroke-dasharray="2 2"/></svg>
+                    <span>Análise preditiva</span>
+                </a>
+                <span class="nav-title nav-title-spacing">Administração</span>
+                <a href="hospitais.html" class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 21v-5h6v5M10 8h4m-2-2v4M9 13h.01M15 13h.01"/></svg>
+                    <span>Cadastrar hospital</span>
+                </a>
+                <a href="cadastrar-usuario.html" class="nav-item" aria-current="page">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3"/><path d="M3 21v-2a6 6 0 0 1 12 0v2m2-17a3 3 0 0 1 0 6m2 5a5 5 0 0 1 2 4v2"/></svg>
+                    <span>Cadastrar usuário</span>
+                </a>
+            </nav>
 
         <div class="sidebar-footer">
           <div class="sidebar-user">
@@ -119,8 +107,9 @@
           <header class="engenharia-cabecalho">
             <div><div class="eyebrow">ENGENHARIA / ANÁLISE ESTATÍSTICA</div>
               <h1>Quais lotes podem atingir o limite térmico?</h1>
-              <p>Compare as tendências dos lotes e investigue as unidades que precisam de atenção.</p>
+              <p>Compare as tendências térmicas dos lotes e acompanhe quantas unidades atingiram o limite.</p>
             </div>
+            <button id="exportarResumo" class="botao secundario" type="button" hidden>Exportar resumo CSV</button>
           </header>
           <noscript>Ative o JavaScript para consultar a análise.</noscript>
           <section class="engenharia-filtros painel" aria-label="Filtros da análise">
@@ -146,47 +135,23 @@
             <section class="engenharia-graficos" aria-label="Tendência e dispersão térmica">
               <article class="painel">
                 <div class="titulo-painel"><div><h2>Temperatura média da CPU ao longo do tempo</h2><p>Leituras de operação agrupadas por hora.</p></div><span class="rotulo">REGRESSÃO LINEAR</span></div>
-                <div class="canvas-engenharia"><canvas id="graficoTendencia" role="img" aria-label="Temperatura por horário de coleta, ajuste e extrapolação. Valores e resultados na tabela abaixo."></canvas><p id="erroTendencia" hidden></p></div>
-                <p class="texto-apoio">Pontos: médias por hora de coleta · linha contínua: ajuste · tracejado: projeção de até 24 h após o último ponto · linha cinza: limite comum às séries exibidas, quando houver. Cada cor representa um lote. Selecione um lote para ver também seus mínimos e máximos.</p>
+                <div class="canvas-engenharia"><canvas id="graficoTendencia" role="img" aria-label="Temperatura média por hora de coleta, ajuste linear e projeção por lote."></canvas><p id="erroTendencia" hidden></p></div>
+                <p class="texto-apoio">Os pontos mostram as médias horárias e cada cor representa um lote. A linha contínua mostra o ajuste e a tracejada, a projeção de até 24 h após o último ponto. A linha cinza indica o limite comum, quando disponível.</p>
                 <p class="texto-apoio">A projeção supõe que a tendência se mantenha. Ela exige limite comum, histórico compatível com o cadastro, temperatura recente nas unidades avaliadas e ajuste consistente.</p>
               </article>
               <article class="painel">
                 <h2>Quanto a temperatura varia em cada lote?</h2><p>Desvio padrão populacional de todas as leituras do período, em °C.</p>
-                <div class="canvas-engenharia"><canvas id="graficoDispersao" role="img" aria-label="Desvio padrão da temperatura por lote. Valores na tabela abaixo."></canvas><p id="erroDispersao" hidden></p></div>
+                <div class="canvas-engenharia"><canvas id="graficoDispersao" role="img" aria-label="Desvio padrão da temperatura por lote."></canvas><p id="erroDispersao" hidden></p></div>
                 <p class="texto-apoio">Maior dispersão pede investigação: pode refletir aquecimento ao longo do período ou diferença entre unidades. Compare com a tendência; sozinha, não indica falha.</p>
               </article>
             </section>
-            <section class="painel">
-              <div class="titulo-painel"><div><h2>Onde investigar primeiro?</h2><p>Métricas calculadas no período selecionado. Abra um equipamento do lote para conferir CPU, RAM, disco e rede.</p></div><button id="exportarResumo" class="botao secundario" type="button">Exportar resumo CSV</button></div>
-              <div class="tabela-rolagem"><table class="tabela-engenharia">
-                <caption class="sr-engenharia">Estatísticas térmicas, cobertura e projeção por lote</caption>
-                <thead><tr><th scope="col">Modelo / lote</th><th scope="col">Média / pico (°C)</th><th scope="col">Desvio (°C)</th><th scope="col">Tendência (°C/h)</th><th scope="col">R²</th><th scope="col">Coleta recente</th><th scope="col">Projeção térmica</th><th scope="col">Ação sugerida</th></tr></thead>
-                <tbody id="tabelaResultados"></tbody>
-              </table></div>
-              <p class="texto-apoio">Projeções usam a média ajustada, enquanto o pico considera leituras individuais. Uma média abaixo do limite pode esconder uma unidade acima dele. Sem coleta, a situação térmica fica indeterminada.</p>
-            </section>
             <details class="painel fontes-engenharia">
               <summary>Como os cálculos apoiam a validação técnica?</summary>
-              <p><strong>Para o engenheiro de hardware:</strong> investigar aquecimento e instabilidade, comparar unidades e identificar falhas de coleta.</p>
               <p><strong>Origem:</strong> a Gold no S3 fornece a telemetria histórica. Modelos, lotes, equipamentos e limites vêm do cadastro no MySQL. A coleta em andamento pode demorar a chegar à Gold.</p>
               <p><strong>Média e desvio:</strong> usam as amostras recebidas com o mesmo peso, sem ponderação pelo tempo. <strong>Regressão:</strong> T = a × horas + b, calculada sobre as médias por hora de coleta. A inclinação a mede °C/h; R² mede o ajuste à variação observada, não a precisão futura.</p>
               <p><strong>Coleta recente:</strong> unidades com leitura nas 24 h anteriores à referência / unidades cadastradas no lote. Os indicadores de coleta e de limite usam o cadastro atual. As estatísticas do lote incluem as séries vinculadas a ele no momento da coleta.</p>
-              <p><strong>Escopo da análise:</strong> a temperatura interna da CPU ajuda a identificar aquecimento e orientar a investigação térmica do equipamento.</p>
             </details>
           </div>
-          <dialog id="detalhesLote" aria-labelledby="tituloDetalhes"><div class="titulo-painel"><h2 id="tituloDetalhes"></h2><button id="fecharDetalhes" class="botao secundario" type="button">Fechar</button></div><div id="conteudoDetalhes"></div>
-            <section class="engenharia-filtros" aria-label="Investigação por equipamento">
-              <label for="filtroUnidade">Equipamento do lote<select id="filtroUnidade"></select></label>
-            </section>
-            <p id="resumoUnidade" role="status"></p>
-            <button id="tentarUnidade" class="botao secundario detalhes" type="button" hidden>Tentar novamente</button>
-            <p id="recursosUnidade"></p>
-            <div class="canvas-engenharia" id="areaGraficoUnidade" hidden>
-              <canvas id="graficoUnidade" role="img" aria-label="Leituras individuais de temperatura, regressão e limite térmico."></canvas>
-            </div>
-            <p id="erroUnidade" hidden></p>
-          </dialog>
-
         </div>
       </main>
     </div>
