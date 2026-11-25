@@ -1,0 +1,65 @@
+/* =========================================================
+   BioTrace — dash-ranking-operacional
+   Tokens e estilos base extraídos do <style> inline da página.
+   As classes utilitárias do layout continuam no Tailwind CDN
+   para preservar exatamente a aparência e os breakpoints.
+   ========================================================= */
+
+:root {
+  --color-background: #f8f9ff;
+  --color-surface: #f8f9ff;
+  --color-surface-lowest: #ffffff;
+  --color-surface-low: #eff4ff;
+  --color-surface-container: #e5eeff;
+  --color-surface-container-high: #dce9ff;
+  --color-surface-variant: #d3e4fe;
+  --color-primary: #5300b7;
+  --color-primary-container: #6d28d9;
+  --color-secondary: #6b38d4;
+  --color-error: #ba1a1a;
+  --color-outline: #7b7486;
+  --color-text: #0b1c30;
+  --color-text-muted: #4a4455;
+  --font-heading: "Plus Jakarta Sans", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
+
+@layer base {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    overscroll-behavior: none;
+    font-family: var(--font-body);
+    background: var(--color-background);
+    color: var(--color-text);
+  }
+
+  main > :first-child {
+    margin-top: 0 !important;
+  }
+
+  main > :last-child {
+    margin-bottom: 0 !important;
+  }
+}
+
+/* Oculta a barra visual sem desabilitar a rolagem. */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Elementos de gráfico: mantêm a altura definida pelo layout. */
+canvas {
+  max-width: 100%;
+}
+
+/* Acessibilidade: foco visível para navegação por teclado. */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
