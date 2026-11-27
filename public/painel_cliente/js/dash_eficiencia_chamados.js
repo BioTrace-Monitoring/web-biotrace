@@ -3,9 +3,10 @@ const dadosMock = window.BioTraceMockData;
 let funcionarioSelecionadoId = "ana";
 let chamadoSelecionadoId = null;
 let mapa = null;
-let camadaTrajeto = null;
 let marcadores = [];
 let limites = { ...dadosMock.criterios };
+let locaisEmpresa = null;
+let requisicaoLocais = null;
 
 function mediana(valores) {
     if (!valores.length) return 0;
@@ -196,20 +197,50 @@ function criarMarcador(lat, lng, tipo, texto, titulo) {
             iconAnchor: [14, 28]
         })
     }).addTo(mapa);
-    marcador.bindPopup(`<strong>${titulo}</strong>`);
+    const conteudoPopup = document.createElement("strong");
+    conteudoPopup.textContent = titulo;
+    marcador.bindPopup(conteudoPopup);
     marcadores.push(marcador);
 }
 
-async function buscarRota(base, hospital) {
-    const url = `https://router.project-osrm.org/route/v1/driving/${base.lng},${base.lat};${hospital.lng},${hospital.lat}?overview=full&geometries=geojson&steps=false`;
-    const resposta = await fetch(url);
-    if (!resposta.ok) throw new Error("Falha ao consultar a API de rotas");
-    const dados = await resposta.json();
-    if (!dados.routes?.length) throw new Error("Nenhuma rota encontrada");
-    return dados.routes[0];
+async function carregarLocaisEmpresa() {
+    if (locaisEmpresa) return locaisEmpresa;
+    if (requisicaoLocais) return requisicaoLocais;
+
+    requisicaoLocais = (async () => {
+        const idUsuario = Number(localStorage.getItem("ID_USUARIO"));
+        if (!Number.isSafeInteger(idUsuario) || idUsuario <= 0) {
+            throw new Error("Faça login novamente para carregar os locais da sua empresa.");
+        }
+
+        const resposta = await fetch(`/mapa/locais/${idUsuario}`, {
+            headers: { Accept: "application/json" }
+        });
+        const dados = await resposta.json();
+        if (!resposta.ok) {
+            throw new Error(dados.mensagem || "Não foi possível carregar os locais da empresa.");
+        }
+        if (
+            !Number.isSafeInteger(dados.empresaId) ||
+            !Array.isArray(dados.bases) ||
+            !Array.isArray(dados.hospitais)
+        ) {
+            throw new Error("A resposta do endpoint de locais está inválida.");
+        }
+
+        const empresaDaSessao = Number(localStorage.getItem("FK_EMPRESA"));
+        if (empresaDaSessao && empresaDaSessao !== dados.empresaId) {
+            throw new Error("O usuário conectado não corresponde à empresa retornada pelo banco.");
+        }
+
+        locaisEmpresa = dados;
+        return dados;
+    })();
+
+    return requisicaoLocais;
 }
 
-async function renderizarMapa(chamado) {
+async function renderizarMapa() {
     inicializarMapa();
     if (!mapa) {
         document.getElementById("route-status").textContent = "Não foi possível carregar o mapa.";
@@ -218,53 +249,52 @@ async function renderizarMapa(chamado) {
 
     marcadores.forEach(marcador => marcador.remove());
     marcadores = [];
-    if (camadaTrajeto) camadaTrajeto.remove();
 
-    const funcionario = obterFuncionario();
-    const base = obterBase(funcionario);
-    const hospital = obterHospital(chamado);
-
-    dadosMock.bases.forEach(item => {
-        criarMarcador(item.lat, item.lng, "base", "B", item.nome);
-    });
-    dadosMock.hospitais.forEach(item => {
-        criarMarcador(item.lat, item.lng, "hospital", "H", `${item.nome} · ${item.unidade}`);
-    });
-
-    document.getElementById("route-summary").textContent =
-        `${base.nome} → ${hospital.nome} · ${hospital.unidade} · ${chamado.equipamento}`;
-
-    document.getElementById("route-estimate-title").textContent = "Consultando trajeto...";
-    document.getElementById("route-status").textContent = "Aguarde a resposta da API de rotas.";
+    document.getElementById("route-summary").textContent = "Carregando bases e hospitais da empresa...";
+    document.getElementById("route-estimate-title").textContent = "Carregando locais...";
+    document.getElementById("route-status").textContent = "Buscando os endereços associados ao usuário conectado.";
 
     try {
-        const rota = await buscarRota(base, hospital);
-        const coordenadas = rota.geometry.coordinates.map(([lng, lat]) => [lat, lng]);
-        camadaTrajeto = L.polyline(coordenadas, {
-            color: "#7041d2",
-            weight: 4,
-            opacity: 0.85
-        }).addTo(mapa);
-        const bounds = L.featureGroup([...marcadores, camadaTrajeto]).getBounds();
-        mapa.fitBounds(bounds, { padding: [24, 24] });
+        const dados = await carregarLocaisEmpresa();
+        const todosLocais = [
+            ...dados.bases.map(local => ({ ...local, tipo: "base" })),
+            ...dados.hospitais.map(local => ({ ...local, tipo: "hospital" }))
+        ];
+        const localizacoesValidas = todosLocais.filter(local =>
+            Number.isFinite(local.latitude) &&
+            Number.isFinite(local.longitude) &&
+            Math.abs(local.latitude) <= 90 &&
+            Math.abs(local.longitude) <= 180
+        );
 
-        const distanciaKm = rota.distance / 1000;
-        const duracaoMin = Math.round(rota.duration / 60);
+        localizacoesValidas.forEach(local => {
+            criarMarcador(
+                local.latitude,
+                local.longitude,
+                local.tipo,
+                local.tipo === "base" ? "B" : "H",
+                local.nome
+            );
+        });
+
+        document.getElementById("route-summary").textContent =
+            `Bases e hospitais da empresa ${dados.empresaId}`;
+
+        if (marcadores.length) {
+            mapa.fitBounds(L.featureGroup(marcadores).getBounds(), { padding: [24, 24] });
+        }
+
+        const semCoordenadas = todosLocais.length - localizacoesValidas.length;
         document.getElementById("route-estimate-title").textContent =
-            `${distanciaKm.toFixed(1)} km · aproximadamente ${duracaoMin} min`;
-        document.getElementById("route-status").textContent =
-            `Rota calculada pela API OSRM. Chamado concluído em ${chamado.tempoLocal} min no local.`;
+            `${localizacoesValidas.length} locais encontrados`;
+        document.getElementById("route-status").textContent = semCoordenadas
+            ? `${semCoordenadas} locais não puderam ser geocodificados. Os chamados desta tela ainda são demonstrativos e não possuem rota real.`
+            : "Locais carregados do banco. Os chamados desta tela ainda são demonstrativos e não possuem rota real.";
     } catch (erro) {
-        camadaTrajeto = L.polyline([
-            [base.lat, base.lng],
-            [hospital.lat, hospital.lng]
-        ], { color: "#7041d2", weight: 4, opacity: 0.85, dashArray: "8 8" }).addTo(mapa);
-        const bounds = L.featureGroup([...marcadores, camadaTrajeto]).getBounds();
-        mapa.fitBounds(bounds, { padding: [24, 24] });
-        document.getElementById("route-estimate-title").textContent =
-            `Deslocamento mockado: ${chamado.deslocamento} min`;
+        document.getElementById("route-summary").textContent = "Não foi possível carregar os locais da empresa.";
+        document.getElementById("route-estimate-title").textContent = "Falha ao carregar locais";
         document.getElementById("route-status").textContent =
-            "Serviço de rotas indisponível; exibindo trajeto direto de demonstração.";
+            erro.message;
     }
 }
 

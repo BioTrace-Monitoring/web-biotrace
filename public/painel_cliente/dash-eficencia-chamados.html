@@ -130,24 +130,23 @@
             <article class="map-card panel">
               <div class="card-heading">
                 <div>
-                  <h2>Bases, hospitais e trajeto</h2>
-                  <p class="muted" id="route-summary">Base Paulista → Hospital Paulista · Bela Vista (demo) · BT-4091</p>
+                  <h2>Bases e hospitais da empresa</h2>
+                  <p class="muted" id="route-summary">Carregando locais do banco...</p>
                 </div>
               </div>
-              <div class="map" id="map" aria-label="Mapa interativo de bases, hospitais e trajeto do chamado"></div>
+              <div class="map" id="map" aria-label="Mapa interativo das bases e hospitais da empresa"></div>
               <p class="map-caption">
-                Bases e hospitais demonstrativos distribuídos pela cidade de São Paulo · Mapa © OpenStreetMap ·
+                Endereços vinculados à empresa do usuário conectado · Mapa © OpenStreetMap ·
                 <a href="https://operations.osmfoundation.org/policies/tiles/" target="_blank" rel="noopener noreferrer">política de uso dos tiles</a>
-                · rota OSRM sem trânsito em tempo real.
+                · coordenadas obtidas a partir do CEP cadastrado.
               </p>
               <div class="route-estimate">
-                <strong id="route-estimate-title">Carregando trajeto…</strong>
-                <span id="route-status" aria-live="polite">Aguardando o serviço de rotas.</span>
+                <strong id="route-estimate-title">Carregando locais…</strong>
+                <span id="route-status" aria-live="polite">Buscando os endereços associados ao usuário conectado.</span>
               </div>
               <div class="legend map-legend">
                 <span><i class="map-key base-key">B</i> Bases</span>
                 <span><i class="map-key hospital-key">H</i> Hospitais</span>
-                <span><i class="route-key"></i> Trajeto</span>
               </div>
             </article>
 

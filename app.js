@@ -15,8 +15,8 @@ var cors = require("cors"); // Libera requisições de origens externas
 var path = require("path"); // Manipulação de caminhos de arquivos
 
 // Porta e host são lidos do arquivo .env para facilitar configuração por ambiente
-var PORTA_APP = process.env.APP_PORT;
-var HOST_APP = process.env.APP_HOST;
+var PORTA_APP = process.env.APP_PORT || 3000;
+var HOST_APP = process.env.APP_HOST || "localhost";
 
 var app = express();
 
@@ -27,6 +27,7 @@ var hospitalRouter = require("./src/routes/hospital");
 var equipamentoRouter = require("./src/routes/equipamento");
 var analiseLotesRouter = require("./src/routes/analiseLotes");
 var dashboardAlertasRouter = require("./src/routes/dashboardAlertas");
+var mapaRouter = require("./src/routes/mapa");
 
 // Habilita CORS para permitir requisições de outros domínios/portas
 app.use(cors());
@@ -47,6 +48,7 @@ app.use("/hospital", hospitalRouter)
 app.use("/equipamento", equipamentoRouter);
 app.use("/analise-lotes", analiseLotesRouter);
 app.use("/dashboard-alertas", dashboardAlertasRouter);
+app.use("/mapa", mapaRouter);
 
 // Coloca o servidor para escutar na porta definida nas variáveis de ambiente
 app.listen(PORTA_APP, function ()

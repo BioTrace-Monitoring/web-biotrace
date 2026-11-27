@@ -20,17 +20,12 @@ function autenticarUsuario(req, res) {
         // Chama a função do model que consulta o banco de dados
         usuarioModel.autenticarUsuario(email, senha)
             .then(function (resultadoAutenticar) {
-                    console.log(`\nResultados encontrados: ${resultadoAutenticar.length}`); // qtd de registros encontrados
-                    console.log(`Resultados: ${JSON.stringify(resultadoAutenticar)}`); // transforma JSON em String
-
                     // Se encontrou um usuário
                     if (resultadoAutenticar.length == 1) {
-                        console.log(resultadoAutenticar);
-
                         const token = jwt.sign(
                             {id: resultadoAutenticar[0].id_usuario, email: resultadoAutenticar[0].email, nome: resultadoAutenticar[0].nome, empresa: resultadoAutenticar[0].empresa, cargo: resultadoAutenticar[0].cargo, fk_empresa: resultadoAutenticar[0].fk_empresa},
                             process.env.JWT_SECRET,
-                            {expiresIn: process.env.JWT_EXPIRES_IN}
+                            {expiresIn: process.env.JWT_EXPIRES_IN || "1h"}
                         );
 
                         res.json({token,
@@ -51,9 +46,8 @@ function autenticarUsuario(req, res) {
                     }
                 }
             ).catch(function (erro) {
-                console.log(erro);
-                console.log("\nHouve um erro ao realizar o login! Erro: ", erro.sqlMessage);
-                res.status(500).json(erro.sqlMessage);
+                console.error("Erro ao autenticar usuário:", erro.code || erro.name);
+                res.status(500).json({ mensagem: "Não foi possível concluir o login." });
             });
     }
 }

@@ -5,8 +5,6 @@ const database = require("../database/config");
 
 // Função que verifica se existe um usuário cadastrado com o email e senha informados
 function autenticarUsuario(email, senha) {
-    console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function autenticarUsuario(): ", email, senha)
-    
     // Select que busca o usuário que possui o email e senha informados no login
     // A senha é comparada usando SHA2, já que é assim que ela é salva no banco (ver seed)
     // É usado ? no lugar da interpolação para proteger de SQL Injection
@@ -18,9 +16,6 @@ function autenticarUsuario(email, senha) {
         JOIN cargo c ON u.fk_cargo = c.id_cargo
         WHERE u.email_usuario = ? AND u.senha_usuario = SHA2(?, 256)
     `;
-
-    // Exibe a query montada no terminal
-    console.log("Executando a instrução SQL: \n" + instrucaoSql);
 
     // Executa a query no banco passando os valores aqui e retorna o resultado
     return database.executar(instrucaoSql, [email, senha]);
