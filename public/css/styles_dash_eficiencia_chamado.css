@@ -253,6 +253,9 @@ select { width: 100%; height: 30px; padding: 0 9px; border: 1px solid var(--bord
 .call-option strong { color: var(--green); font-size: 8px; font-weight: 600; }
 .call-option.inefficient strong { color: var(--red); }
 .call-option.intermediate strong { color: var(--orange); }
+.employee-option.unavailable, .call-option.unavailable { border-left-color: var(--border); }
+.employee-option.unavailable strong, .call-option.unavailable strong { color: var(--muted); }
+.status-pill.unavailable { border-color: var(--border); color: var(--muted); }
 .call-option span { overflow: hidden; color: var(--muted); font-size: 7px; line-height: 1.3; text-overflow: ellipsis; white-space: nowrap; }
 .empty-state { margin: 5px 0; color: var(--muted); font-size: 9px; }
 

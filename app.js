@@ -28,6 +28,7 @@ var equipamentoRouter = require("./src/routes/equipamento");
 var analiseLotesRouter = require("./src/routes/analiseLotes");
 var dashboardAlertasRouter = require("./src/routes/dashboardAlertas");
 var mapaRouter = require("./src/routes/mapa");
+var chamadosRouter = require("./src/routes/chamados");
 
 // Habilita CORS para permitir requisições de outros domínios/portas
 app.use(cors());
@@ -49,6 +50,7 @@ app.use("/equipamento", equipamentoRouter);
 app.use("/analise-lotes", analiseLotesRouter);
 app.use("/dashboard-alertas", dashboardAlertasRouter);
 app.use("/mapa", mapaRouter);
+app.use("/chamados", chamadosRouter);
 
 // Coloca o servidor para escutar na porta definida nas variáveis de ambiente
 app.listen(PORTA_APP, function ()

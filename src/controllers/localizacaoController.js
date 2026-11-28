@@ -9,6 +9,10 @@ async function listarLocais(req, res) {
         });
     }
 
+    if (Number(req.usuario.id) !== idUsuario || !(Number(req.usuario.fk_empresa) > 0)) {
+        return res.status(403).json({ mensagem: "Usuário incompatível com a sessão." });
+    }
+
     try {
         var idEmpresa = await localizacaoModel.buscarEmpresaDoUsuario(idUsuario);
         if (idEmpresa === null) {
@@ -16,7 +20,7 @@ async function listarLocais(req, res) {
                 mensagem: "Usuário não encontrado."
             });
         }
-        if (!Number.isSafeInteger(idEmpresa) || idEmpresa <= 0) {
+        if (!Number.isSafeInteger(idEmpresa) || idEmpresa <= 0 || idEmpresa !== Number(req.usuario.fk_empresa)) {
             return res.status(403).json({
                 mensagem: "O usuário não está associado a uma empresa válida."
             });

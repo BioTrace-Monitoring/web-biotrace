@@ -1,15 +1,14 @@
-const dadosMock = window.BioTraceMockData;
-
-let funcionarioSelecionadoId = "ana";
+let funcionarios = [];
+let funcionarioSelecionadoId = null;
 let chamadoSelecionadoId = null;
 let mapa = null;
 let marcadores = [];
-let limites = { ...dadosMock.criterios };
+let limites = { eficiente: 180, intermediario: 360 };
 let locaisEmpresa = null;
-let requisicaoLocais = null;
 
 function mediana(valores) {
-    if (!valores.length) return 0;
+    valores = valores.filter(Number.isFinite);
+    if (!valores.length) return null;
     const ordenados = [...valores].sort((a, b) => a - b);
     const meio = Math.floor(ordenados.length / 2);
     return ordenados.length % 2
@@ -18,19 +17,21 @@ function mediana(valores) {
 }
 
 function classificacao(tempo) {
+    if (tempo === null) return "unavailable";
     if (tempo <= limites.eficiente) return "efficient";
     if (tempo <= limites.intermediario) return "intermediate";
     return "inefficient";
 }
 
 function rotuloClassificacao(tempo) {
+    if (tempo === null) return "Sem dados";
     if (classificacao(tempo) === "efficient") return "Eficiente";
     if (classificacao(tempo) === "intermediate") return "Intermediário";
     return "Ineficiente";
 }
 
 function iniciais(nome) {
-    return nome.split(" ").map(parte => parte[0]).slice(0, 2).join("").toUpperCase();
+    return nome.split(/\s+/).map(parte => parte[0]).slice(0, 2).join("").toUpperCase();
 }
 
 function formatarData(dataIso) {
@@ -39,120 +40,126 @@ function formatarData(dataIso) {
 }
 
 function obterFuncionario() {
-    return dadosMock.funcionarios.find(funcionario => funcionario.id === funcionarioSelecionadoId);
+    return funcionarios.find(funcionario => funcionario.id === funcionarioSelecionadoId);
 }
 
-function obterBase(funcionario) {
-    return dadosMock.bases.find(base => base.id === funcionario.baseId);
+function obterLocal(tipo, id) {
+    return locaisEmpresa?.[tipo].find(local => String(local.id) === String(id));
 }
 
 function obterChamadosFuncionario(funcionario, meses) {
-    const limite = new Date();
+    const hoje = new Date();
+    const limite = new Date(hoje);
+    const dia = limite.getDate();
+    limite.setDate(1);
     limite.setMonth(limite.getMonth() - Number(meses));
-    return funcionario.chamados
-        .filter(chamado => new Date(chamado.data) >= limite)
-        .sort((a, b) => new Date(b.data) - new Date(a.data));
+    const fimDoMes = new Date(limite.getFullYear(), limite.getMonth() + 1, 0);
+    limite.setDate(Math.min(dia, fimDoMes.getDate()));
+
+    return (funcionario?.chamados ?? [])
+        .filter(chamado => {
+            const data = Date.parse(chamado.resolvidoEm);
+            return data >= limite.getTime() && data <= hoje.getTime();
+        })
+        .sort((a, b) => Date.parse(b.resolvidoEm) - Date.parse(a.resolvidoEm));
 }
 
-function obterHospital(chamado) {
-    return dadosMock.hospitais.find(hospital => hospital.id === chamado.hospitalId);
+function formatarMinutos(tempo) {
+    return tempo === null ? "—" : `${Math.round(tempo)} min`;
+}
+
+function criarOpcao(tipo, titulo, descricao, tempo, selecionado, selecionar) {
+    const botao = document.createElement("button");
+    botao.type = "button";
+    botao.classList.add(tipo, classificacao(tempo));
+    botao.classList.toggle("selected", selecionado);
+    botao.setAttribute("aria-pressed", selecionado);
+    const nome = document.createElement("strong");
+    nome.textContent = titulo;
+    const detalhe = document.createElement("span");
+    detalhe.textContent = descricao;
+    botao.append(nome, detalhe);
+    botao.addEventListener("click", selecionar);
+    return botao;
 }
 
 function renderizarFuncionarios() {
     const meses = document.getElementById("period-select").value;
     const ordem = document.getElementById("employee-sort").value;
-    const funcionarioMedianas = dadosMock.funcionarios.map(funcionario => {
+    const funcionarioMedianas = funcionarios.map(funcionario => {
         const chamados = obterChamadosFuncionario(funcionario, meses);
-        return { funcionario, mediana: mediana(chamados.map(chamado => chamado.tempoLocal)) };
-    }).sort((a, b) => ordem === "asc" ? a.mediana - b.mediana : b.mediana - a.mediana);
-
-    const lista = document.getElementById("employee-list");
-    lista.innerHTML = funcionarioMedianas.map(({ funcionario, mediana: tempo }) => {
-        const classe = classificacao(tempo);
-        return `
-            <button class="employee-option ${classe === "inefficient" ? "inefficient" : classe === "intermediate" ? "intermediate" : ""} ${funcionario.id === funcionarioSelecionadoId ? "selected" : ""}"
-                type="button" data-employee-id="${funcionario.id}">
-                <strong>${funcionario.nome} · ${tempo} min</strong>
-                <span>${funcionario.cargo}</span>
-            </button>
-        `;
-    }).join("");
-
-    lista.querySelectorAll("[data-employee-id]").forEach(botao => {
-        botao.addEventListener("click", () => {
-            funcionarioSelecionadoId = botao.dataset.employeeId;
-            chamadoSelecionadoId = null;
-            renderizarPainel();
-        });
+        return { funcionario, tempo: mediana(chamados.map(chamado => chamado.tempoAjustado)) };
+    }).sort((a, b) => {
+        if (a.tempo === null || b.tempo === null) return Number(a.tempo === null) - Number(b.tempo === null);
+        return ordem === "asc" ? a.tempo - b.tempo : b.tempo - a.tempo;
     });
+
+    document.getElementById("employee-list").replaceChildren(...funcionarioMedianas.map(({ funcionario, tempo }) =>
+        criarOpcao("employee-option", `${funcionario.nome} · ${formatarMinutos(tempo)}`,
+            funcionario.cargo || "Cargo indisponível", tempo, funcionario.id === funcionarioSelecionadoId, () => {
+                funcionarioSelecionadoId = funcionario.id;
+                chamadoSelecionadoId = null;
+                renderizarPainel();
+            })
+    ));
+}
+
+function renderizarMetrica(id, tempo) {
+    const metrica = document.getElementById(id);
+    const cores = { efficient: "green-text", intermediate: "orange-text", inefficient: "red-text" };
+    metrica.textContent = formatarMinutos(tempo);
+    metrica.className = `metric-value ${cores[classificacao(tempo)] || ""}`;
+    document.getElementById(`${id}-note`).textContent = rotuloClassificacao(tempo);
 }
 
 function renderizarPainel() {
     const funcionario = obterFuncionario();
-    const base = obterBase(funcionario);
+    const base = obterLocal("bases", funcionario?.baseId);
     const meses = document.getElementById("period-select").value;
     const chamados = obterChamadosFuncionario(funcionario, meses);
-
-    if (!chamados.length) chamadoSelecionadoId = null;
-    if (!chamadoSelecionadoId || !chamados.some(chamado => chamado.id === chamadoSelecionadoId)) {
-        chamadoSelecionadoId = chamados[0]?.id || null;
-    }
-
     const chamadoAtual = chamados.find(chamado => chamado.id === chamadoSelecionadoId) || chamados[0];
-    const tempos = chamados.map(chamado => chamado.tempoLocal);
-    const deslocamentos = chamados.map(chamado => chamado.deslocamento);
-    const tempoMediano = mediana(tempos);
-    const deslocamentoMediano = mediana(deslocamentos);
-    const equipe = mediana(dadosMock.funcionarios.flatMap(item =>
-        obterChamadosFuncionario(item, meses).map(chamado => chamado.tempoLocal)
+    chamadoSelecionadoId = chamadoAtual?.id ?? null;
+
+    const tempoMediano = mediana(chamados.map(chamado => chamado.tempoAjustado));
+    const deslocamentoMediano = mediana(chamados.map(chamado => chamado.deslocamento));
+    const equipe = mediana(funcionarios.flatMap(item =>
+        obterChamadosFuncionario(item, meses).map(chamado => chamado.tempoAjustado)
     ));
-    const classe = classificacao(tempoMediano);
-    const classeEquipe = classificacao(equipe);
 
-    document.getElementById("page-title").textContent = funcionario.nome;
-    document.getElementById("profile-initials").textContent = iniciais(funcionario.nome);
-    document.getElementById("profile-name").textContent = funcionario.nome;
-    document.getElementById("profile-role").textContent = `${funcionario.cargo} · ${base.nome}`;
+    document.getElementById("page-title").textContent = funcionario?.nome ?? "Eficiência de chamados";
+    document.getElementById("profile-initials").textContent = funcionario ? iniciais(funcionario.nome) : "—";
+    document.getElementById("profile-name").textContent = funcionario?.nome ?? "Nenhum funcionário selecionado";
+    document.getElementById("profile-role").textContent = [funcionario?.cargo, base?.nome].filter(Boolean).join(" · ");
     document.getElementById("profile-status").textContent = rotuloClassificacao(tempoMediano);
-    document.getElementById("profile-status").className = `status-pill ${classe === "inefficient" ? "inefficient" : classe === "intermediate" ? "intermediate" : ""}`;
+    document.getElementById("profile-status").className = `status-pill ${classificacao(tempoMediano)}`;
 
-    document.getElementById("metric-time").textContent = `${tempoMediano} min`;
-    document.getElementById("metric-time").className = `metric-value ${classe === "inefficient" ? "red-text" : classe === "intermediate" ? "orange-text" : "green-text"}`;
-    document.getElementById("metric-time-note").textContent = `Mediana no local · ${rotuloClassificacao(tempoMediano)}`;
-    document.getElementById("metric-team").textContent = `${equipe} min`;
-    document.getElementById("metric-team").className = `metric-value ${classeEquipe === "inefficient" ? "red-text" : classeEquipe === "intermediate" ? "orange-text" : "green-text"}`;
-    document.getElementById("metric-team-note").textContent = `Mediana geral da equipe · ${rotuloClassificacao(equipe)}`;
-    document.getElementById("metric-distance").textContent = `${deslocamentoMediano} min`;
+    renderizarMetrica("metric-time", tempoMediano);
+    renderizarMetrica("metric-team", equipe);
+    document.getElementById("metric-distance").textContent = formatarMinutos(deslocamentoMediano);
     document.getElementById("metric-calls").textContent = String(chamados.length);
     document.getElementById("history-count").textContent = String(chamados.length);
 
     renderizarChamados(chamados);
     renderizarCriterios();
     renderizarFuncionarios();
-
-    if (chamadoAtual) renderizarMapa(chamadoAtual);
+    if (locaisEmpresa) renderizarMapa(chamadoAtual, funcionario);
 }
 
 function renderizarChamados(chamados) {
     const lista = document.getElementById("call-list");
-    lista.innerHTML = chamados.map(chamado => {
-        const hospital = obterHospital(chamado);
-        const classe = classificacao(chamado.tempoLocal);
-        return `
-            <button class="call-option ${classe === "inefficient" ? "inefficient" : classe === "intermediate" ? "intermediate" : ""} ${chamado.id === chamadoSelecionadoId ? "selected" : ""}"
-                type="button" data-call-id="${chamado.id}">
-                <strong>${chamado.equipamento} · ${chamado.tempoLocal} min</strong>
-                <span>${hospital.nome} · ${formatarData(chamado.data)}</span>
-            </button>
-        `;
-    }).join("");
-
-    lista.querySelectorAll("[data-call-id]").forEach(botao => {
-        botao.addEventListener("click", () => {
-            chamadoSelecionadoId = botao.dataset.callId;
-            renderizarPainel();
-        });
-    });
+    lista.replaceChildren(...chamados.map(chamado => {
+        const hospital = obterLocal("hospitais", chamado.hospitalId);
+        const titulo = [chamado.id, chamado.equipamento].filter(Boolean).join(" · ");
+        const descricao = [hospital?.nome, formatarData(chamado.resolvidoEm),
+            `Atendimento: ${formatarMinutos(chamado.tempoAtendimento)}`,
+            `Ajustado: ${formatarMinutos(chamado.tempoAjustado)}`].filter(Boolean).join(" · ");
+        return criarOpcao("call-option", titulo, descricao, chamado.tempoAjustado,
+            chamado.id === chamadoSelecionadoId, () => {
+                chamadoSelecionadoId = chamado.id;
+                renderizarPainel();
+            });
+    }));
+    if (!chamados.length && obterFuncionario()) lista.textContent = "Nenhum chamado concluído no período.";
 }
 
 function renderizarCriterios(valores = limites) {
@@ -204,21 +211,19 @@ function criarMarcador(lat, lng, tipo, texto, titulo) {
 }
 
 async function carregarLocaisEmpresa() {
-    if (locaisEmpresa) return locaisEmpresa;
-    if (requisicaoLocais) return requisicaoLocais;
-
-    requisicaoLocais = (async () => {
+    try {
         const idUsuario = Number(localStorage.getItem("ID_USUARIO"));
-        if (!Number.isSafeInteger(idUsuario) || idUsuario <= 0) {
+        const token = localStorage.getItem("token");
+        if (!Number.isSafeInteger(idUsuario) || idUsuario <= 0 || !token) {
             throw new Error("Faça login novamente para carregar os locais da sua empresa.");
         }
 
         const resposta = await fetch(`/mapa/locais/${idUsuario}`, {
-            headers: { Accept: "application/json" }
+            headers: { Accept: "application/json", Authorization: `Bearer ${token}` }
         });
         const dados = await resposta.json();
         if (!resposta.ok) {
-            throw new Error(dados.mensagem || "Não foi possível carregar os locais da empresa.");
+            throw new Error(dados?.mensagem || dados?.erro || "Não foi possível carregar os locais da empresa.");
         }
         if (
             !Number.isSafeInteger(dados.empresaId) ||
@@ -234,13 +239,15 @@ async function carregarLocaisEmpresa() {
         }
 
         locaisEmpresa = dados;
-        return dados;
-    })();
-
-    return requisicaoLocais;
+        renderizarPainel();
+    } catch (erro) {
+        document.getElementById("route-summary").textContent = "Bases e hospitais indisponíveis.";
+        document.getElementById("route-estimate-title").textContent = "Falha ao carregar locais";
+        document.getElementById("route-status").textContent = erro.message;
+    }
 }
 
-async function renderizarMapa() {
+function renderizarMapa(chamado, funcionario) {
     inicializarMapa();
     if (!mapa) {
         document.getElementById("route-status").textContent = "Não foi possível carregar o mapa.";
@@ -250,52 +257,34 @@ async function renderizarMapa() {
     marcadores.forEach(marcador => marcador.remove());
     marcadores = [];
 
-    document.getElementById("route-summary").textContent = "Carregando bases e hospitais da empresa...";
-    document.getElementById("route-estimate-title").textContent = "Carregando locais...";
-    document.getElementById("route-status").textContent = "Buscando os endereços associados ao usuário conectado.";
+    const base = obterLocal("bases", chamado?.baseId ?? funcionario?.baseId);
+    const hospital = obterLocal("hospitais", chamado?.hospitalId);
+    const locaisDoChamado = [base, hospital].filter(Boolean);
+    const locais = chamado && locaisDoChamado.length
+        ? locaisDoChamado : [...locaisEmpresa.bases, ...locaisEmpresa.hospitais];
+    const localizacoesValidas = locais.filter(local =>
+        Number.isFinite(local.latitude) && Math.abs(local.latitude) <= 90 &&
+        Number.isFinite(local.longitude) && Math.abs(local.longitude) <= 180
+    );
 
-    try {
-        const dados = await carregarLocaisEmpresa();
-        const todosLocais = [
-            ...dados.bases.map(local => ({ ...local, tipo: "base" })),
-            ...dados.hospitais.map(local => ({ ...local, tipo: "hospital" }))
-        ];
-        const localizacoesValidas = todosLocais.filter(local =>
-            Number.isFinite(local.latitude) &&
-            Number.isFinite(local.longitude) &&
-            Math.abs(local.latitude) <= 90 &&
-            Math.abs(local.longitude) <= 180
-        );
-
-        localizacoesValidas.forEach(local => {
-            criarMarcador(
-                local.latitude,
-                local.longitude,
-                local.tipo,
-                local.tipo === "base" ? "B" : "H",
-                local.nome
-            );
-        });
-
-        document.getElementById("route-summary").textContent =
-            `Bases e hospitais da empresa ${dados.empresaId}`;
-
-        if (marcadores.length) {
-            mapa.fitBounds(L.featureGroup(marcadores).getBounds(), { padding: [24, 24] });
-        }
-
-        const semCoordenadas = todosLocais.length - localizacoesValidas.length;
-        document.getElementById("route-estimate-title").textContent =
-            `${localizacoesValidas.length} locais encontrados`;
-        document.getElementById("route-status").textContent = semCoordenadas
-            ? `${semCoordenadas} locais não puderam ser geocodificados. Os chamados desta tela ainda são demonstrativos e não possuem rota real.`
-            : "Locais carregados do banco. Os chamados desta tela ainda são demonstrativos e não possuem rota real.";
-    } catch (erro) {
-        document.getElementById("route-summary").textContent = "Não foi possível carregar os locais da empresa.";
-        document.getElementById("route-estimate-title").textContent = "Falha ao carregar locais";
-        document.getElementById("route-status").textContent =
-            erro.message;
+    for (const local of localizacoesValidas) {
+        criarMarcador(local.latitude, local.longitude, local.tipo,
+            local.tipo === "base" ? "B" : "H", local.nome);
     }
+    if (marcadores.length) {
+        mapa.fitBounds(L.featureGroup(marcadores).getBounds(), { padding: [24, 24], maxZoom: 15 });
+    } else {
+        mapa.setView([-23.568, -46.672], 12);
+    }
+
+    document.getElementById("route-summary").textContent = chamado
+        ? `${base?.nome ?? "Base indisponível"} → ${hospital?.nome ?? "Hospital indisponível"}`
+        : `Bases e hospitais da empresa ${locaisEmpresa.empresaId}`;
+    document.getElementById("route-estimate-title").textContent = chamado
+        ? `Deslocamento estimado: ${formatarMinutos(chamado.deslocamento)}`
+        : `${localizacoesValidas.length} locais com coordenadas`;
+    document.getElementById("route-status").textContent = locais.length > localizacoesValidas.length
+        ? "Alguns locais estão sem coordenadas." : "";
 }
 
 function configurarCriterios() {
@@ -368,10 +357,39 @@ function configurarConta() {
     });
 }
 
+async function consultarChamadosEmpresa() {
+    const status = document.getElementById("chamados-api-status");
+    const idEmpresa = Number(localStorage.getItem("FK_EMPRESA"));
+    const token = localStorage.getItem("token");
+    if (!Number.isSafeInteger(idEmpresa) || idEmpresa <= 0 || !token) {
+        status.textContent = "Faça login para consultar os chamados da empresa.";
+        return;
+    }
+
+    status.textContent = "Consultando chamados da empresa...";
+    try {
+        const resposta = await fetch(`/chamados/${idEmpresa}`, {
+            headers: { Accept: "application/json", Authorization: `Bearer ${token}` }
+        });
+        const dados = await resposta.json();
+        if (!resposta.ok) {
+            throw new Error(dados?.mensagem || dados?.erro || "Não foi possível consultar os chamados.");
+        }
+        funcionarios = dados.funcionarios;
+        funcionarioSelecionadoId = funcionarios[0]?.id ?? null;
+        renderizarPainel();
+        status.textContent = funcionarios.length ? "" : "Nenhum funcionário recebido para esta empresa.";
+    } catch (erro) {
+        status.textContent = erro.message;
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     configurarConta();
     configurarCriterios();
     document.getElementById("period-select").addEventListener("change", renderizarPainel);
     document.getElementById("employee-sort").addEventListener("change", renderizarFuncionarios);
     renderizarPainel();
+    carregarLocaisEmpresa();
+    consultarChamadosEmpresa();
 });

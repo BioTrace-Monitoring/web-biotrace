@@ -22,7 +22,6 @@
       crossorigin=""
       defer
     ></script>
-    <script src="./js/dash_eficiencia_chamados_mock.js" defer></script>
     <script src="./js/dash_eficiencia_chamados.js" defer></script>
   </head>
   <body>
@@ -54,7 +53,7 @@
     <main class="page">
       <header class="page-header">
         <div class="eyebrow"><span class="dot dot-purple"></span> Desempenho operacional</div>
-        <h1 id="page-title">Ana Souza</h1>
+        <h1 id="page-title">Eficiência de chamados</h1>
         <p>Acompanhe chamados, eficiência ajustada pelo deslocamento e trajeto do funcionário.</p>
       </header>
 
@@ -68,8 +67,8 @@
               </div>
             </div>
             <label class="sort-control" for="employee-sort">
-              <span>Ordenar mediana no local</span>
-              <select id="employee-sort" aria-label="Ordenar funcionários pela mediana no local">
+              <span>Ordenar pela mediana ajustada</span>
+              <select id="employee-sort" aria-label="Ordenar funcionários pela mediana ajustada">
                 <option value="asc">Menor para maior</option>
                 <option value="desc">Maior para menor</option>
               </select>
@@ -94,34 +93,34 @@
           </div>
 
           <article class="profile panel">
-            <div class="avatar" id="profile-initials">AS</div>
+            <div class="avatar" id="profile-initials">—</div>
             <div class="profile-copy">
               <div class="eyebrow"><span class="dot dot-purple"></span> Perfil do funcionário</div>
-              <h2 id="profile-name">Ana Souza</h2>
-              <p id="profile-role">Técnica de equipamentos · Base Paulista</p>
+              <h2 id="profile-name">Nenhum funcionário selecionado</h2>
+              <p id="profile-role"></p>
             </div>
-            <span class="status-pill" id="profile-status">Eficiente</span>
+            <span class="status-pill unavailable" id="profile-status">Sem dados</span>
           </article>
 
           <section class="metrics" aria-label="Indicadores do período">
             <article class="metric panel">
-              <span class="metric-label">Mediana no local</span>
-              <strong class="metric-value green-text" id="metric-time">136 min</strong>
-              <span class="metric-note" id="metric-time-note">Mediana no local · Eficiente</span>
+              <span class="metric-label">Mediana do tempo ajustado</span>
+              <strong class="metric-value" id="metric-time">—</strong>
+              <span class="metric-note" id="metric-time-note">Sem dados</span>
             </article>
             <article class="metric panel">
-              <span class="metric-label">Mediana de atendimento da equipe</span>
-              <strong class="metric-value" id="metric-team">200 min</strong>
-              <span class="metric-note" id="metric-team-note">Mediana geral da equipe · Eficiente</span>
+              <span class="metric-label">Mediana ajustada da equipe</span>
+              <strong class="metric-value" id="metric-team">—</strong>
+              <span class="metric-note" id="metric-team-note">Sem dados</span>
             </article>
             <article class="metric panel">
               <span class="metric-label">Mediana de deslocamento</span>
-              <strong class="metric-value" id="metric-distance">61 min</strong>
-              <span class="metric-note">Mediana do trânsito no período</span>
+              <strong class="metric-value" id="metric-distance">—</strong>
+              <span class="metric-note">Estimativa de viagem no período</span>
             </article>
             <article class="metric panel">
               <span class="metric-label">Chamados no período</span>
-              <strong class="metric-value" id="metric-calls">4</strong>
+              <strong class="metric-value" id="metric-calls">0</strong>
               <span class="metric-note">Chamados concluídos no histórico filtrado</span>
             </article>
           </section>
@@ -155,9 +154,10 @@
                 <div class="history-heading">
                   <div>
                     <h2>Histórico de chamados</h2>
-                    <p class="muted">Selecione um chamado concluído para ver o trajeto</p>
+                    <p id="chamados-api-status" role="status"></p>
+                    <p class="muted">Selecione um chamado concluído para ver a base e o hospital</p>
                   </div>
-                  <span class="count-badge" id="history-count">4</span>
+                  <span class="count-badge" id="history-count">0</span>
                 </div>
                 <div class="legend status-legend">
                   <span><i class="legend-dot green"></i> Eficiente</span>
