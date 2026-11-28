@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cadastrar base | BioTrace</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="../css/styles_dash_eficiencia_chamado.css" />
+    <link rel="stylesheet" href="../css/styles_gestao_bases.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+    <script src="./js/gestao_bases.js" defer></script>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="index.html" aria-label="BioTrace"><span class="brand-mark">b<span>p</span></span></a>
+      <div class="sidebar-section-label">Acompanhamento</div>
+      <nav class="navigation" aria-label="Navegação principal">
+        <a class="nav-link" href="index.html">Visão geral</a>
+        <a class="nav-link" href="dash-eficencia-chamados.html">Central de processos</a>
+        <a class="nav-link active" href="cadastrar-base.html" aria-current="page">Cadastrar base</a>
+        <a class="nav-link" href="realocar-funcionarios.html">Realocar funcionários</a>
+      </nav>
+    </aside>
+    <main class="page base-page">
+      <header class="page-header">
+        <div class="eyebrow"><span class="dot dot-purple"></span> Gestão de bases</div>
+        <h1>Cadastrar base</h1>
+        <p>Adicione uma base à sua empresa e confira o endereço no mapa.</p>
+      </header>
+      <div class="base-layout">
+        <div class="base-coluna">
+          <form id="cadastrar-base" class="panel base-card base-form" aria-label="Cadastrar base">
+          <label>Nome da base <input name="nome" maxlength="100" required /></label>
+          <div class="base-endereco">
+            <label>CEP <input name="cep" inputmode="numeric" autocomplete="postal-code" maxlength="9" pattern="[0-9]{5}-?[0-9]{3}" placeholder="00000-000" required /></label>
+            <label>Número <input name="numero" maxlength="10" required /></label>
+          </div>
+          <button type="submit" disabled>Cadastrar base</button>
+            <p id="form-status" class="base-status" role="status"></p>
+          </form>
+        <section class="panel base-card" aria-labelledby="lista-bases-titulo">
+          <h2 id="lista-bases-titulo">Bases cadastradas</h2>
+          <ul id="lista-bases" class="base-lista"></ul>
+        </section>
+        </div>
+        <section class="panel base-card" aria-labelledby="mapa-titulo">
+          <h2 id="mapa-titulo">Mapa das bases</h2>
+          <div id="mapa-bases" class="map base-mapa" aria-label="Localização das bases da empresa"></div>
+          <p id="mapa-status" class="base-status" role="status">Carregando bases da empresa…</p>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

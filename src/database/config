@@ -1,4 +1,5 @@
 var mysql = require("mysql2");
+var fs = require("node:fs");
 
 var mySqlConfig = {
     host: process.env.DB_HOST,
@@ -8,6 +9,14 @@ var mySqlConfig = {
     port: process.env.DB_PORT,
     charset: "utf8mb4"
 };
+
+if (process.env.DB_SSL_CA_FILE) {
+    mySqlConfig.ssl = {
+        ca: fs.readFileSync(process.env.DB_SSL_CA_FILE, "utf8"),
+        rejectUnauthorized: true,
+        verifyIdentity: true
+    };
+}
 
 function conectar() {
     var ambiente = process.env.AMBIENTE_PROCESSO;

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Realocar funcionários | BioTrace</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="../css/styles_dash_eficiencia_chamado.css" />
+    <link rel="stylesheet" href="../css/styles_gestao_bases.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+    <script src="./js/gestao_bases.js" defer></script>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="index.html" aria-label="BioTrace"><span class="brand-mark">b<span>p</span></span></a>
+      <div class="sidebar-section-label">Acompanhamento</div>
+      <nav class="navigation" aria-label="Navegação principal">
+        <a class="nav-link" href="index.html">Visão geral</a>
+        <a class="nav-link" href="dash-eficencia-chamados.html">Central de processos</a>
+        <a class="nav-link" href="cadastrar-base.html">Cadastrar base</a>
+        <a class="nav-link active" href="realocar-funcionarios.html" aria-current="page">Realocar funcionários</a>
+      </nav>
+    </aside>
+    <main class="page base-page">
+      <header class="page-header">
+        <div class="eyebrow"><span class="dot dot-purple"></span> Gestão de bases</div>
+        <h1>Realocar funcionários</h1>
+        <p>Selecione um funcionário e altere a base vinculada a ele.</p>
+      </header>
+      <div class="base-layout">
+        <div class="base-coluna">
+          <form id="realocar-funcionarios" class="panel base-card base-form" aria-label="Realocar funcionários">
+          <label>Funcionário
+            <select name="funcionario" required disabled><option value="">Carregando funcionários…</option></select>
+          </label>
+          <p id="base-atual" class="base-atual"></p>
+          <label>Base de destino
+            <select name="baseId" required disabled><option value="">Carregando bases…</option></select>
+          </label>
+          <button type="submit" disabled>Confirmar realocação</button>
+            <p id="form-status" class="base-status" role="status"></p>
+          </form>
+        </div>
+        <section class="panel base-card" aria-labelledby="mapa-titulo">
+          <h2 id="mapa-titulo">Mapa das bases</h2>
+          <div id="mapa-bases" class="map base-mapa" aria-label="Localização das bases da empresa"></div>
+          <p id="mapa-status" class="base-status" role="status">Carregando bases da empresa…</p>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

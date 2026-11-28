@@ -26,7 +26,7 @@ async function listarLocais(req, res) {
             });
         }
 
-        var locais = await localizacaoModel.listarLocais(idEmpresa);
+        var locais = await localizacaoModel.listarLocais(idEmpresa, req.query.tipo === "base");
         var geocodificados = [];
 
         for (var local of locais) {

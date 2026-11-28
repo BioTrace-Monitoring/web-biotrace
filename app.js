@@ -1,6 +1,5 @@
-// Define o ambiente atual: 'producao' ou 'desenvolvimento'
-// Para alternar, troque o valor desta variável
-var ambiente_processo = 'desenvolvimento';
+// O Docker pode definir o ambiente por variável. Localmente, o padrão é desenvolvimento.
+var ambiente_processo = process.env.AMBIENTE_PROCESSO || 'desenvolvimento';
 
 // Seleciona o arquivo .env correspondente ao ambiente definido acima
 // producao -> le as variáveis de .env
@@ -9,6 +8,7 @@ var caminho_env = ambiente_processo === 'producao' ? '.env' : '.env.dev';
 
 // Carrega as variáveis de ambiente do arquivo selecionado
 require("dotenv").config({ path: caminho_env });
+process.env.AMBIENTE_PROCESSO ||= ambiente_processo;
 
 var express = require("express"); // Framework principal do servidor
 var cors = require("cors"); // Libera requisições de origens externas
@@ -29,6 +29,7 @@ var analiseLotesRouter = require("./src/routes/analiseLotes");
 var dashboardAlertasRouter = require("./src/routes/dashboardAlertas");
 var mapaRouter = require("./src/routes/mapa");
 var chamadosRouter = require("./src/routes/chamados");
+var baseRouter = require("./src/routes/base");
 
 // Habilita CORS para permitir requisições de outros domínios/portas
 app.use(cors());
@@ -51,6 +52,7 @@ app.use("/analise-lotes", analiseLotesRouter);
 app.use("/dashboard-alertas", dashboardAlertasRouter);
 app.use("/mapa", mapaRouter);
 app.use("/chamados", chamadosRouter);
+app.use("/bases", baseRouter);
 
 // Coloca o servidor para escutar na porta definida nas variáveis de ambiente
 app.listen(PORTA_APP, function ()
@@ -68,5 +70,5 @@ app.listen(PORTA_APP, function ()
     Você está rodando sua aplicação em ambiente de .:${process.env.AMBIENTE_PROCESSO}:. \n
     \tSe .:desenvolvimento:. você está se conectando ao banco local. \n
     \tSe .:producao:. você está se conectando ao banco remoto. \n
-    \t\tPara alterar o ambiente, comente ou descomente as linhas 1 ou 2 no arquivo 'app.js'\n`);
+    \t\tPara selecionar o ambiente, defina AMBIENTE_PROCESSO antes de iniciar o servidor.\n`);
 });
